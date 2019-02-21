@@ -693,7 +693,7 @@ const std::string TelemetryReceiver::getEZWBInfoString()const{
          ostringstream1 << "Adapter" << i << ":" << (int) data->adapter[i].current_signal_dbm
                         << (int) data->adapter[i].received_packet_cnt << "\n";
      }
-     
+
      return ostringstream1.str();
 }
 
