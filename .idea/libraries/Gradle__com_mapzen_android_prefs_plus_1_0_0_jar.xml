@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.mapzen.android:prefs-plus:1.0.0@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapzen.android/prefs-plus/1.0.0/e5ecd3cdcab9c91a6740e9c6ada1f37e567a80ba/prefs-plus-1.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.mapzen.android/prefs-plus/1.0.0/9dd0aab036c5ecdaf82c55dfecb015b09804acf2/prefs-plus-1.0.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="entriesTelemetryProtocol" >
+        <item>NONE</item>
+        <item>LTM</item>
+        <item>MAVLINK</item>
+        <item>SMARTPORT (experimental)</item>
+        <item>FRSKY (deprecated)</item>
+        <item>MAVLINK v2(Developer only)</item>
+    </string-array>
+    <string-array name="valuesTelemetryProtocol" >
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+
+
+    <string-array name="entriesEZWBStatusProtocol" >
+        <item>Disable</item>
+        <item>Version 1.6 rc6 </item>
+    </string-array>
+    <string-array name="valuesEZWBStatusProtocol" >
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
+
+</resources>

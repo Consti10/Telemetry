@@ -1,0 +1,23 @@
+[1/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/ltm.c.o
+[2/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/mavlink2.c.o
+[3/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/frsky.c.o
+[4/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/smartport.c.o
+In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles\mavlink2.c:1:
+In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink2.h:5:
+In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink_v2/mavlink.h:24:
+In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink_v2/common/common.h:30:
+In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink_v2/common/../protocol.h:75:
+C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink_v2/mavlink_helpers.h:248:25: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+        crc_accumulate_buffer(&msg->checksum, _MAV_PAYLOAD(msg), msg->len);
+                               ^~~~~~~~~~~~~
+C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink_v2/mavlink_helpers.h:249:29: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+        crc_accumulate(crc_extra, &msg->checksum);
+                                   ^~~~~~~~~~~~~
+C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink_v2/mavlink_helpers.h:472:12: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+        crc_init(&msg->checksum);
+                  ^~~~~~~~~~~~~
+C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink_v2/mavlink_helpers.h:477:21: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+        crc_accumulate(c, &msg->checksum);
+                           ^~~~~~~~~~~~~
+4 warnings generated.
+[5/5] Linking C shared library ..\..\..\..\build\intermediates\cmake\debug\obj\x86\libltm_frsky_mavlink_smartport.so
