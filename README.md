@@ -5,7 +5,7 @@ TelemetryExample depends on TelemetryCore, other projects should only include Te
 
 ### TelemetryCore 
 contains the main library, written in cpp/c. TelemetryReceiver.cpp is the main object.
-It parses telemetry coming from different uav platforms ( MAVLLINK,LTM,FRSKY ) into one uniform data model and provides an interface
+It parses telemetry coming from different uav platforms ( MAVLINK,LTM,FRSKY ) into one uniform data model and provides an interface
 for optaining Telemetry values as human-readable strings (e.g. for display on an On-Screen-Display) without being platform-dependent.
 Its functions are also exposed to JAVA code using the ndk. 
 
