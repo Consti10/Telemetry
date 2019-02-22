@@ -1,5 +1,5 @@
-[1/3] Building CXX object CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/UDPReceiver.cpp.o
-[2/3] Building CXX object CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o
+[1/3] Building CXX object CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o
+[2/3] Building CXX object CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/UDPReceiver.cpp.o
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\TelemetryReceiver.cpp:20:
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry/cFiles/mavlink2.h:5:
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry/cFiles/mavlink_v2/mavlink.h:24:

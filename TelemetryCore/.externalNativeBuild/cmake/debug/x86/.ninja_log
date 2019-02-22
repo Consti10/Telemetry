@@ -15,3 +15,5 @@
 431	2378	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/UDPReceiver.cpp.o	162b189d37b387e9
 6	3452	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o	892d8aa6049ecaef
 3452	4282	0	../../../../jniLibs/x86/libTelemetryReceiver.so	2779f1db7964db14
+8	3607	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o	892d8aa6049ecaef
+3608	4524	0	../../../../jniLibs/x86/libTelemetryReceiver.so	2779f1db7964db14

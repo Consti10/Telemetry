@@ -1,5 +1,4 @@
-[1/3] Building CXX object CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o
-[2/3] Building CXX object CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/UDPReceiver.cpp.o
+[1/2] Building CXX object CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\TelemetryReceiver.cpp:20:
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry/cFiles/mavlink2.h:5:
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry/cFiles/mavlink_v2/mavlink.h:24:
@@ -18,4 +17,4 @@ C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src
         crc_accumulate(c, &msg->checksum);
                            ^~~~~~~~~~~~~
 4 warnings generated.
-[3/3] Linking CXX shared library ..\..\..\..\jniLibs\x86\libTelemetryReceiver.so
+[2/2] Linking CXX shared library ..\..\..\..\jniLibs\x86\libTelemetryReceiver.so

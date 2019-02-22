@@ -7,3 +7,11 @@
 5	1686	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/UDPReceiver.cpp.o	827d9b6e94738d8a
 382	3415	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o	d04f827ac45166a1
 3416	4161	0	../../../../jniLibs/armeabi-v7a/libTelemetryReceiver.so	f60c7be34af52f56
+7	1643	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/ltm.c.o	e92f9243665d5a5a
+398	1645	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/frsky.c.o	49972efbd5f5f77f
+1244	2788	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/smartport.c.o	a2457e3cdc0b0ec7
+844	2803	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/mavlink2.c.o	dc20d42cd16341c9
+2803	3899	0	../../../../build/intermediates/cmake/debug/obj/armeabi-v7a/libltm_frsky_mavlink_smartport.so	9b3e4ed2ded55563
+408	2255	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/UDPReceiver.cpp.o	827d9b6e94738d8a
+6	3443	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o	d04f827ac45166a1
+3443	4211	0	../../../../jniLibs/armeabi-v7a/libTelemetryReceiver.so	f60c7be34af52f56
