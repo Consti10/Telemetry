@@ -1,7 +1,7 @@
 # Telemetry
 
 ## Structure:
-TelemetryExample depend on TelemetryCore, other projects should only include TelemetryCore not TelemetryExample.
+TelemetryExample depends on TelemetryCore, other projects should only include TelemetryCore not TelemetryExample.
 
 ### TelemetryCore 
 contains the main library, written in cpp/c. TelemetryReceiver.cpp is the main object.
