@@ -7,16 +7,16 @@ import android.graphics.Color;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import constantin.telemetry.core.TelemetryReceiver;
+import androidx.annotation.ColorInt;
 
-public class TestReceiverTelemetry extends Thread{
+public class TestReceiverTelemetry{
 
     private final TextView receivedTelemetryDataTV;
     private final TextView ezwbForwardDataTV;
     private final TextView dataAsStringTV;
     private final Context context;
     private TelemetryReceiver telemetryReceiver;
-
+    private Thread mThread;
 
     public TestReceiverTelemetry(Context c, TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV,TextView dataAsStringTV){
         this.context=c;
@@ -26,14 +26,21 @@ public class TestReceiverTelemetry extends Thread{
     }
 
     public void startReceiving(){
+        mThread=new Thread(new Runnable() {
+            @Override
+            public void run() {
+                loop();
+            }
+        });
+        mThread.setName("TestReceiverTelemetry TV String refresher");
         telemetryReceiver =new TelemetryReceiver(context);
         telemetryReceiver.startReceiving();
-        this.start();
+        mThread.start();
     }
 
     public void stopReceiving(){
-        this.interrupt();
-        try {this.join();} catch (InterruptedException e) {e.printStackTrace();}
+        mThread.interrupt();
+        try {mThread.join();} catch (InterruptedException e) {e.printStackTrace();}
         telemetryReceiver.stopReceiving();
         telemetryReceiver.delete();
     }
@@ -51,7 +58,7 @@ public class TestReceiverTelemetry extends Thread{
 
     //to have as less work on the UI thread and GPU, we check if the content of the string has changed
     //before updating the TV.
-    private static void updateViewIfStringChanged(final Context context,final TextView tv, final String newContent,final boolean colorRed,final boolean changeColor){
+    private void updateViewIfStringChanged(final TextView tv, final String newContent,final boolean changeColor,@ColorInt final int newColor){
         final String prev=tv.getText().toString();
         if(!prev.contentEquals(newContent)){
             ((Activity)context).runOnUiThread(new Runnable() {
@@ -59,10 +66,8 @@ public class TestReceiverTelemetry extends Thread{
                 public void run() {
                     tv.setText(newContent);
                     if(changeColor){
-                        if(colorRed){
-                            tv.setTextColor(Color.RED);
-                        }else{
-                            tv.setTextColor(Color.GREEN);
+                        if(tv.getCurrentTextColor()!=newColor){
+                            tv.setTextColor(newColor);
                         }
                     }
                 }
@@ -70,24 +75,23 @@ public class TestReceiverTelemetry extends Thread{
         }
     }
 
-    @Override
-    public void run(){
-        setName("TestReceiverTelemetry TV String refresher");
+    private void loop(){
         long lastCheckMS = System.currentTimeMillis() - 2*1000;
-        while (!isInterrupted()){
-            //if the receivedVideoDataTV is !=null, we should update its content with the
-            //number of received bytes usw
+        while (!Thread.currentThread().isInterrupted()){
+            //if any of the TV are not null, we update its content
+            //with the corresponding string, and optionally change color
             if(receivedTelemetryDataTV !=null){
-                final String s= telemetryReceiver.getTelemetryInfoString();
-                updateViewIfStringChanged(context,receivedTelemetryDataTV,s,!telemetryReceiver.anyTelemetryDataReceived(),true);
+                final String s= telemetryReceiver.getStatisticsAsString();
+                final int newColor=telemetryReceiver.anyTelemetryDataReceived() ? Color.GREEN : Color.RED;
+                updateViewIfStringChanged(receivedTelemetryDataTV,s,true,newColor);
             }
             if(ezwbForwardDataTV!=null){
                 final String s= telemetryReceiver.getEZWBInfoString();
-                updateViewIfStringChanged(context,ezwbForwardDataTV,s,false,false);
+                updateViewIfStringChanged(ezwbForwardDataTV,s,false,0);
             }
             if(dataAsStringTV!=null){
                 final String s = telemetryReceiver.getTelemetryDataAsString();
-                dataAsStringTV.setText(s);
+                updateViewIfStringChanged(dataAsStringTV,s,false,0);
             }
             if(telemetryReceiver.isEZWBIpAvailable()){
                 onEZWBIpDetected(telemetryReceiver.getEZWBIPAdress());
@@ -104,11 +108,12 @@ public class TestReceiverTelemetry extends Thread{
                 }
             }
             //Refresh every 200ms
-            try {sleep(200);} catch (InterruptedException e) {return;}
+            try {Thread.sleep(200);} catch (InterruptedException e) {return;}
         }
     }
 
     public interface EZWBIpAddressDetected{
         void onEZWBIpDetected(String ip);
     }
+
 }

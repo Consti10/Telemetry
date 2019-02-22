@@ -748,7 +748,7 @@ JNI_METHOD(void, stopReceiving)
     testRecN->stopReceivingSafe();
 }
 
-JNI_METHOD(jstring , getTelemetryInfoString)
+JNI_METHOD(jstring , getStatisticsAsString)
 (JNIEnv *env,jclass unused,jlong telemetryReceiverN) {
     TelemetryReceiver* telRecN=native(telemetryReceiverN);
     jstring ret = env->NewStringUTF( telRecN->getStatisticsAsString().c_str());

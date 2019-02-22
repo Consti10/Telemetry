@@ -4,8 +4,6 @@ package constantin.telemetry.core;
 import android.content.Context;
 import android.location.Location;
 
-import constantin.telemetry.core.HomeLocation;
-
 /*
  * Pattern native -> ndk:
  * createInstance() creates a new native instance and return the pointer to it
@@ -17,6 +15,7 @@ import constantin.telemetry.core.HomeLocation;
  * Optionally: Also handles Sending telemetry data
  */
 
+@SuppressWarnings("WeakerAccess")
 public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
     static {
         System.loadLibrary("TelemetryReceiver");
@@ -30,10 +29,10 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
                                                float avgWaitForInputBTime_ms,float avgDecodingTime_ms);
     private static native void setHomeLocation(long instance,double latitude,double longitude,double attitude);
     //For debugging/testing
-    private static native boolean anyTelemetryDataReceived(long testRecN);
-    private static native String getTelemetryInfoString(long testRecN);
+    private static native String getStatisticsAsString(long testRecN);
     private static native String getEZWBInfoString(long testRecN);
     private static native String getTelemetryDataAsString(long testRecN);
+    private static native boolean anyTelemetryDataReceived(long testRecN);
     private static native boolean isEZWBIpAvailable(long testRecN);
     private static native String getEZWBIPAdress(long testRecN);
     private static native boolean receivingEZWBButCannotParse(long testRecN);
@@ -68,8 +67,8 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
     public boolean anyTelemetryDataReceived(){
         return anyTelemetryDataReceived(nativeInstance);
     }
-    public String getTelemetryInfoString(){
-        return getTelemetryInfoString(nativeInstance);
+    public String getStatisticsAsString(){
+        return getStatisticsAsString(nativeInstance);
     }
     public String getEZWBInfoString(){
         return getEZWBInfoString(nativeInstance);

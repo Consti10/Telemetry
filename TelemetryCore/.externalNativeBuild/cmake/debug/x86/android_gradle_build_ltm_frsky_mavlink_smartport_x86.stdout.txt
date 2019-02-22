@@ -1,6 +1,6 @@
 [1/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/ltm.c.o
-[2/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/mavlink2.c.o
-[3/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/frsky.c.o
+[2/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/frsky.c.o
+[3/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/mavlink2.c.o
 [4/5] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/smartport.c.o
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles\mavlink2.c:1:
 In file included from C:\Users\Constantin\Desktop\FPV_VR_for_wifibroadcast\Telemetry\TelemetryCore\src\main\cpp\Telemetry\cFiles/mavlink2.h:5:

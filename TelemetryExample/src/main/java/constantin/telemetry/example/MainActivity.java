@@ -13,9 +13,6 @@ import android.widget.TextView;
 public class MainActivity extends AppCompatActivity {
 
     private TestReceiverTelemetry testReceiverTelemetry;
-    private TextView tv1;
-    private TextView tv2;
-    private TextView tv3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,15 +25,15 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent().setClass(getApplicationContext(), ASettingsTelemetry.class));
             }
         });
-        tv1=findViewById(R.id.textView);
-        tv2=findViewById(R.id.textView2);
-        tv3=findViewById(R.id.textView3);
+        TextView tv1 = findViewById(R.id.textView);
+        TextView tv2 = findViewById(R.id.textView2);
+        TextView tv3 = findViewById(R.id.textView3);
+        testReceiverTelemetry=new TestReceiverTelemetry(this, tv1, tv2, tv3);
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        testReceiverTelemetry=new TestReceiverTelemetry(this,tv1,tv2,tv3);
         testReceiverTelemetry.startReceiving();
     }
 
@@ -44,6 +41,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause(){
         super.onPause();
         testReceiverTelemetry.stopReceiving();
-        testReceiverTelemetry=null;
     }
 }
