@@ -170,5 +170,6 @@
     <orderEntry type="module" module-name="TelemetryCore" />
     <orderEntry type="module" module-name="TelemetryCore" />
     <orderEntry type="module" module-name="TelemetryCore" />
+    <orderEntry type="module" module-name="TelemetryCore" />
   </component>
 </module>
