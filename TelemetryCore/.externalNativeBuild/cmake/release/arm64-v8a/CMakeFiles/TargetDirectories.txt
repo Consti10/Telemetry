@@ -1,0 +1,4 @@
+C:/Users/Constantin/Desktop/FPV_VR_for_wifibroadcast/Telemetry/TelemetryCore/.externalNativeBuild/cmake/release/arm64-v8a/CMakeFiles/ltm_frsky_mavlink_smartport.dir
+C:/Users/Constantin/Desktop/FPV_VR_for_wifibroadcast/Telemetry/TelemetryCore/.externalNativeBuild/cmake/release/arm64-v8a/CMakeFiles/rebuild_cache.dir
+C:/Users/Constantin/Desktop/FPV_VR_for_wifibroadcast/Telemetry/TelemetryCore/.externalNativeBuild/cmake/release/arm64-v8a/CMakeFiles/TelemetryReceiver.dir
+C:/Users/Constantin/Desktop/FPV_VR_for_wifibroadcast/Telemetry/TelemetryCore/.externalNativeBuild/cmake/release/arm64-v8a/CMakeFiles/edit_cache.dir
