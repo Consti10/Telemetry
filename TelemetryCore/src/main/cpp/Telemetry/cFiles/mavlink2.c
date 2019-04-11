@@ -15,7 +15,7 @@ void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *
         }
         uint8_t c = data[i];
         if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
-            td->validmsgsrxMAVLINK++;
+            td->validmsgsrx++;
 
             //__android_log_print(ANDROID_LOG_DEBUG,"Message seq:","%d",msg.seq);
 

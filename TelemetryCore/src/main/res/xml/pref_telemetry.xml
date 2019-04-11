@@ -5,6 +5,7 @@
         android:title="Telemetry settings"
         android:summary="Select your telemetry protocol and protocol-specific settings ">
 
+
         <PreferenceCategory
             android:title="Telemetry stream">
             <com.mapzen.prefsplus.IntListPreference
@@ -34,6 +35,12 @@
                 android:title="@string/T_FRSKYPort"
                 android:defaultValue="5002"
                 android:summary="UDP Port to listen for FRSKY data;default:5002"/>
+            <com.mapzen.prefsplus.IntListPreference
+                android:key="@string/T_Source"
+                android:title="@string/T_Source"
+                android:entries="@array/entriesTelemetrySource"
+                android:entryValues="@array/valuesTelemetrySource"
+                android:defaultValue="0"/>
         </PreferenceCategory>
 
         <PreferenceCategory
@@ -99,6 +106,22 @@
             android:key="@string/T_BATT_CAPACITY_MAH_USED_WARNING"
             android:title="@string/T_BATT_CAPACITY_MAH_USED_WARNING"
             android:defaultValue="2000"/>
+
+        <PreferenceCategory
+            android:title="Ground recording">
+
+            <SwitchPreference
+                android:key="@string/T_GROUND_RECORDING"
+                android:title="@string/T_GROUND_RECORDING"
+                android:summary="Record telemetry data into a file for playback"
+                android:defaultValue="false" />
+
+        </PreferenceCategory>
+
+
+
     </PreferenceScreen>
+
+
 
 </PreferenceScreen>

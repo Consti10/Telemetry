@@ -129,14 +129,14 @@ int ltm_check(UAVTelemetryData *td,OriginData *originData) {
         td->AltitudeGPS_m = (ltmread_u32()/100.0f);
         uint8_t ltm_satsfix = ltmread_u8();
         td->SatsInUse = ((ltm_satsfix >> 2) & 0xFF);
-        td->validmsgsrxLTM++;
+        td->validmsgsrx++;
 
     }else if (LTMcmd==LIGHTTELEMETRY_AFRAME)  {
         td->Pitch_Deg = (int16_t)ltmread_u16();
         td->Roll_Deg =  (int16_t)ltmread_u16();
         td->Heading_Deg = (float)((int16_t)ltmread_u16());
         if (td->Heading_Deg < 0 ) td->Heading_Deg = td->Heading_Deg + 360; //convert from -180/180 to 0/360Â°
-        td->validmsgsrxLTM++;
+        td->validmsgsrx++;
 
     }else if (LTMcmd==LIGHTTELEMETRY_OFRAME)  {
         if(originData->writeByTelemetryProtocol){
@@ -145,7 +145,7 @@ int ltm_check(UAVTelemetryData *td,OriginData *originData) {
             //originData->Altitude_m= (ltmread_u32())/100.0f;
             originData->hasBeenSet=true;
         }
-        td->validmsgsrxLTM++;
+        td->validmsgsrx++;
 
     }else if (LTMcmd==LIGHTTELEMETRY_XFRAME)  {
         //HDOP 		uint16 HDOP * 100
@@ -173,7 +173,7 @@ int ltm_check(UAVTelemetryData *td,OriginData *originData) {
         //td->armed = (uint8_t)(ltm_armfsmode & 0b00000001);
         //-C-td->ltm_failsafe = (ltm_armfsmode >> 1) & 0b00000001;
         //-C-td->ltm_flightmode = (ltm_armfsmode >> 2) & 0b00111111;
-        td->validmsgsrxLTM++;
+        td->validmsgsrx++;
     }
     printf("\n");
     return 0;

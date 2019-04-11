@@ -47,11 +47,11 @@ int frsky_interpret_packet(frsky_state_t *state, UAVTelemetryData *td) {
 	data = *(uint16_t*)(state->pkg+1);
 	switch(state->pkg[0]) {
 		case ID_VOLTAGE_AMP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->BatteryPack_V = (data/1000.0f);
 			break;
 		case ID_ALTITUDE_BP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->AltitudeBaro_m = data/100.0f;
 			break;
 		case ID_ALTITUDE_AP:
@@ -59,42 +59,42 @@ int frsky_interpret_packet(frsky_state_t *state, UAVTelemetryData *td) {
 			//printf("Baro Altitude AP:%f  ", td->altitude_baro);
 			break;
 		case ID_GPS_ALTITUDE_BP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->AltitudeGPS_m = data/100.0f;
 			break;
 		case ID_LONGITUDE_BP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->Longitude_dDeg = data / 100;
 			td->Longitude_dDeg += 1.0 * (data - td->Longitude_dDeg * 100) / 60;
 			break;
 		case ID_LONGITUDE_AP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->Longitude_dDeg +=  1.0 * data / 60 / 10000;
 			break;
 		case ID_LATITUDE_BP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->Latitude_dDeg = data / 100;
 			td->Latitude_dDeg += 1.0 * (data - td->Latitude_dDeg * 100) / 60;
 			break;
 		case ID_LATITUDE_AP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->Latitude_dDeg +=  1.0 * data / 60 / 10000;
 			break;
 		case ID_COURSE_BP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->Heading_Deg = data;
 			break;
 		case ID_GPS_SPEED_BP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->SpeedGround_KPH = (uint32_t)(1.0 * data / 0.0194384449);
 			break;
 		case ID_GPS_SPEED_AP:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			td->SpeedGround_KPH += 1.0 * data / 1.94384449; //now we are in cm/s
 			td->SpeedGround_KPH = td->SpeedGround_KPH / 100 / 1000 * 3600; //now we are in km/h
 			break;
 		case ID_ACC_X:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			//-C-td->x = data;
 			td->Roll_Deg=data;
 			break;
@@ -103,7 +103,7 @@ int frsky_interpret_packet(frsky_state_t *state, UAVTelemetryData *td) {
 			//-C-td->y = data;
 			break;
 		case ID_ACC_Z:
-			td->validmsgsrxFRSKY++;
+			td->validmsgsrx++;
 			//-C-td->z = data;
 			td->Pitch_Deg=data;
 			break;

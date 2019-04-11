@@ -47,7 +47,7 @@ public class ASettingsTelemetry extends AppCompatActivity {
         @Override
         public void onPause(){
             super.onPause();
-            getPreferenceScreen().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+            getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
         }
 
         @Override

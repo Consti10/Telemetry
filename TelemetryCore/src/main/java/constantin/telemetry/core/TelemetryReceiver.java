@@ -1,8 +1,15 @@
 package constantin.telemetry.core;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.location.Location;
+import android.os.Environment;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /*
  * Pattern native -> ndk:
@@ -22,7 +29,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
     }
     private static native long createInstance(Context context);
     private static native void deleteInstance(long instance);
-    private static native void startReceiving(long instance);
+    private static native void startReceiving(long instance, String groundRecordingDirectory, AssetManager assetManager);
     private static native void stopReceiving(long instance);
     //set values from java
     private static native void setDecodingInfo(long instance,float currentFPS, float currentKiloBitsPerSecond,float avgParsingTime_ms,
@@ -30,7 +37,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
     private static native void setHomeLocation(long instance,double latitude,double longitude,double attitude);
     //For debugging/testing
     private static native String getStatisticsAsString(long testRecN);
-    private static native String getEZWBInfoString(long testRecN);
+    private static native String getEZWBDataAsString(long testRecN);
     private static native String getTelemetryDataAsString(long testRecN);
     private static native boolean anyTelemetryDataReceived(long testRecN);
     private static native boolean isEZWBIpAvailable(long testRecN);
@@ -38,10 +45,11 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
     private static native boolean receivingEZWBButCannotParse(long testRecN);
 
     private final long nativeInstance;
+    private final Context context;
     private final HomeLocation mHomeLocation;
 
-
     public TelemetryReceiver(final Context context){
+        this.context=context;
         nativeInstance=createInstance(context);
         mHomeLocation=new HomeLocation(context);
     }
@@ -51,7 +59,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
     }
 
     public void startReceiving(){
-        startReceiving(nativeInstance);
+        startReceiving(nativeInstance,getDirectoryToSaveDataTo(),context.getAssets());
         mHomeLocation.resume(this);
     }
 
@@ -70,8 +78,8 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
     public String getStatisticsAsString(){
         return getStatisticsAsString(nativeInstance);
     }
-    public String getEZWBInfoString(){
-        return getEZWBInfoString(nativeInstance);
+    public String getEZWBDataAsString(){
+        return getEZWBDataAsString(nativeInstance);
     }
     public boolean isEZWBIpAvailable(){
         return isEZWBIpAvailable(nativeInstance);
@@ -95,6 +103,21 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
         setHomeLocation(nativeInstance,location.getLatitude(),location.getLongitude(),location.getAltitude());
     }
 
+    private static String createGroundRecordingFilename(){
+        @SuppressLint("SimpleDateFormat")
+        final String currentDateandTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+        return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/FPV_VR/TELEMETRY/"+"RECORDING_"+currentDateandTime+".telemetry";
+    }
 
+    //also create directory if not already existing
+    private static String getDirectoryToSaveDataTo(){
+        final String ret= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/FPV_VR/Telemetry/";
+        File dir = new File(ret);
+        if (!dir.exists()) {
+            final boolean mkdirs = dir.mkdirs();
+            //System.out.println("mkdirs res"+mkdirs);
+        }
+        return ret;
+    }
 
 }

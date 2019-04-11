@@ -30,10 +30,7 @@ typedef struct {
  * and now has almost no similarities.
  */
 typedef struct {
-    uint32_t validmsgsrxLTM;
-    uint32_t validmsgsrxFRSKY;
-    uint32_t validmsgsrxMAVLINK;
-    uint32_t validmsgsrxSMARTPORT;
+    uint32_t validmsgsrx;
 
     float BatteryPack_V;  //Resolution only mVolt
     float BatteryPack_A;  //Resolution only mAmpere.

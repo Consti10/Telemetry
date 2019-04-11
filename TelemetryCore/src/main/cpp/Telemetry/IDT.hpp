@@ -3,6 +3,8 @@
 
 class IDT{
 public:
+    static constexpr const char* T_GROUND_RECORDING="T_GROUND_RECORDING";
+    static constexpr const char* T_Source="Telemetry source";
     static constexpr const char* T_Protocol="Telemetry protocol";
     static constexpr const char* T_LTMPort="LTMPort";
     static constexpr const char* T_FRSKYPort="FRSKYPort";

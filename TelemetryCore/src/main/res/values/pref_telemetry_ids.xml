@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="T_Source">Telemetry source</string>
+
+    <string name="T_GROUND_RECORDING">T_GROUND_RECORDING</string>
+
     //telemetry settings
     <string name="T_Protocol">Telemetry protocol</string>
     <string name="T_LTMPort">LTMPort</string>

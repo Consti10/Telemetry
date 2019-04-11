@@ -86,7 +86,7 @@ public class TestReceiverTelemetry{
                 updateViewIfStringChanged(receivedTelemetryDataTV,s,true,newColor);
             }
             if(ezwbForwardDataTV!=null){
-                final String s= telemetryReceiver.getEZWBInfoString();
+                final String s= telemetryReceiver.getEZWBDataAsString();
                 updateViewIfStringChanged(ezwbForwardDataTV,s,false,0);
             }
             if(dataAsStringTV!=null){
@@ -102,14 +102,23 @@ public class TestReceiverTelemetry{
                 final boolean errorEZ_WB= telemetryReceiver.receivingEZWBButCannotParse();
                 lastCheckMS =System.currentTimeMillis();
                 if(errorEZ_WB){
-                    Toast.makeText(context,"You are receiving ez-wifibroadcast telemetry data, but FPV-VR cannot parse it. Probably you are using" +
+                    makeToastOnUI("You are receiving ez-wifibroadcast telemetry data, but FPV-VR cannot parse it. Probably you are using" +
                             " app version 1.5 or higher with ez-wb. 1.6 or lower. Please upgrade to ez-wb 2.0. This also allows you to read all useful" +
-                            " telemetry data from your EZ-WB rx pi on android.",Toast.LENGTH_LONG).show();
+                            " telemetry data from your EZ-WB rx pi on android.",Toast.LENGTH_SHORT);
                 }
             }
             //Refresh every 200ms
             try {Thread.sleep(200);} catch (InterruptedException e) {return;}
         }
+    }
+
+    private void makeToastOnUI(final String s,final int length){
+        ((Activity)context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context,s,length).show();
+            }
+        });
     }
 
     public interface EZWBIpAddressDetected{

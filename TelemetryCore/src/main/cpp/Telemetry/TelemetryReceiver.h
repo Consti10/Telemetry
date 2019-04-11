@@ -12,6 +12,7 @@
 #include <iostream>
 #include "Helper/SettingsN.hpp"
 #include "Helper/FileReader.hpp"
+#include "GroundRecorder.h"
 
 //#define RECEIVE_FROM_TESTLOG
 
@@ -56,29 +57,28 @@ public:
     const int EZWBS_Port;
     const bool MAVLINK_FLIGHTMODE_QUADCOPTER;
     const bool ORIGIN_POSITION_ANDROID;
+    const bool ENABLE_GROUND_RECORDING;
     //
     const int BATT_CAPACITY_MAH;
     const int BATT_CELLS_N;
     const float BATT_CELLS_V_WARNING1_ORANGE;
     const float BATT_CELLS_V_WARNING2_RED;
     const float BATT_CAPACITY_MAH_USED_WARNING;
+    enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
+    const SOURCE_TYPE_OPTIONS SOURCE_TYPE;
 public:
     explicit TelemetryReceiver(const SettingsN& settingsN);
-    /**
-     * Also checks if some UDPReceiver are still running and stops/deletes them properly
-     */
-    ~TelemetryReceiver();
     /**
      * Start all telemetry receiver. If they are already receiving, nothing happens.
      * Make sure startReceiving() and stopReceivingAndWait() are not called on different threads
      * Also make sure to call stopReading() every time startReading() is called
      */
-    void startReceivingSafe();
+    void startReceiving(AAssetManager* assetManager,const char* groundRecordingDirectory);
     /**
      * Stop all telemetry receiver if they are currently running
      * Make sure startReading() and stopReading() are not called on different threads
      */
-    void stopReceivingSafe();
+    void stopReceiving();
     //
     void setDecodingInfo(float currentFPS, float currentKiloBitsPerSecond,float avgParsingTime_ms,float avgWaitForInputBTime_ms,float avgDecodingTime_ms);
     void setOpenGLFPS(float fps);
@@ -87,8 +87,9 @@ public:
     void resetNReceivedTelemetryBytes();
     //
     const std::string getStatisticsAsString()const;
+    const std::string getProtocolAsString()const;
     const std::string getAllTelemetryValuesAsString()const;
-    const std::string getEZWBInfoString()const;
+    const std::string getEZWBDataAsString()const;
     const int getNReceivedTelemetryBytes()const;
     const long getNEZWBPacketsParsingFailed()const;
     const int getBestDbm()const;
@@ -157,10 +158,9 @@ public:
 private:
     UDPReceiver* mTelemetryDataReceiver= nullptr;
     UDPReceiver* mEZWBDataReceiver= nullptr;
-#ifdef RECEIVE_FROM_TESTLOG
     FileReader* mTestFileReader= nullptr;
-    UDPSender* mTestSender=nullptr;
-#endif
+    GroundRecorder* mGroundRecorder=nullptr;
+
     long nTelemetryBytes=0;
     long nWIFIBRADCASTBytes=0;
     long nWIFIBROADCASTParsedPackets=0;

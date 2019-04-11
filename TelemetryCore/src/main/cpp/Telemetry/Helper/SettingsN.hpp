@@ -8,6 +8,10 @@
 #include <jni.h>
 #include <android/log.h>
 
+///Example
+///SettingsN settingsN(env,context,"pref_telemetry");
+///T_Protocol=settingsN.getInt(IDT::T_Protocol);
+
 class SettingsN {
 public:
     SettingsN(SettingsN const &) = delete;

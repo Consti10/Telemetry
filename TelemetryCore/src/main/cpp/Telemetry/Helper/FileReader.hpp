@@ -5,11 +5,20 @@
 #ifndef FPV_VR_FILERECEIVER_H
 #define FPV_VR_FILERECEIVER_H
 
+#include <android/asset_manager.h>
+
 class FileReader{
 public:
-    FileReader(const std::string fn,const int waitTimeMS,std::function<void(uint8_t[],int)> onDataReceivedCallback):
-            filename(fn),waitTimeMS(waitTimeMS){
-        this->onDataReceivedCallback=onDataReceivedCallback;
+    //Read from file system
+    FileReader(const std::string fn,const int waitTimeMS,std::function<void(uint8_t[],int)> onDataReceivedCallback,int chunkSize=8):
+            filename(fn),waitTimeMS(waitTimeMS),CHUNCK_SIZE(chunkSize),
+            onDataReceivedCallback(onDataReceivedCallback){
+    }
+    //Read from the android asset manager
+    FileReader(AAssetManager* assetManager,const std::string filename,const int waitTimeMS,std::function<void(uint8_t[],int)> onDataReceivedCallback):
+            filename(filename),waitTimeMS(waitTimeMS),CHUNCK_SIZE(8),
+            onDataReceivedCallback(onDataReceivedCallback){
+        this->assetManager=assetManager;
     }
     void startReading(){
         receiving=true;
@@ -22,35 +31,67 @@ public:
         }
         delete(mThread);
     }
+    int getNReceivedbytes(){
+        return nReceivedB;
+    }
+    void passDataInChuncks(uint8_t* data,int len){
+        int offset=0;
+        while(receiving){
+            offset+=CHUNCK_SIZE;
+            if(offset>len){
+                return;
+            }
+            nReceivedB+=CHUNCK_SIZE;
+            onDataReceivedCallback(&data[offset],CHUNCK_SIZE);
+            std::this_thread::sleep_for(std::chrono::nanoseconds(1000*1000*waitTimeMS));
+        }
+    }
 private:
-    std::function<void(uint8_t[],int)> onDataReceivedCallback;
-    std::thread* mThread;
+    const std::function<void(uint8_t[],int)> onDataReceivedCallback;
+    std::thread* mThread= nullptr;
     std::atomic<bool> receiving;
+    int nReceivedB=0;
+    AAssetManager* assetManager= nullptr;
     const std::string filename;
     const int waitTimeMS;
+    const int CHUNCK_SIZE;
     void receiveLoop(){
-        std::ifstream file (filename.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
-        if (file.is_open()) {
-            auto size = file.tellg();
-            uint8_t* memblock = new uint8_t [size];
-            file.seekg (0, std::ios::beg);
-            file.read ((char*)memblock, size);
-            file.close();
-            __android_log_print(ANDROID_LOG_VERBOSE, "TR","the entire file content is in memory");
-            int offset=0;
-            const int chunkSize=8;
-            while(receiving){
-                onDataReceivedCallback(&memblock[offset],chunkSize);
-                offset+=chunkSize;
-                if(offset>size){
-                    offset=0;
-                    //return;
+        if(assetManager!= nullptr){
+            AAsset* asset = AAssetManager_open(assetManager, filename.c_str(), 0);
+            //const auto* buff=AAsset_getBuffer(asset);
+            //const auto len=AAsset_getLength(asset);
+            if(!asset){
+                __android_log_print(ANDROID_LOG_VERBOSE, "TR","Error asset not found");
+            }else{
+                //__android_log_print(ANDROID_LOG_VERBOSE, "TR","Asset found");
+                auto* buff=new uint8_t[1024];
+                while(receiving){
+                    int len=AAsset_read(asset,buff,1024);
+                    passDataInChuncks(buff,len);
+                    if(len==0){
+                        AAsset_seek(asset,0,SEEK_SET);
+                    }
+                    //__android_log_print(ANDROID_LOG_VERBOSE, "TR","%d",len);
                 }
-                std::this_thread::sleep_for(std::chrono::nanoseconds(1000*1000*waitTimeMS));
             }
-            delete[] memblock;
-        } else {
-            __android_log_print(ANDROID_LOG_VERBOSE, "TR", "Cannot open file");
+        }else{
+            std::ifstream file (filename.c_str(), std::ios::in|std::ios::binary|std::ios::ate);
+            nReceivedB=0;
+            if (file.is_open()) {
+                auto size = file.tellg();
+                auto* memblock = new uint8_t [size];
+                file.seekg (0, std::ios::beg);
+                file.read ((char*)memblock, size);
+                file.close();
+                __android_log_print(ANDROID_LOG_VERBOSE, "TR","the entire file content is in memory");
+                int offset=0;
+                while(receiving){
+                    passDataInChuncks(memblock,(int)size);
+                }
+                delete[] memblock;
+            } else {
+                __android_log_print(ANDROID_LOG_VERBOSE, "TR", "Cannot open file %s",filename.c_str());
+            }
         }
     }
 };
