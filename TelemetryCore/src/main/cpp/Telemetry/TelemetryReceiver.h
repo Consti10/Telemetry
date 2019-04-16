@@ -12,7 +12,7 @@
 #include <iostream>
 #include "Helper/SettingsN.hpp"
 #include "Helper/FileReader.hpp"
-#include "GroundRecorder.h"
+#include "Helper/GroundRecorder.hpp"
 
 //#define RECEIVE_FROM_TESTLOG
 
@@ -39,22 +39,20 @@ private:
     //these are called via lambda by the UDP receiver(s)
     void onUAVTelemetryDataReceived(uint8_t[],int);
     void onEZWBStatusDataReceived(uint8_t[], int);
-public:
-    static constexpr int T_PROTOCOL_NONE=0;
-    static constexpr int T_PROTOCOL_LTM=1;
-    static constexpr int T_PROTOCOL_MAVLINK=2;
-    static constexpr int T_PROTOCOL_SMARTPORT=3;
-    static constexpr int T_PROTOCOL_FRSKY=4;
-    static constexpr int T_PROTOCOL_MAVLINK2=5;
-    const int T_Protocol;
+private:
+    enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
+    enum PROTOCOL_OPTIONS {NONE,XLTM,MAVLINK,XSMARTPORT,FRSKY};
+    enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6};
+    const SOURCE_TYPE_OPTIONS SOURCE_TYPE;
+    const PROTOCOL_OPTIONS T_Protocol;
     const int T_Port;
     static int getTelemetryPort(const SettingsN& settingsN, int T_Protocol);
-
     //ez-wb status settings
-    static constexpr int EZWB_PROTOCOL_DISBALE=0;
-    static constexpr int EZWB_PROTOCOL_16_rc6=1;
-    const int EZWBS_Protocol;
+    EZWB_STATUS_PROTOCOL EZWBS_Protocol;
     const int EZWBS_Port;
+    const std::string GROUND_RECORDING_DIRECTORY;
+    const std::string T_PLAYBACK_FILENAME;
+public:
     const bool MAVLINK_FLIGHTMODE_QUADCOPTER;
     const bool ORIGIN_POSITION_ANDROID;
     const bool ENABLE_GROUND_RECORDING;
@@ -64,16 +62,14 @@ public:
     const float BATT_CELLS_V_WARNING1_ORANGE;
     const float BATT_CELLS_V_WARNING2_RED;
     const float BATT_CAPACITY_MAH_USED_WARNING;
-    enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
-    const SOURCE_TYPE_OPTIONS SOURCE_TYPE;
 public:
-    explicit TelemetryReceiver(const SettingsN& settingsN);
+    explicit TelemetryReceiver(const SettingsN& settingsN,const char* DIR);
     /**
      * Start all telemetry receiver. If they are already receiving, nothing happens.
      * Make sure startReceiving() and stopReceivingAndWait() are not called on different threads
      * Also make sure to call stopReading() every time startReading() is called
      */
-    void startReceiving(AAssetManager* assetManager,const char* groundRecordingDirectory);
+    void startReceiving(AAssetManager* assetManager);
     /**
      * Stop all telemetry receiver if they are currently running
      * Make sure startReading() and stopReading() are not called on different threads

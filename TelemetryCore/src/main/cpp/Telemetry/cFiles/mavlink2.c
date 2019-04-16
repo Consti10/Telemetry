@@ -8,17 +8,19 @@ mavlink_message_t msg;
 
 void enable_v1_messages();
 
-void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length,const bool hackV1Messages) {
+void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length) {
     for(int i=0; i<data_length; i++) {
-        if(hackV1Messages){
-            enable_v1_messages();
-        }
         uint8_t c = data[i];
         if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
             td->validmsgsrx++;
-
+        /*const uint8_t res=mavlink_frame_char(MAVLINK_COMM_0, c, &msg,&status);
+        if(res!=MAVLINK_FRAMING_INCOMPLETE){
+            __android_log_print(ANDROID_LOG_DEBUG,"not incomplete","%d",res);
+        }
+        if (res == MAVLINK_FRAMING_OK){
+            __android_log_print(ANDROID_LOG_DEBUG,"received message with","ID %d, sequence: %d from component %d of system %d", msg.msgid, msg.seq, msg.compid, msg.sysid);
             //__android_log_print(ANDROID_LOG_DEBUG,"Message seq:","%d",msg.seq);
-
+            td->validmsgsrx++;*/
             switch (msg.msgid){
                 case MAVLINK_MSG_ID_GPS_RAW_INT:{
                     td->SatsInUse = mavlink_msg_gps_raw_int_get_satellites_visible(&msg);
@@ -78,6 +80,8 @@ void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *
                     //__android_log_print(ANDROID_LOG_DEBUG,"Message:","%d",msg.msgid);
                     break;
             }
+        }else{
+
         }
     }
 }
@@ -87,7 +91,6 @@ void enable_v1_messages() {
     chan_state->flags |=MAVLINK_STATUS_FLAG_IN_MAVLINK1;
     //chan_state->flags |=MAVLINK_STATUS_FLAG_OUT_MAVLINK1;
 }
-
 
 //MAVLINK_MSG_ID_SYSTEM_TIME 2
 //MAVLINK_MSG_ID_RAW_IMU 27

@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 
-public class TestReceiverTelemetry{
+public class TestReceiverTelemetry implements Runnable {
 
     private final TextView receivedTelemetryDataTV;
     private final TextView ezwbForwardDataTV;
@@ -18,20 +18,15 @@ public class TestReceiverTelemetry{
     private TelemetryReceiver telemetryReceiver;
     private Thread mThread;
 
-    public TestReceiverTelemetry(Context c, TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV,TextView dataAsStringTV){
+    public TestReceiverTelemetry(Context c, TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV,TextView telemetryValuesAsString){
         this.context=c;
         this.receivedTelemetryDataTV=receivedTelemetryDataTV;
         this.ezwbForwardDataTV=ezwbForwardDataTV;
-        this.dataAsStringTV=dataAsStringTV;
+        this.dataAsStringTV=telemetryValuesAsString;
     }
 
     public void startReceiving(){
-        mThread=new Thread(new Runnable() {
-            @Override
-            public void run() {
-                loop();
-            }
-        });
+        mThread=new Thread(this);
         mThread.setName("TestReceiverTelemetry TV String refresher");
         telemetryReceiver =new TelemetryReceiver(context);
         telemetryReceiver.startReceiving();
@@ -75,7 +70,17 @@ public class TestReceiverTelemetry{
         }
     }
 
-    private void loop(){
+    private void makeToastOnUI(final String s,final int length){
+        ((Activity)context).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context,s,length).show();
+            }
+        });
+    }
+
+    @Override
+    public void run() {
         long lastCheckMS = System.currentTimeMillis() - 2*1000;
         while (!Thread.currentThread().isInterrupted()){
             //if any of the TV are not null, we update its content
@@ -97,7 +102,7 @@ public class TestReceiverTelemetry{
                 onEZWBIpDetected(telemetryReceiver.getEZWBIPAdress());
             }
             //Every 3.5s we check if we are receiving video data, but cannot parse the data. Probably the user did mix up
-            //rtp and raw. Make a warning toast
+            //ezwb-versions
             if(System.currentTimeMillis()- lastCheckMS >=3500){
                 final boolean errorEZ_WB= telemetryReceiver.receivingEZWBButCannotParse();
                 lastCheckMS =System.currentTimeMillis();
@@ -110,15 +115,6 @@ public class TestReceiverTelemetry{
             //Refresh every 200ms
             try {Thread.sleep(200);} catch (InterruptedException e) {return;}
         }
-    }
-
-    private void makeToastOnUI(final String s,final int length){
-        ((Activity)context).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(context,s,length).show();
-            }
-        });
     }
 
     public interface EZWBIpAddressDetected{

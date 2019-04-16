@@ -15,8 +15,8 @@ public:
             onDataReceivedCallback(onDataReceivedCallback){
     }
     //Read from the android asset manager
-    FileReader(AAssetManager* assetManager,const std::string filename,const int waitTimeMS,std::function<void(uint8_t[],int)> onDataReceivedCallback):
-            filename(filename),waitTimeMS(waitTimeMS),CHUNCK_SIZE(8),
+    FileReader(AAssetManager* assetManager,const std::string filename,const int waitTimeMS,std::function<void(uint8_t[],int)> onDataReceivedCallback,int chunkSize=8):
+            filename(filename),waitTimeMS(waitTimeMS),CHUNCK_SIZE(chunkSize),
             onDataReceivedCallback(onDataReceivedCallback){
         this->assetManager=assetManager;
     }
@@ -34,16 +34,20 @@ public:
     int getNReceivedbytes(){
         return nReceivedB;
     }
-    void passDataInChuncks(uint8_t* data,int len){
+    void passDataInChuncks(uint8_t* data,const int len){
         int offset=0;
         while(receiving){
-            offset+=CHUNCK_SIZE;
-            if(offset>len){
+            int len_left=len-offset;
+            if(len_left>=CHUNCK_SIZE){
+                nReceivedB+=CHUNCK_SIZE;
+                onDataReceivedCallback(&data[offset],CHUNCK_SIZE);
+                std::this_thread::sleep_for(std::chrono::nanoseconds(1000*1000*waitTimeMS));
+                offset+=CHUNCK_SIZE;
+            }else{
+                nReceivedB+=len_left;
+                onDataReceivedCallback(&data[offset],len_left);
                 return;
             }
-            nReceivedB+=CHUNCK_SIZE;
-            onDataReceivedCallback(&data[offset],CHUNCK_SIZE);
-            std::this_thread::sleep_for(std::chrono::nanoseconds(1000*1000*waitTimeMS));
         }
     }
 private:

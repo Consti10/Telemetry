@@ -1,6 +1,10 @@
 package constantin.telemetry.core;
 
 import androidx.appcompat.app.AppCompatActivity;
+/*import androidx.preference.Preference;
+import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;*/
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +13,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
 import com.mapzen.prefsplus.IntListPreference;
+
 
 public class ASettingsTelemetry extends AppCompatActivity {
 
@@ -30,11 +35,14 @@ public class ASettingsTelemetry extends AppCompatActivity {
             addPreferencesFromResource(R.xml.pref_telemetry);
         }
 
+        /*@Override
+        public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            setPreferencesFromResource(R.xml.pref_telemetry, null);
+        }*/
+
         @Override
         public void onActivityCreated(Bundle savedInstanceState){
             super.onActivityCreated(savedInstanceState);
-            IntListPreference intListPref = (IntListPreference) findPreference(this.getString(R.string.T_Protocol));
-            intListPref.setEntries(getResources().getStringArray(R.array.entriesTelemetryProtocol));
         }
 
         @Override
@@ -52,39 +60,24 @@ public class ASettingsTelemetry extends AppCompatActivity {
 
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            if(key.contentEquals(getActivity().getString(R.string.T_Protocol))){
+            if(key.contentEquals(getActivity().getString(R.string.T_PROTOCOL))){
                 enableOrDisablePreferences_TelemetryProtocol(sharedPreferences);
             }
         }
 
+
         private void enableOrDisablePreferences_TelemetryProtocol(SharedPreferences sharedPreferences){
-            int val= sharedPreferences.getInt(getActivity().getString(R.string.T_Protocol),0);
+            final int val= sharedPreferences.getInt(getActivity().getString(R.string.T_PROTOCOL),0);
             Preference LTMPort=findPreference(getActivity().getString(R.string.T_LTMPort));
             Preference MAVLINKPort=findPreference(getActivity().getString(R.string.T_MAVLINKPort));
             Preference SMARTPORTPort=findPreference(getActivity().getString(R.string.T_SMARTPORTPort));
             Preference FRSKYPort=findPreference(getActivity().getString(R.string.T_FRSKYPort));
-            LTMPort.setEnabled(false);
-            MAVLINKPort.setEnabled(false);
-            SMARTPORTPort.setEnabled(false);
-            FRSKYPort.setEnabled(false);
-            switch (val){
-                case 0:
-                    break;
-                case 1:LTMPort.setEnabled(true);
-                    break;
-                case 2:MAVLINKPort.setEnabled(true);
-                    break;
-                case 3:SMARTPORTPort.setEnabled(true);
-                    break;
-                case 4:
-                    FRSKYPort.setEnabled(true);
-                    break;
-                case 5:
-                    MAVLINKPort.setEnabled(true);
-                    break;
-                default:
-                    break;
-            }
+            LTMPort.setEnabled(val==1);
+            MAVLINKPort.setEnabled(val==2);
+            SMARTPORTPort.setEnabled(val==3);
+            FRSKYPort.setEnabled(val==4);
         }
+
+
     }
 }

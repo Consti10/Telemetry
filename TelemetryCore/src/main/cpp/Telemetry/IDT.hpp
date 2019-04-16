@@ -3,9 +3,7 @@
 
 class IDT{
 public:
-    static constexpr const char* T_GROUND_RECORDING="T_GROUND_RECORDING";
-    static constexpr const char* T_Source="Telemetry source";
-    static constexpr const char* T_Protocol="Telemetry protocol";
+    static constexpr const char* T_PROTOCOL="Telemetry protocol";
     static constexpr const char* T_LTMPort="LTMPort";
     static constexpr const char* T_FRSKYPort="FRSKYPort";
     static constexpr const char* T_MAVLINKPort="MAVLINKPort";
@@ -21,6 +19,9 @@ public:
     static constexpr const char* T_BATT_CELLS_V_MIN="T_BATT_CELLS_V_MIN";
     static constexpr const char* T_BATT_CAPACITY_MAH="T_BATT_CAPACITY_MAH";
     static constexpr const char* T_BATT_CAPACITY_MAH_USED_WARNING="T_BATT_CAPACITY_MAH_USED_WARNING";
+    static constexpr const char* T_GROUND_RECORDING="T_GROUND_RECORDING";
+    static constexpr const char* T_SOURCE="T_SOURCE";
+    static constexpr const char* T_PLAYBACK_FILENAME="T_PLAYBACK_FILENAME";
 };
 
 #endif //CONSTI_10_100_IDT

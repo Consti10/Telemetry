@@ -26,7 +26,7 @@ add_library( TelemetryReceiver
         SHARED
         src/main/cpp/Telemetry/UDPReceiver.cpp
         src/main/cpp/Telemetry/TelemetryReceiver.cpp
-        src/main/cpp/Telemetry/GroundRecorder.cpp)
+        )
 target_link_libraries(TelemetryReceiver
         ${log-lib}
         android

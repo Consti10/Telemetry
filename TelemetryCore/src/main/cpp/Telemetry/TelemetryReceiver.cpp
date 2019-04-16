@@ -35,27 +35,27 @@ static constexpr const wchar_t ICON_SATELITE=(wchar_t)192+5;
 int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protocol) {
     int port=5700;
     switch (T_Protocol){
-        case TelemetryReceiver::T_PROTOCOL_NONE:break;
-        case TelemetryReceiver::T_PROTOCOL_LTM:port=settingsN.getInt(IDT::T_LTMPort);break;
-        case TelemetryReceiver:: T_PROTOCOL_MAVLINK:port=settingsN.getInt(IDT::T_MAVLINKPort);break;
-        case TelemetryReceiver::T_PROTOCOL_SMARTPORT:port=settingsN.getInt(IDT::T_SMARTPORTPort);break;
-        case TelemetryReceiver::T_PROTOCOL_FRSKY:port=settingsN.getInt(IDT::T_FRSKYPort);break;
-        case TelemetryReceiver::T_PROTOCOL_MAVLINK2:port=settingsN.getInt(IDT::T_MAVLINKPort);break;
-        default:break;
+        case TelemetryReceiver::NONE:break;
+        case TelemetryReceiver::XLTM :port=settingsN.getInt(IDT::T_LTMPort);break;
+        case TelemetryReceiver::MAVLINK:port=settingsN.getInt(IDT::T_MAVLINKPort);break;
+        case TelemetryReceiver::XSMARTPORT:port=settingsN.getInt(IDT::T_SMARTPORTPort);break;
+        case TelemetryReceiver::FRSKY:port=settingsN.getInt(IDT::T_FRSKYPort);break;
     }
     return port;
 }
 
-TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN):
-        T_Protocol(settingsN.getInt(IDT::T_Protocol,1)),T_Port(getTelemetryPort(settingsN,T_Protocol)),
-        EZWBS_Protocol(settingsN.getInt(IDT::EZWBS_Protocol)),EZWBS_Port(settingsN.getInt(IDT::EZWBS_Port)),
+TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR):
+        T_Protocol(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1))),T_Port(getTelemetryPort(settingsN,T_Protocol)),
+        EZWBS_Protocol(static_cast<EZWB_STATUS_PROTOCOL>(settingsN.getInt(IDT::EZWBS_Protocol))),EZWBS_Port(settingsN.getInt(IDT::EZWBS_Port)),
         MAVLINK_FLIGHTMODE_QUADCOPTER(settingsN.getBoolean(IDT::T_MAVLINK_FLIGHTMODE_QUADCOPTER)),
         BATT_CAPACITY_MAH(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH)),BATT_CELLS_N(settingsN.getInt(IDT::T_BATT_CELLS_N)),
         BATT_CELLS_V_WARNING1_ORANGE(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING1_ORANGE)),BATT_CELLS_V_WARNING2_RED(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING2_RED)),
         BATT_CAPACITY_MAH_USED_WARNING(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH_USED_WARNING)),
         ORIGIN_POSITION_ANDROID(settingsN.getBoolean(IDT::T_ORIGIN_POSITION_ANDROID)),
-        SOURCE_TYPE(static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_Source))),
-        ENABLE_GROUND_RECORDING(settingsN.getBoolean(IDT::T_GROUND_RECORDING)){
+        SOURCE_TYPE(static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_SOURCE))),
+        ENABLE_GROUND_RECORDING(settingsN.getBoolean(IDT::T_GROUND_RECORDING)),
+        GROUND_RECORDING_DIRECTORY(DIR),
+        T_PLAYBACK_FILENAME(settingsN.getString(IDT::T_PLAYBACK_FILENAME)){
     resetNReceivedTelemetryBytes();
     std::memset (&uav_td, 0, sizeof(uav_td));
     uav_td.Pitch_Deg=10; //else you cannot see the AH 3D Quad,since it is totally flat
@@ -72,17 +72,17 @@ TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN):
 }
 
 
-void TelemetryReceiver::startReceiving(AAssetManager* assetManager,const char* groundRecordingDirectory) {
+void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
     assert(mTelemetryDataReceiver==nullptr);
     assert(mEZWBDataReceiver== nullptr);
     assert(mTestFileReader== nullptr);
-    if(ENABLE_GROUND_RECORDING){
-        const auto filename=GroundRecorder::findUnusedFilename(std::string(groundRecordingDirectory),getProtocolAsString());
-        LOGD("%s",filename.c_str());
+    if(ENABLE_GROUND_RECORDING){ //&& SOURCE_TYPE==UDP
+        const auto filename=GroundRecorder::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
+        //LOGD("%s",filename.c_str());
         mGroundRecorder=new GroundRecorder(filename);
     }
     if(SOURCE_TYPE==UDP){
-        if(T_Protocol!=T_PROTOCOL_NONE ){
+        if(T_Protocol!=TelemetryReceiver::NONE ){
             std::function<void(uint8_t data[],int data_length)> f= [=](uint8_t data[],int data_length) {
                 this->onUAVTelemetryDataReceived(data,data_length);
             };
@@ -91,7 +91,7 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager,const char* g
         }
         //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
         //should not add any additional latency
-        if(EZWBS_Protocol==EZWB_PROTOCOL_16_rc6){
+        if(EZWBS_Protocol==EZWB_16_rc6){
             std::function<void(uint8_t data[],int data_length)> f2 = [=](uint8_t data[],int data_length) {
                 this->onEZWBStatusDataReceived(data, data_length);
             };
@@ -99,18 +99,19 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager,const char* g
             mEZWBDataReceiver->startReceiving();
         }
     }else if(SOURCE_TYPE==FILE || SOURCE_TYPE==ASSETS){
-        if(T_Protocol!=T_PROTOCOL_NONE){
+        if(T_Protocol!=TelemetryReceiver::NONE){
             std::string protocol;
             int waitTimeMS=5;
-            if(T_Protocol==T_PROTOCOL_MAVLINK || T_Protocol==T_PROTOCOL_MAVLINK2){
+            if(T_Protocol==TelemetryReceiver::MAVLINK){
                 waitTimeMS=1;
             }
             if(SOURCE_TYPE==FILE){
-                mTestFileReader=new FileReader("/storage/emulated/0/DCIM/FPV_VR/testlog."+getProtocolAsString(),
-                                               waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); });
+                //we don't check if we are playing the right file type !
+                mTestFileReader=new FileReader(T_PLAYBACK_FILENAME,
+                                               waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
             }else{
                 mTestFileReader=new FileReader(assetManager,"testlog."+getProtocolAsString(),
-                                               waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); });
+                                               waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
             }
             mTestFileReader->startReading();
         }
@@ -143,29 +144,25 @@ void TelemetryReceiver::stopReceiving() {
 
 void TelemetryReceiver::onUAVTelemetryDataReceived(uint8_t data[],int data_length){
     switch (T_Protocol){
-        case T_PROTOCOL_LTM:
+        case TelemetryReceiver::XLTM:
             ltm_read(&uav_td,&originData,data,data_length);
             break;
-        case T_PROTOCOL_MAVLINK:
-            mavlink_read_v2(&uav_td,&originData,data,data_length,true);
+        case TelemetryReceiver::MAVLINK:
+            mavlink_read_v2(&uav_td,&originData,data,data_length);
             break;
-        case T_PROTOCOL_SMARTPORT:
+        case TelemetryReceiver::XSMARTPORT:
             smartport_read(&uav_td,data,data_length);
             break;
-        case T_PROTOCOL_FRSKY:
+        case TelemetryReceiver::FRSKY:
             frsky_read(&uav_td,data,data_length);
-            break;
-        case T_PROTOCOL_MAVLINK2:
-            mavlink_read_v2(&uav_td,&originData,data,data_length,false);
-            break;
-        case T_PROTOCOL_NONE:
             break;
         default:
             LOGD("TelR ERROR %d",T_Protocol);
+            assert(false);
             break;
     }
     nTelemetryBytes+=data_length;
-    if(T_Protocol==T_PROTOCOL_LTM){
+    if(T_Protocol==TelemetryReceiver::XLTM){
         uav_td.BatteryPack_P=(int8_t)(uav_td.BatteryPack_mAh/BATT_CAPACITY_MAH*100.0f);
     }
     if(mGroundRecorder!= nullptr){
@@ -289,7 +286,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             ret.prefixScale=1.2f;
             float perc;
             float capacity=BATT_CAPACITY_MAH;
-            if(T_Protocol==T_PROTOCOL_MAVLINK){
+            if(T_Protocol==TelemetryReceiver::MAVLINK){
                 perc=uav_td.BatteryPack_P;
             }else{
                 perc=(capacity-uav_td.BatteryPack_mAh)/capacity*100.0f;
@@ -406,7 +403,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         case RX_1:{
             ret.prefix=L"RX1";
             ret.value=intToString((int)uav_td.RSSI1_Percentage_dBm,4);
-            if(T_Protocol==T_PROTOCOL_MAVLINK){
+            if(T_Protocol==TelemetryReceiver::MAVLINK){
                 ret.metric=L"%";
             }else{
                 ret.metric=L"dBm";
@@ -442,7 +439,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case FLIGHT_STATUS_MAV_ONLY:{
-            if(T_Protocol==T_PROTOCOL_MAVLINK){
+            if(T_Protocol==TelemetryReceiver::MAVLINK){
                 ret.value=getMAVLINKFlightMode();
             }else{
                 ret.value=L"MAV only";
@@ -536,14 +533,14 @@ TelemetryReceiver::getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(int adapter) const {
 const std::string TelemetryReceiver::getStatisticsAsString()const {
     std::ostringstream ostream;
     if(SOURCE_TYPE==UDP){
-        if(T_Protocol!=T_PROTOCOL_NONE){
+        if(T_Protocol!=TelemetryReceiver::NONE){
             ostream<<"\nListening for "+getProtocolAsString()+" telemetry on port "<<T_Port;
             ostream<<"\nReceived: "<<nTelemetryBytes<<"B"<<" | Packets:"<<uav_td.validmsgsrx;
             ostream<<"\n";
         }else{
             ostream<<"UAV telemetry disabled\n";
         }
-        if(EZWBS_Protocol==EZWB_PROTOCOL_16_rc6){
+        if(EZWBS_Protocol==EZWB_16_rc6){
             ostream<<"\nListening for WIFIBROADCAST telemetry on port "<<EZWBS_Port;
             ostream<<"\nReceived: "<<nWIFIBRADCASTBytes<<"B | Packets:"<<nWIFIBROADCASTParsedPackets;
             ostream<<"\n";
@@ -668,11 +665,10 @@ const float TelemetryReceiver::getHeading_Deg() const {
 const std::string TelemetryReceiver::getProtocolAsString() const {
     std::stringstream ss;
     switch (T_Protocol){
-        case T_PROTOCOL_LTM:ss<<"ltm";break;
-        case T_PROTOCOL_FRSKY:ss<<"frsky";break;
-        case T_PROTOCOL_MAVLINK:ss<<"mavlink";break;
-        case T_PROTOCOL_MAVLINK2:ss<<"mavlink2";break;
-        default:ss<<"None";break;
+        case TelemetryReceiver::XLTM:ss<<"ltm";break;
+        case TelemetryReceiver::FRSKY:ss<<"frsky";break;
+        case TelemetryReceiver::MAVLINK:ss<<"mavlink";break;
+        default:assert(false);break;
     }
     return ss.str();
 }
@@ -692,9 +688,11 @@ inline TelemetryReceiver *native(jlong ptr) {
 
 extern "C" {
 JNI_METHOD(jlong , createInstance)
-(JNIEnv *env,jclass unused,jobject context) {
+(JNIEnv *env,jclass unused,jobject context,jstring groundRecordingDirectory) {
     SettingsN settingsN(env,context,"pref_telemetry");
-    auto* telemetryReceiver = new TelemetryReceiver(settingsN);
+    const char *str = env->GetStringUTFChars(groundRecordingDirectory, nullptr);
+    auto* telemetryReceiver = new TelemetryReceiver(settingsN,str);
+    env->ReleaseStringUTFChars(groundRecordingDirectory,str);
     return jptr(telemetryReceiver);
 }
 
@@ -705,12 +703,10 @@ JNI_METHOD(void, deleteInstance)
 }
 
 JNI_METHOD(void, startReceiving)
-(JNIEnv *env,jclass unused,jlong testReceiverN,jstring groundRecordingDirectory,jobject assetManager) {
+(JNIEnv *env,jclass unused,jlong testReceiverN,jobject assetManager) {
     TelemetryReceiver* testRecN=native(testReceiverN);
-    const char *str = env->GetStringUTFChars(groundRecordingDirectory, 0);
     AAssetManager* mgr=AAssetManager_fromJava(env,assetManager);
-    testRecN->startReceiving(mgr,str);
-    env->ReleaseStringUTFChars(groundRecordingDirectory,str);
+    testRecN->startReceiving(mgr);
 }
 
 JNI_METHOD(void, stopReceiving)
