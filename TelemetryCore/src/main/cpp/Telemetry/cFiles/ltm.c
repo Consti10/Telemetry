@@ -15,7 +15,7 @@
  *      $     T   S   VBAT(mv)  Current(ma)   RSSI  AIRSPEED  ARM/FS/FMOD   CRC
  * ################################################################################################################# */
 #include "ltm.h"
-#include "shared_c_objective.h"
+#include "UAVTelemetryData.h"
 
 
 static uint8_t LTMserialBuffer[LIGHTTELEMETRY_GFRAMELENGTH-4];

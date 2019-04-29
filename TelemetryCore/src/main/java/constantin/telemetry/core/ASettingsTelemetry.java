@@ -12,20 +12,25 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 
-import com.mapzen.prefsplus.IntListPreference;
-
 
 public class ASettingsTelemetry extends AppCompatActivity {
+    public static final String EXTRA_KEY="SHOW_ADVANCED_SETTINGS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        final Bundle bundle=getIntent().getExtras();
+        final MSettingsFragment fragment=new MSettingsFragment();
+        if(bundle!=null){
+            fragment.showAdvanced=bundle.getBoolean(EXTRA_KEY,false);
+        }
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new MSettingsFragment())
+                .replace(android.R.id.content, fragment)
                 .commit();
     }
 
     public static class MSettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener{
+        public boolean showAdvanced=false;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +38,12 @@ public class ASettingsTelemetry extends AppCompatActivity {
             PreferenceManager preferenceManager=getPreferenceManager();
             preferenceManager.setSharedPreferencesName("pref_telemetry");
             addPreferencesFromResource(R.xml.pref_telemetry);
+            if(showAdvanced){
+                Preference p1=findPreference(getString(R.string.T_PLAYBACK_FILENAME));
+                Preference p2=findPreference(getString(R.string.T_SOURCE));
+                p1.setEnabled(true);
+                p2.setEnabled(true);
+            }
         }
 
         /*@Override

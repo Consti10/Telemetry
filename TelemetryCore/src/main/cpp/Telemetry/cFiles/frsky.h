@@ -3,7 +3,7 @@
 #define FPV_VR_FRSKY_H
 
 #include <stdint.h>
-#include "shared_c_objective.h"
+#include "UAVTelemetryData.h"
 
 // Data Ids (bp = before decimal point; af = after decimal point)
 // Official data IDs

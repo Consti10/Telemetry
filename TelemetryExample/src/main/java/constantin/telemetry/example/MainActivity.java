@@ -38,12 +38,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkAndRequestPermissions();
-        TelemetryReceiver.initializePreferences(this);
+        TelemetryReceiver.initializePreferences(this,false);
         Button button=findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent().setClass(getApplicationContext(), ASettingsTelemetry.class));
+                final Intent intent=new Intent();
+                intent.putExtra(ASettingsTelemetry.EXTRA_KEY,true);
+                intent.setClass(getApplicationContext(), ASettingsTelemetry.class);
+                startActivity(intent);
             }
         });
         TextView tv1 = findViewById(R.id.textView);

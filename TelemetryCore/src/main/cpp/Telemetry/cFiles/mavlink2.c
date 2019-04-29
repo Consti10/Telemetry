@@ -1,12 +1,10 @@
 #include "mavlink2.h"
-#include "shared_c_objective.h"
+#include "UAVTelemetryData.h"
 #include <stdio.h>
 #include <unistd.h>
 
 mavlink_status_t status;
 mavlink_message_t msg;
-
-void enable_v1_messages();
 
 void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length) {
     for(int i=0; i<data_length; i++) {
@@ -86,11 +84,6 @@ void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *
     }
 }
 
-void enable_v1_messages() {
-    mavlink_status_t* chan_state = mavlink_get_channel_status(MAVLINK_COMM_0);
-    chan_state->flags |=MAVLINK_STATUS_FLAG_IN_MAVLINK1;
-    //chan_state->flags |=MAVLINK_STATUS_FLAG_OUT_MAVLINK1;
-}
 
 //MAVLINK_MSG_ID_SYSTEM_TIME 2
 //MAVLINK_MSG_ID_RAW_IMU 27

@@ -3,7 +3,7 @@
 #define SMARTPORT
 
 #include <stdint.h>
-#include "shared_c_objective.h"
+#include "UAVTelemetryData.h"
 
 #define START_STOP 0x7e
 #define DATA_FRAME 0x10

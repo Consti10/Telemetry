@@ -27,7 +27,7 @@ public class TestReceiverTelemetry implements Runnable {
 
     public void startReceiving(){
         mThread=new Thread(this);
-        mThread.setName("TestReceiverTelemetry TV String refresher");
+        mThread.setName("TestReceiverTelemetry");
         telemetryReceiver =new TelemetryReceiver(context);
         telemetryReceiver.startReceiving();
         mThread.start();

@@ -6,7 +6,9 @@
 #define OSDTESTER_TELEMETRYRECEIVER_H
 
 #include "UDPReceiver.h"
-#include "cFiles/shared_c_objective.h"
+#include "cFiles/UAVTelemetryData.h"
+#include "WFBTelemetryData.h"
+
 #include <atomic>
 #include <fstream>
 #include <iostream>
@@ -42,7 +44,7 @@ private:
 private:
     enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
     enum PROTOCOL_OPTIONS {NONE,XLTM,MAVLINK,XSMARTPORT,FRSKY};
-    enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6};
+    enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6,OpenHD_1_0_0};
     const SOURCE_TYPE_OPTIONS SOURCE_TYPE;
     const PROTOCOL_OPTIONS T_Protocol;
     const int T_Port;
@@ -84,28 +86,35 @@ public:
     //
     const std::string getStatisticsAsString()const;
     const std::string getProtocolAsString()const;
+    const std::string getSystemAsString()const;
     const std::string getAllTelemetryValuesAsString()const;
     const std::string getEZWBDataAsString()const;
     const int getNReceivedTelemetryBytes()const;
     const long getNEZWBPacketsParsingFailed()const;
     const int getBestDbm()const;
-    const UAVTelemetryData* getUAVTelemetryData()const;
+    const UAVTelemetryData& getUAVTelemetryData()const;
+    const wifibroadcast_rx_status_forward_t2& get_ez_wb_forward_data()const;
+    const OriginData& getOriginData()const;
     const float getCourseOG_Deg()const;
     const float getHeading_Deg()const;
-    const wifibroadcast_rx_status_forward_t* get_ez_wb_forward_data()const;
-    const OriginData* getOriginData()const;
     float getHeadingHome_Deg()const;
 
     class MTelemetryValue{
     public:
-        std::wstring prefix=L"";
-        bool prefixIsIcon=false;
+        std::wstring prefix=std::wstring();
+        std::wstring prefixIcon=std::wstring();
         float prefixScale=0.83f;
         std::wstring value=L"";
         std::wstring metric=L"";
         int warning=0; //0==okay 1==orange 2==red and -1==green
-        unsigned long getLength(){
+        unsigned long getLength()const{
             return prefix.length()+value.length()+metric.length();
+        }
+        bool hasIcon()const{
+            return (!prefixIcon.empty());
+        }
+        std::wstring getPrefix()const{
+            return hasIcon() ? prefixIcon : prefix;
         }
     };
     enum TelemetryValueIndex{
@@ -139,16 +148,16 @@ public:
         EZWB_STATUS_AIR,
         EZWB_STATUS_GROUND,
         EZWB_BLOCKS,
-        EZWB_ADAPTER1_RSSI,
-        EZWB_ADAPTER2_RSSI,
-        EZWB_ADAPTER3_RSSI,
-        EZWB_ADAPTER4_RSSI,
-        EZWB_ADAPTER5_RSSI,
-        EZWB_ADAPTER6_RSSI,
+        EZWB_RSSI_ADAPTER0,
+        EZWB_RSSI_ADAPTER1,
+        EZWB_RSSI_ADAPTER2,
+        EZWB_RSSI_ADAPTER3,
+        //EZWB_RSSI_ADAPTER4,
+        //EZWB_RSSI_ADAPTER5,
         XXX
     };
     const MTelemetryValue getTelemetryValue(TelemetryValueIndex index)const;
-    const MTelemetryValue getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(int adapter)const;
+    const MTelemetryValue getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(int adapter)const;
 
     const std::wstring getMAVLINKFlightMode()const;
 private:
@@ -164,7 +173,14 @@ private:
     OriginData originData;
     AppOSDData appOSDData;
     UAVTelemetryData uav_td;
-    wifibroadcast_rx_status_forward_t wifibroadcast_rx_status_forward;
+    wifibroadcast_rx_status_forward_t2 wifibroadcastTelemetryData;
+private:
+    const std::wstring ICON_BATTERY=std::wstring(1,(wchar_t)192);
+    const std::wstring ICON_CHIP=std::wstring(1,(wchar_t)192+1);
+    const std::wstring ICON_HOME=std::wstring(1,(wchar_t)192+2);
+    const std::wstring ICON_LATITUDE=std::wstring(1,(wchar_t)192+3);
+    const std::wstring ICON_LONGITUDE=std::wstring(1,(wchar_t)192+4);
+    const std::wstring ICON_SATELITE=std::wstring(1,(wchar_t)192+5);
 };
 
 

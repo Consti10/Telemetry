@@ -133,8 +133,8 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
 
 
     @SuppressLint("ApplySharedPref")
-    public static void initializePreferences(final Context context){
-        PreferenceManager.setDefaultValues(context,R.xml.pref_telemetry,false);
+    public static void initializePreferences(final Context context,final boolean readAgain){
+        PreferenceManager.setDefaultValues(context,R.xml.pref_telemetry,readAgain);
         final SharedPreferences pref_telemetry=context.getSharedPreferences("pref_telemetry",Context.MODE_PRIVATE);
         final String filename=pref_telemetry.getString(context.getString(R.string.T_PLAYBACK_FILENAME),context.getString(R.string.T_PLAYBACK_FILENAME_DEFAULT_VALUE));
         if(filename.equals(context.getString(R.string.T_PLAYBACK_FILENAME_DEFAULT_VALUE))){

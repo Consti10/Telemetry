@@ -119,12 +119,14 @@
             android:title="@string/T_SOURCE"
             android:entries="@array/entriesTelemetrySource"
             android:entryValues="@array/valuesTelemetrySource"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            android:enabled="false"/>
         <EditTextPreference
             android:key="@string/T_PLAYBACK_FILENAME"
             android:title="@string/T_PLAYBACK_FILENAME"
             android:summary="Entered filename will be played if Source=File. Enter full path !"
-            android:defaultValue="@string/T_PLAYBACK_FILENAME_DEFAULT_VALUE"/>
+            android:defaultValue="@string/T_PLAYBACK_FILENAME_DEFAULT_VALUE"
+            android:enabled="false"/>
     </PreferenceCategory>
 
 

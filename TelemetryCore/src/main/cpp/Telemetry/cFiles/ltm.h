@@ -3,7 +3,7 @@
 #define LTM
 
 #include <stdint.h>
-#include "shared_c_objective.h"
+#include "UAVTelemetryData.h"
 
 int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length);
 int ltm_check(UAVTelemetryData *td,OriginData *originData);

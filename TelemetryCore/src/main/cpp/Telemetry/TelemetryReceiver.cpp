@@ -24,14 +24,6 @@ extern "C"{
 #define TAG "TelemetryReceiver"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
 
-static constexpr const wchar_t ICON_BATTERY=(wchar_t)192;
-static constexpr const wchar_t ICON_CHIP=(wchar_t)192+1;
-static constexpr const wchar_t ICON_HOME=(wchar_t)192+2;
-static constexpr const wchar_t ICON_LATITUDE=(wchar_t)192+3;
-static constexpr const wchar_t ICON_LONGITUDE=(wchar_t)192+4;
-static constexpr const wchar_t ICON_SATELITE=(wchar_t)192+5;
-
-
 int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protocol) {
     int port=5700;
     switch (T_Protocol){
@@ -64,11 +56,13 @@ TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR)
     originData.Longitude_dDeg=0;
     originData.hasBeenSet=false;
     originData.writeByTelemetryProtocol=!ORIGIN_POSITION_ANDROID;
-    std::memset (&wifibroadcast_rx_status_forward, 0, sizeof(wifibroadcast_rx_status_forward));
-    for (auto &i : wifibroadcast_rx_status_forward.adapter) {
+    std::memset (&wifibroadcastTelemetryData, 0, sizeof(wifibroadcastTelemetryData));
+    for (auto &i : wifibroadcastTelemetryData.adapter) {
         i.current_signal_dbm=-99;
     }
-    wifibroadcast_rx_status_forward.wifi_adapter_cnt=1;
+    wifibroadcastTelemetryData.current_signal_joystick_uplink=-99;
+    wifibroadcastTelemetryData.current_signal_telemetry_uplink=-99;
+    wifibroadcastTelemetryData.wifi_adapter_cnt=1;
 }
 
 
@@ -76,7 +70,7 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
     assert(mTelemetryDataReceiver==nullptr);
     assert(mEZWBDataReceiver== nullptr);
     assert(mTestFileReader== nullptr);
-    if(ENABLE_GROUND_RECORDING){ //&& SOURCE_TYPE==UDP
+    if(ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS){
         const auto filename=GroundRecorder::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
         //LOGD("%s",filename.c_str());
         mGroundRecorder=new GroundRecorder(filename);
@@ -91,7 +85,7 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
         }
         //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
         //should not add any additional latency
-        if(EZWBS_Protocol==EZWB_16_rc6){
+        if(EZWBS_Protocol!=DISABLED){
             std::function<void(uint8_t data[],int data_length)> f2 = [=](uint8_t data[],int data_length) {
                 this->onEZWBStatusDataReceived(data, data_length);
             };
@@ -173,7 +167,11 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(uint8_t data[],int data_lengt
 void TelemetryReceiver::onEZWBStatusDataReceived(uint8_t *data, int data_length){
     nWIFIBRADCASTBytes+=data_length;
     if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES){
-        memcpy(&wifibroadcast_rx_status_forward,data,WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES);
+        const auto* struct_pointer= reinterpret_cast<const wifibroadcast_rx_status_forward_t*>(data);
+        //writeDataBackwardsCompatible(&wifibroadcastTelemetryData,struct_pointer);
+        nWIFIBROADCASTParsedPackets++;
+    }else if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES){
+        memcpy(&wifibroadcastTelemetryData,data,(size_t)data_length);
         nWIFIBROADCASTParsedPackets++;
     }else{
         nWIFIBRADCASTFailedPackets++;
@@ -196,16 +194,16 @@ void TelemetryReceiver::setHome(double latitude, double longitude,double attitud
     originData.hasBeenSet=true;
 }
 
-const UAVTelemetryData* TelemetryReceiver::getUAVTelemetryData()const{
-    return &uav_td;
+const UAVTelemetryData& TelemetryReceiver::getUAVTelemetryData()const{
+    return uav_td;
 }
 
-const wifibroadcast_rx_status_forward_t* TelemetryReceiver::get_ez_wb_forward_data() const{
-    return &wifibroadcast_rx_status_forward;
+const wifibroadcast_rx_status_forward_t2& TelemetryReceiver::get_ez_wb_forward_data() const{
+    return wifibroadcastTelemetryData;
 }
 
-const OriginData *TelemetryReceiver::getOriginData() const {
-    return &originData;
+const OriginData& TelemetryReceiver::getOriginData() const {
+    return originData;
 }
 const long TelemetryReceiver::getNEZWBPacketsParsingFailed()const {
     return nWIFIBRADCASTFailedPackets;
@@ -213,12 +211,12 @@ const long TelemetryReceiver::getNEZWBPacketsParsingFailed()const {
 
 const int TelemetryReceiver::getBestDbm()const{
     //Taken from ez-wifibroadcast OSD.
-    int cnt =  wifibroadcast_rx_status_forward.wifi_adapter_cnt;
+    int cnt =  wifibroadcastTelemetryData.wifi_adapter_cnt;
     cnt = (cnt<=6) ? cnt : 6;
     int best_dbm = -100;
     // find out which card has best signal
     for(int i=0; i<cnt; i++) {
-        const int curr_dbm=wifibroadcast_rx_status_forward.adapter[i].current_signal_dbm;
+        const int curr_dbm=wifibroadcastTelemetryData.adapter[i].current_signal_dbm;
         if (best_dbm < curr_dbm) best_dbm = curr_dbm;
     }
     return best_dbm;
@@ -240,14 +238,16 @@ void TelemetryReceiver::setFlightTime(float timeSeconds) {
     appOSDData.flight_time_seconds=timeSeconds;
 }
 
-
 const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(TelemetryValueIndex index) const {
     MTelemetryValue ret = TelemetryReceiver::MTelemetryValue();
+
+    LOGD("Size %d",(int)sizeof(wifibroadcast_rx_status_forward_t2));
+
     ret.warning=0;
     switch (index){
         case BATT_VOLTAGE:{
-            ret.prefix=ICON_BATTERY;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Batt";
+            ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
             ret.value= doubleToString(uav_td.BatteryPack_V, 5, 2);
             ret.metric=L"V";
@@ -261,16 +261,16 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case BATT_CURRENT:{
-            ret.prefix=ICON_BATTERY;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Batt";
+            ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
             ret.value= doubleToString(uav_td.BatteryPack_A, 5, 2);
             ret.metric=L"A";
         }
             break;
         case BATT_USED_CAPACITY:{
-            ret.prefix=ICON_BATTERY;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Batt";
+            ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
             float val=uav_td.BatteryPack_mAh;
             ret.value=intToString((int)val,5);
@@ -281,8 +281,8 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case BATT_PERCENTAGE:{
-            ret.prefix=ICON_BATTERY;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Batt";
+            ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
             float perc;
             float capacity=BATT_CAPACITY_MAH;
@@ -314,15 +314,15 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case LONGITUDE:{
-            ret.prefix=ICON_LONGITUDE;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Lon";
+            ret.prefixIcon=ICON_LONGITUDE;
             ret.value= doubleToString(uav_td.Longitude_dDeg, 10, 8);
             ret.metric=L"";
         }
             break;
         case LATITUDE:{
-            ret.prefix=ICON_LATITUDE;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Lat";
+            ret.prefixIcon=ICON_LATITUDE;
             ret.value= doubleToString(uav_td.Latitude_dDeg, 10, 8);
             ret.metric=L"";
         }
@@ -352,8 +352,8 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case HOME_DISTANCE:{
-            ret.prefix+=ICON_HOME;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Home";
+            ret.prefixIcon=ICON_HOME;
             if(!originData.hasBeenSet){
                 ret.value=L"No origin";
                 ret.metric=L"";
@@ -400,6 +400,12 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             ret.metric=L"dBm";
         }
             break;
+        case EZWB_DOWNLINK_VIDEO_RSSI2:{
+            ret.prefix=L"";
+            ret.value=L"X";
+            ret.metric=L"x";
+        }
+            break;
         case RX_1:{
             ret.prefix=L"RX1";
             ret.value=intToString((int)uav_td.RSSI1_Percentage_dBm,4);
@@ -411,8 +417,8 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case SATS_IN_USE:{
-            ret.prefix+=ICON_SATELITE;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"Sat";
+            ret.prefixIcon=ICON_SATELITE;
             ret.value=intToString(uav_td.SatsInUse,3);
             ret.metric=L"";
         }
@@ -448,84 +454,88 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case EZWB_UPLINK_RC_RSSI:{
-            ret.value=intToString(wifibroadcast_rx_status_forward.current_signal_air,5);
+            ret.value=intToString(wifibroadcastTelemetryData.current_signal_joystick_uplink,5);
             ret.metric=L"dBm";
         }
             break;
         case EZWB_UPLINK_RC_BLOCKS:{
-            std::wstring s1 = intToString((int) wifibroadcast_rx_status_forward.lost_packet_cnt_rc, 6);
-            std::wstring s2 = intToString((int) wifibroadcast_rx_status_forward.lost_packet_cnt_telemetry_up , 6);
+            std::wstring s1 = intToString((int) wifibroadcastTelemetryData.lost_packet_cnt_rc, 6);
+            std::wstring s2 = intToString((int) wifibroadcastTelemetryData.lost_packet_cnt_telemetry_up , 6);
             ret.value=s1+L"/"+s2;
             ret.metric=L"";
         }
             break;
         case EZWB_STATUS_AIR:{
-            std::wstring s2= intToString(wifibroadcast_rx_status_forward.cpuload_air, 2);
+            std::wstring s2= intToString(wifibroadcastTelemetryData.cpuload_air, 2);
             std::wstring s3=L"%";
-            std::wstring s4=intToString(wifibroadcast_rx_status_forward.temp_air,3);
+            std::wstring s4=intToString(wifibroadcastTelemetryData.temp_air,3);
             std::wstring s5=L"°";
             ret.value=s2+s3+L" "+s4+s5;
-            ret.prefix+=ICON_CHIP;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"CPU";
+            ret.prefixIcon=ICON_CHIP;
         }
             break;
         case EZWB_STATUS_GROUND:{
-            std::wstring s2= intToString(wifibroadcast_rx_status_forward.cpuload_gnd, 2);
+            std::wstring s2= intToString(wifibroadcastTelemetryData.cpuload_gnd, 2);
             std::wstring s3=L"%";
-            std::wstring s4=intToString(wifibroadcast_rx_status_forward.temp_gnd,3);
+            std::wstring s4=intToString(wifibroadcastTelemetryData.temp_gnd,3);
             std::wstring s5=L"°";
             ret.value=s2+s3+L" "+s4+s5;
-            ret.prefix+=ICON_CHIP;
-            ret.prefixIsIcon=true;
+            ret.prefix=L"CPU";
+            ret.prefixIcon=ICON_CHIP;
         }
             break;
         case EZWB_BLOCKS:{
-            std::wstring s1 = intToString((int) wifibroadcast_rx_status_forward.damaged_block_cnt, 6);
-            std::wstring s2 = intToString((int) wifibroadcast_rx_status_forward.lost_packet_cnt, 6);
+            std::wstring s1 = intToString((int) wifibroadcastTelemetryData.damaged_block_cnt, 6);
+            std::wstring s2 = intToString((int) wifibroadcastTelemetryData.lost_packet_cnt, 6);
             ret.value=s1+L"/"+s2;
             ret.prefix=L"";
         }
             break;
-        case EZWB_ADAPTER1_RSSI:{
-            ret=getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(1);
+        case EZWB_RSSI_ADAPTER0:{
+            ret= getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(0);
         }break;
-        case EZWB_ADAPTER2_RSSI:{
-            ret=getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(2);
+        case EZWB_RSSI_ADAPTER1:{
+            ret= getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(1);
         }break;
-        case EZWB_ADAPTER3_RSSI:{
-            ret=getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(3);
+        case EZWB_RSSI_ADAPTER2:{
+            ret= getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(2);
         }break;
-        case EZWB_ADAPTER4_RSSI:{
-            ret=getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(4);
+        case EZWB_RSSI_ADAPTER3:{
+            ret= getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(3);
         }break;
-        case EZWB_ADAPTER5_RSSI:{
-            ret=getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(5);
-        }break;
-        case EZWB_ADAPTER6_RSSI:{
-            ret=getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(0);
-        }break;
+//        case EZWB_RSSI_ADAPTER4:{
+//            ret= getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(4);
+//        }break;
+//        case EZWB_RSSI_ADAPTER5:{
+//            ret= getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(5);
+//        }break;
         default:
-            ret.prefix=L"P";
-            ret.value=L"V";
-            ret.metric=L"M";
+            ret.prefix=L"A";
+            ret.value=L"B";
+            ret.metric=L"C";
             break;
     }
     return ret;
 }
 
 const TelemetryReceiver::MTelemetryValue
-TelemetryReceiver::getTelemetryValueEZWB_RSSI_ADAPTERS_1to6(int adapter) const {
+TelemetryReceiver::getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(int adapter) const {
     MTelemetryValue ret = TelemetryReceiver::MTelemetryValue();
     ret.warning=0;
     if(adapter>6 || adapter<0){
         adapter=0;
         LOGD("Adapter error");
     }
-    std::wstring s1=intToString((int)wifibroadcast_rx_status_forward.adapter[adapter].current_signal_dbm,4);
-    std::wstring s2=L"dBm [";
-    std::wstring s3=intToString((int)wifibroadcast_rx_status_forward.adapter[adapter].received_packet_cnt,7);
-    std::wstring s4=L"]";
-    ret.value=s1+s2+s3+s4;
+    if(adapter<wifibroadcastTelemetryData.wifi_adapter_cnt){
+        const std::wstring s1=intToString((int)wifibroadcastTelemetryData.adapter[adapter].current_signal_dbm,4);
+        const std::wstring s2=L"dBm [";
+        const std::wstring s3=intToString((int)wifibroadcastTelemetryData.adapter[adapter].received_packet_cnt,7);
+        const std::wstring s4=L"]";
+        ret.value=s1+s2+s3+s4;
+    }else{
+        ret.value=L"";
+    }
     return ret;
 }
 
@@ -540,12 +550,12 @@ const std::string TelemetryReceiver::getStatisticsAsString()const {
         }else{
             ostream<<"UAV telemetry disabled\n";
         }
-        if(EZWBS_Protocol==EZWB_16_rc6){
-            ostream<<"\nListening for WIFIBROADCAST telemetry on port "<<EZWBS_Port;
+        if(EZWBS_Protocol!=DISABLED){
+            ostream<<"\nListening for "+getSystemAsString()+" statistics on port "<<EZWBS_Port;
             ostream<<"\nReceived: "<<nWIFIBRADCASTBytes<<"B | Packets:"<<nWIFIBROADCASTParsedPackets;
             ostream<<"\n";
         }else{
-            ostream<<"\nWIFIBROADCAST telemetry disabled\n";
+            ostream<<"\n"+getSystemAsString()+" telemetry disabled\n";
         }
     }else{
         ostream<<"Source type==File. ("+getProtocolAsString()+") Select UDP as data source\n";
@@ -609,7 +619,7 @@ const std::wstring TelemetryReceiver::getMAVLINKFlightMode() const {
 
 const std::string TelemetryReceiver::getAllTelemetryValuesAsString() const {
     std::wstringstream ss;
-    for( int i = TelemetryValueIndex ::DECODER_FPS; i != TelemetryValueIndex::EZWB_ADAPTER6_RSSI; i++ ){
+    for( int i = TelemetryValueIndex ::DECODER_FPS; i != TelemetryValueIndex::EZWB_RSSI_ADAPTER3; i++ ){
         const auto indx = static_cast<TelemetryValueIndex>(i);
         const auto val=getTelemetryValue(indx);
         ss<<val.prefix<<" "<<val.value<<" "<<val.metric<<"\n";
@@ -622,32 +632,31 @@ const std::string TelemetryReceiver::getAllTelemetryValuesAsString() const {
 
 const std::string TelemetryReceiver::getEZWBDataAsString()const{
     std::ostringstream ostringstream1;
-    const wifibroadcast_rx_status_forward_t *data = get_ez_wb_forward_data();
-    ostringstream1 << "damaged_block_cnt:" << data->damaged_block_cnt << "\n";
-    ostringstream1 << "lost_packet_cnt:" << data->lost_packet_cnt << "\n";
-     ostringstream1 << "skipped_packet_cnt:" << data->skipped_packet_cnt << "\n";
-     ostringstream1 << "received_packet_cnt:" << data->received_packet_cnt << "\n";
-     ostringstream1 << "kbitrate:" << data->kbitrate << "\n";
-     ostringstream1 << "kbitrate_measured:" << data->kbitrate_measured << "\n";
-     ostringstream1 << "kbitrate_set:" << data->kbitrate_set << "\n";
-     ostringstream1 << "lost_packet_cnt_telemetry_up:" << data->lost_packet_cnt_telemetry_up << "\n";
-     ostringstream1 << "lost_packet_cnt_telemetry_down:" << data->lost_packet_cnt_telemetry_down<< "\n";
-     ostringstream1 << "lost_packet_cnt_msp_up:" << data->lost_packet_cnt_msp_up << "\n";
-     ostringstream1 << "lost_packet_cnt_msp_down:" << data->lost_packet_cnt_msp_down << "\n";
-     ostringstream1 << "lost_packet_cnt_rc:" << data->lost_packet_cnt_rc << "\n";
-     ostringstream1 << "current_signal_air:" << (int) data->current_signal_air << "\n";
-     ostringstream1 << "joystick_connected:" << (int) data->joystick_connected << "\n";
-     ostringstream1 << "cpuload_gnd:" << (int) data->cpuload_gnd << "\n";
-     ostringstream1 << "temp_gnd:" << (int) data->temp_gnd << "\n";
-     ostringstream1 << "cpuload_air:" << (int) data->cpuload_air << "\n";
-     ostringstream1 << "temp_air:" << (int) data->temp_air << "\n";
-     ostringstream1 << "wifi_adapter_cnt:" << data->wifi_adapter_cnt << "\n";
-     for (int i = 0; i < data->wifi_adapter_cnt; i++) {
-         ostringstream1 << "Adapter" << i << ":" << (int) data->adapter[i].current_signal_dbm
-                        << (int) data->adapter[i].received_packet_cnt << "\n";
-     }
-
-     return ostringstream1.str();
+    ostringstream1 << "damaged_block_cnt:" << wifibroadcastTelemetryData.damaged_block_cnt << "\n";
+    ostringstream1 << "lost_packet_cnt:" << wifibroadcastTelemetryData.lost_packet_cnt << "\n";
+    ostringstream1 << "skipped_packet_cnt:" << wifibroadcastTelemetryData.skipped_packet_cnt << "\n";
+    ostringstream1 << "received_packet_cnt:" << wifibroadcastTelemetryData.received_packet_cnt << "\n";
+    ostringstream1 << "kbitrate:" << wifibroadcastTelemetryData.kbitrate << "\n";
+    ostringstream1 << "kbitrate_measured:" << wifibroadcastTelemetryData.kbitrate_measured << "\n";
+    ostringstream1 << "kbitrate_set:" << wifibroadcastTelemetryData.kbitrate_set << "\n";
+    ostringstream1 << "lost_packet_cnt_telemetry_up:" << wifibroadcastTelemetryData.lost_packet_cnt_telemetry_up << "\n";
+    ostringstream1 << "lost_packet_cnt_telemetry_down:" << wifibroadcastTelemetryData.lost_packet_cnt_telemetry_down<< "\n";
+    ostringstream1 << "lost_packet_cnt_msp_up:" << wifibroadcastTelemetryData.lost_packet_cnt_msp_up << "\n";
+    ostringstream1 << "lost_packet_cnt_msp_down:" << wifibroadcastTelemetryData.lost_packet_cnt_msp_down << "\n";
+    ostringstream1 << "lost_packet_cnt_rc:" << wifibroadcastTelemetryData.lost_packet_cnt_rc << "\n";
+    ostringstream1 << "current_signal_joystick_uplink:" << (int) wifibroadcastTelemetryData.current_signal_joystick_uplink << "\n";
+    ostringstream1 << "current_signal_telemetry_uplink:" << (int) wifibroadcastTelemetryData.current_signal_telemetry_uplink << "\n";
+    ostringstream1 << "joystick_connected:" << (int) wifibroadcastTelemetryData.joystick_connected << "\n";
+    ostringstream1 << "cpuload_gnd:" << (int) wifibroadcastTelemetryData.cpuload_gnd << "\n";
+    ostringstream1 << "temp_gnd:" << (int) wifibroadcastTelemetryData.temp_gnd << "\n";
+    ostringstream1 << "cpuload_air:" << (int) wifibroadcastTelemetryData.cpuload_air << "\n";
+    ostringstream1 << "temp_air:" << (int) wifibroadcastTelemetryData.temp_air << "\n";
+    ostringstream1 << "wifi_adapter_cnt:" << wifibroadcastTelemetryData.wifi_adapter_cnt << "\n";
+    for (int i = 0; i < wifibroadcastTelemetryData.wifi_adapter_cnt; i++) {
+        ostringstream1 << "Adapter" << i << " dbm:" << (int) wifibroadcastTelemetryData.adapter[i].current_signal_dbm<<" pkt:"
+                       << (int) wifibroadcastTelemetryData.adapter[i].received_packet_cnt << "\n";
+    }
+    return ostringstream1.str();
 }
 
 float TelemetryReceiver::getHeadingHome_Deg() const {
@@ -671,6 +680,11 @@ const std::string TelemetryReceiver::getProtocolAsString() const {
         default:assert(false);break;
     }
     return ss.str();
+}
+
+const std::string TelemetryReceiver::getSystemAsString() const {
+    const std::string ret=(EZWBS_Protocol==EZWB_16_rc6) ? "EZ-Wifibroadcast" : "OpenHD";
+    return ret;
 }
 
 
