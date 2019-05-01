@@ -9,6 +9,7 @@
 #include "Helper/PositionHelper.hpp"
 #include "Helper/StringHelper.hpp"
 #include "Helper/CPUPriorities.hpp"
+#include "WFBBackwardsCompatibility.h"
 
 #include <locale>
 #include <codecvt>
@@ -168,7 +169,7 @@ void TelemetryReceiver::onEZWBStatusDataReceived(uint8_t *data, int data_length)
     nWIFIBRADCASTBytes+=data_length;
     if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES){
         const auto* struct_pointer= reinterpret_cast<const wifibroadcast_rx_status_forward_t*>(data);
-        //writeDataBackwardsCompatible(&wifibroadcastTelemetryData,struct_pointer);
+        writeDataBackwardsCompatible(&wifibroadcastTelemetryData,struct_pointer);
         nWIFIBROADCASTParsedPackets++;
     }else if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES){
         memcpy(&wifibroadcastTelemetryData,data,(size_t)data_length);
@@ -776,7 +777,6 @@ JNI_METHOD(jstring, getEZWBIPAdress)
     jstring ret = env->NewStringUTF("");
     return ret;
 }
-
 
 JNI_METHOD(void, setDecodingInfo)
 (JNIEnv *env,jclass unused,jlong nativeInstance,
