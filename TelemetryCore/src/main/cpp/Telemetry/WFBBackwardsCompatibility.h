@@ -30,6 +30,13 @@ void writeDataBackwardsCompatible(wifibroadcast_rx_status_forward_t2 *n,
     n->cpuload_air=o->cpuload_air;
     n->temp_air=o->temp_air;
     n->wifi_adapter_cnt=o->wifi_adapter_cnt;
+    for(int i=0;i<6;i++){
+        const wifi_adapter_rx_status_forward_t* p1=&o->adapter[i];
+        wifi_adapter_rx_status_forward_t2* p2=&n->adapter[i];
+        p2->received_packet_cnt=p1->received_packet_cnt;
+        p2->current_signal_dbm=p1->current_signal_dbm;
+        p2->type=p1->type;
+    }
     memcpy(&n->adapter,o->adapter,sizeof(wifi_adapter_rx_status_forward_t)*6);
 }
 
