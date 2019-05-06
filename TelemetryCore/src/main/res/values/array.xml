@@ -31,10 +31,12 @@
     <string-array name="entriesEZWBStatusProtocol" >
         <item>Disable</item>
         <item>Version 1.6 rc6 </item>
+        <item>OpenHD 1.0.0</item>
     </string-array>
     <string-array name="valuesEZWBStatusProtocol" >
         <item>0</item>
         <item>1</item>
+        <item>2</item>
     </string-array>
 
 

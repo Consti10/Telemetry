@@ -10,7 +10,7 @@
 
 
 #define WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES 94
-#define WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES 105 //99 ?
+#define WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES 113
 
 
 typedef struct {
@@ -18,14 +18,6 @@ typedef struct {
     int8_t current_signal_dbm;
     int8_t type; // 0 = Atheros, 1 = Ralink
 } __attribute__((packed)) wifi_adapter_rx_status_forward_t;
-
-typedef struct {
-    uint32_t received_packet_cnt;
-    int8_t current_signal_dbm;
-    int8_t type; // 0 = Atheros, 1 = Ralink
-    int8_t signal_good;
-} __attribute__((packed)) wifi_adapter_rx_status_forward_t2;
-
 
 
 typedef struct {
@@ -53,6 +45,13 @@ typedef struct {
 
 
 typedef struct {
+    uint32_t received_packet_cnt;
+    int8_t current_signal_dbm;
+    int8_t type; // 0 = Atheros, 1 = Ralink
+    int8_t signal_good;
+} __attribute__((packed)) wifi_adapter_rx_status_forward_t2;
+
+typedef struct {
     uint32_t damaged_block_cnt; // number bad blocks video downstream
     uint32_t lost_packet_cnt; // lost packets video downstream
     uint32_t skipped_packet_cnt; // skipped packets video downstream
@@ -69,6 +68,8 @@ typedef struct {
     int8_t current_signal_joystick_uplink; // signal strength in dbm at air pi (telemetry upstream and rc link)
     int8_t current_signal_telemetry_uplink;
     int8_t joystick_connected; // 0 = no joystick connected, 1 = joystick connected
+    float HomeLat;
+    float HomeLon;
     uint8_t cpuload_gnd; // CPU load Ground Pi
     uint8_t temp_gnd; // CPU temperature Ground Pi
     uint8_t cpuload_air; // CPU load Air Pi

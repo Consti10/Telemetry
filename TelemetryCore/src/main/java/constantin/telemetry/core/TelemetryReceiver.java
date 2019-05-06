@@ -15,6 +15,8 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static android.content.Context.MODE_PRIVATE;
+
 /*
  * Pattern native -> ndk:
  * createInstance() creates a new native instance and return the pointer to it
@@ -131,11 +133,10 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
         return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)+"/FPV_VR/";
     }
 
-
     @SuppressLint("ApplySharedPref")
     public static void initializePreferences(final Context context,final boolean readAgain){
-        PreferenceManager.setDefaultValues(context,R.xml.pref_telemetry,readAgain);
-        final SharedPreferences pref_telemetry=context.getSharedPreferences("pref_telemetry",Context.MODE_PRIVATE);
+        PreferenceManager.setDefaultValues(context,"pref_telemetry",MODE_PRIVATE,R.xml.pref_telemetry,readAgain);
+        final SharedPreferences pref_telemetry=context.getSharedPreferences("pref_telemetry", MODE_PRIVATE);
         final String filename=pref_telemetry.getString(context.getString(R.string.T_PLAYBACK_FILENAME),context.getString(R.string.T_PLAYBACK_FILENAME_DEFAULT_VALUE));
         if(filename.equals(context.getString(R.string.T_PLAYBACK_FILENAME_DEFAULT_VALUE))){
             pref_telemetry.edit().putString(context.getString(R.string.T_PLAYBACK_FILENAME),

@@ -165,14 +165,14 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(uint8_t data[],int data_lengt
     }
 }
 
-void TelemetryReceiver::onEZWBStatusDataReceived(uint8_t *data, int data_length){
+void TelemetryReceiver::onEZWBStatusDataReceived(uint8_t *data,const int data_length){
     nWIFIBRADCASTBytes+=data_length;
     if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES){
         const auto* struct_pointer= reinterpret_cast<const wifibroadcast_rx_status_forward_t*>(data);
         writeDataBackwardsCompatible(&wifibroadcastTelemetryData,struct_pointer);
         nWIFIBROADCASTParsedPackets++;
     }else if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES){
-        memcpy(&wifibroadcastTelemetryData,data,(size_t)data_length);
+        memcpy(&wifibroadcastTelemetryData,data,WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES);
         nWIFIBROADCASTParsedPackets++;
     }else{
         nWIFIBRADCASTFailedPackets++;
@@ -241,9 +241,7 @@ void TelemetryReceiver::setFlightTime(float timeSeconds) {
 
 const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(TelemetryValueIndex index) const {
     MTelemetryValue ret = TelemetryReceiver::MTelemetryValue();
-
-    LOGD("Size %d",(int)sizeof(wifibroadcast_rx_status_forward_t2));
-
+    //LOGD("Size %d",(int)sizeof(wifibroadcast_rx_status_forward_t2));
     ret.warning=0;
     switch (index){
         case BATT_VOLTAGE:{
