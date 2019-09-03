@@ -54,6 +54,7 @@ private:
     const int EZWBS_Port;
     const std::string GROUND_RECORDING_DIRECTORY;
     const std::string T_PLAYBACK_FILENAME;
+    const bool LTM_FOR_INAV;
 public:
     const bool MAVLINK_FLIGHTMODE_QUADCOPTER;
     const bool ORIGIN_POSITION_ANDROID;

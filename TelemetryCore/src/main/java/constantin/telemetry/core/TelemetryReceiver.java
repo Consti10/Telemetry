@@ -2,9 +2,7 @@ package constantin.telemetry.core;
 
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.location.Location;
@@ -12,8 +10,6 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -152,13 +148,23 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
         final boolean exists = tempFile.exists();
         if(exists){
             //check if the file type matches the selected telemetry protocol
-            return getFileExtension(filename).equals(getExtensionForProtocol(sharedPreferences.getInt(context.getString(R.string.T_PROTOCOL),0)));
+            return getFileExtension(filename).equals(getNameForProtocol(sharedPreferences.getInt(context.getString(R.string.T_PROTOCOL),0)));
         }
         return false;
     }
 
+    //return true if file name extension does not match the selected telemetry protocol
+    public static boolean checkFileExtensionMatchTelemetryProtocol(final Context context){
+        final SharedPreferences pref_telemetry=context.getSharedPreferences("pref_telemetry",MODE_PRIVATE);
+        final String filename=pref_telemetry.getString(context.getString(R.string.T_PLAYBACK_FILENAME),context.getString(R.string.T_PLAYBACK_FILENAME_DEFAULT_VALUE));
+        final String extension=getFileExtension(filename);
+        final String protocol=getNameForProtocol(pref_telemetry.getInt(context.getString(R.string.T_PROTOCOL),0));
+        System.out.println("LA"+filename+" "+extension+" "+protocol);
+        return extension.equals(protocol);
+    }
+
     //int value=sharedPreferences.getInt(getActivity().getString(R.string.T_Protocol),0);
-    private static String getExtensionForProtocol(int protocol){
+    public static String getNameForProtocol(int protocol){
         switch (protocol){
             case 0:return "none";
             case 1:return "ltm";
@@ -171,10 +177,12 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
 
     private static String getFileExtension(String name) {
         int lastIndexOf = name.lastIndexOf(".");
-        if (lastIndexOf == -1) {
+        if (lastIndexOf == -1 || (lastIndexOf+1>=name.length())) {
             return ""; // empty extension
         }
-        return name.substring(lastIndexOf);
+        return name.substring(lastIndexOf+1);
     }
+
+
 
 }

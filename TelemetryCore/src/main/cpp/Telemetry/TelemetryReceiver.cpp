@@ -33,6 +33,7 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
         case TelemetryReceiver::MAVLINK:port=settingsN.getInt(IDT::T_MAVLINKPort);break;
         case TelemetryReceiver::XSMARTPORT:port=settingsN.getInt(IDT::T_SMARTPORTPort);break;
         case TelemetryReceiver::FRSKY:port=settingsN.getInt(IDT::T_FRSKYPort);break;
+        default:break;
     }
     return port;
 }
@@ -48,7 +49,9 @@ TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR)
         SOURCE_TYPE(static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_SOURCE))),
         ENABLE_GROUND_RECORDING(settingsN.getBoolean(IDT::T_GROUND_RECORDING)),
         GROUND_RECORDING_DIRECTORY(DIR),
-        T_PLAYBACK_FILENAME(settingsN.getString(IDT::T_PLAYBACK_FILENAME)){
+        T_PLAYBACK_FILENAME(settingsN.getString(IDT::T_PLAYBACK_FILENAME)),
+        //LTM_FOR_INAV(settingsN.getBoolean(IDT::T_LTM_FOR_INAV))
+        LTM_FOR_INAV(true){
     resetNReceivedTelemetryBytes();
     std::memset (&uav_td, 0, sizeof(uav_td));
     uav_td.Pitch_Deg=10; //else you cannot see the AH 3D Quad,since it is totally flat
@@ -140,7 +143,7 @@ void TelemetryReceiver::stopReceiving() {
 void TelemetryReceiver::onUAVTelemetryDataReceived(uint8_t data[],int data_length){
     switch (T_Protocol){
         case TelemetryReceiver::XLTM:
-            ltm_read(&uav_td,&originData,data,data_length);
+            ltm_read(&uav_td,&originData,data,data_length,LTM_FOR_INAV);
             break;
         case TelemetryReceiver::MAVLINK:
             mavlink_read_v2(&uav_td,&originData,data,data_length);
@@ -248,7 +251,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             ret.prefix=L"Batt";
             ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
-            ret.value= doubleToString(uav_td.BatteryPack_V, 5, 2);
+            ret.value= StringHelper::doubleToString(uav_td.BatteryPack_V, 5, 2);
             ret.metric=L"V";
             float w1=BATT_CELLS_V_WARNING1_ORANGE*BATT_CELLS_N;
             float w2=BATT_CELLS_V_WARNING2_RED*BATT_CELLS_N;
@@ -263,7 +266,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             ret.prefix=L"Batt";
             ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
-            ret.value= doubleToString(uav_td.BatteryPack_A, 5, 2);
+            ret.value= StringHelper::doubleToString(uav_td.BatteryPack_A, 5, 2);
             ret.metric=L"A";
         }
             break;
@@ -272,7 +275,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
             float val=uav_td.BatteryPack_mAh;
-            ret.value=intToString((int)val,5);
+            ret.value=StringHelper::intToString((int)val,5);
             ret.metric=L"mAh";
             if(val>BATT_CAPACITY_MAH_USED_WARNING){
                 ret.warning=2;
@@ -291,7 +294,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
                 perc=(capacity-uav_td.BatteryPack_mAh)/capacity*100.0f;
             }
             //LOGV3("%d",uav_td.BatteryPack_mAh);
-            ret.value=intToString((int)std::round(perc),3);
+            ret.value=StringHelper::intToString((int)std::round(perc),3);
             ret.metric=L"%";
             if(perc<20.0f){
                 ret.warning=1;
@@ -301,40 +304,40 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case ALTITUDE_GPS:{
-            ret.prefix=L"Alt(GPS)";
-            ret.value=doubleToString(uav_td.AltitudeGPS_m,3,1);
+            ret.prefix=L"Alt(G)";
+            ret.value=StringHelper::doubleToString(uav_td.AltitudeGPS_m,5,2);
             ret.metric=L"m";
         }
             break;
         case ALTITUDE_BARO:{
             ret.prefix=L"Alt(B)";
-            ret.value=doubleToString(uav_td.AltitudeBaro_m,3,1);
+            ret.value=StringHelper::doubleToString(uav_td.AltitudeBaro_m,5,2);
             ret.metric=L"m";
         }
             break;
         case LONGITUDE:{
             ret.prefix=L"Lon";
             ret.prefixIcon=ICON_LONGITUDE;
-            ret.value= doubleToString(uav_td.Longitude_dDeg, 10, 8);
+            ret.value= StringHelper::doubleToString(uav_td.Longitude_dDeg, 10, 8);
             ret.metric=L"";
         }
             break;
         case LATITUDE:{
             ret.prefix=L"Lat";
             ret.prefixIcon=ICON_LATITUDE;
-            ret.value= doubleToString(uav_td.Latitude_dDeg, 10, 8);
+            ret.value= StringHelper::doubleToString(uav_td.Latitude_dDeg, 10, 8);
             ret.metric=L"";
         }
             break;
         case HS_GROUND:{
             ret.prefix=L"HS";
-            ret.value= doubleToString(uav_td.SpeedGround_KPH, 5, 2);
+            ret.value= StringHelper::doubleToString(uav_td.SpeedGround_KPH, 5, 2);
             ret.metric=L"km/h";
         }
             break;
         case HS_AIR:{
             ret.prefix=L"HS";
-            ret.value= doubleToString(uav_td.SpeedAir_KPH, 5, 2);
+            ret.value= StringHelper::doubleToString(uav_td.SpeedAir_KPH, 5, 2);
             ret.metric=L"km/h";
         }
             break;
@@ -342,10 +345,10 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             ret.prefix=L"Time";
             float time=appOSDData.flight_time_seconds;
             if(time<60){
-                ret.value=intToString((int)std::round(time),4);
+                ret.value=StringHelper::intToString((int)std::round(time),4);
                 ret.metric=L"sec";
             }else{
-                ret.value=intToString((int)std::round(time/60),4);
+                ret.value=StringHelper::intToString((int)std::round(time/60),4);
                 ret.metric=L"min";
             }
         }
@@ -359,10 +362,10 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             }else{
                 int distanceM=(int)distance_between(uav_td.Latitude_dDeg,uav_td.Longitude_dDeg,originData.Latitude_dDeg,originData.Longitude_dDeg);
                 if(distanceM>1000){
-                    ret.value=doubleToString(distanceM/1000.0,5,1);
+                    ret.value=StringHelper::doubleToString(distanceM/1000.0,5,1);
                     ret.metric=L"km";
                 }else{
-                    ret.value=intToString(distanceM,5);
+                    ret.value=StringHelper::intToString(distanceM,5);
                     ret.metric=L"m";
                 }
             }
@@ -370,7 +373,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             break;
         case DECODER_FPS:{
             ret.prefix=L"Dec";
-            ret.value=intToString((int)std::round(appOSDData.decoder_fps),4);
+            ret.value=StringHelper::intToString((int)std::round(appOSDData.decoder_fps),4);
             ret.metric=L"fps";
         }
             break;
@@ -379,23 +382,23 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             float kbits=appOSDData.decoder_bitrate_kbits;
             if(kbits>1024){
                 float mbits=kbits/1024.0f;
-                ret.value= doubleToString(mbits, 6, 1);
+                ret.value= StringHelper::doubleToString(mbits, 6, 1);
                 ret.metric=L"mb/s";
             }else{
-                ret.value= doubleToString(kbits, 6, 1);
+                ret.value= StringHelper::doubleToString(kbits, 6, 1);
                 ret.metric=L"kb/s";
             }
         }
             break;
         case OPENGL_FPS:{
             ret.prefix=L"OGL";
-            ret.value=intToString((int)std::round(appOSDData.opengl_fps),4);
+            ret.value=StringHelper::intToString((int)std::round(appOSDData.opengl_fps),4);
             ret.metric=L"fps";
         }
             break;
         case EZWB_DOWNLINK_VIDEO_RSSI:{
             ret.prefix=L"ezWB";
-            ret.value=intToString(getBestDbm(),5);
+            ret.value=StringHelper::intToString(getBestDbm(),5);
             ret.metric=L"dBm";
         }
             break;
@@ -407,7 +410,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             break;
         case RX_1:{
             ret.prefix=L"RX1";
-            ret.value=intToString((int)uav_td.RSSI1_Percentage_dBm,4);
+            ret.value=StringHelper::intToString((int)uav_td.RSSI1_Percentage_dBm,4);
             if(T_Protocol==TelemetryReceiver::MAVLINK){
                 ret.metric=L"%";
             }else{
@@ -418,28 +421,28 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         case SATS_IN_USE:{
             ret.prefix=L"Sat";
             ret.prefixIcon=ICON_SATELITE;
-            ret.value=intToString(uav_td.SatsInUse,3);
+            ret.value=StringHelper::intToString(uav_td.SatsInUse,3);
             ret.metric=L"";
         }
             break;
         case VS:{
             ret.prefix=L"VS";
-            ret.value= doubleToString(uav_td.SpeedClimb_KPH, 5, 2);
+            ret.value= StringHelper::doubleToString(uav_td.SpeedClimb_KPH, 5, 2);
             ret.metric=L"km/h";
         }
             break;
         case DECODER_LATENCY_DETAILED:{
             ret.prefix=L"Dec";
-            ret.value=doubleToString(appOSDData.avgParsingTime_ms,2,1)+L","+
-                      doubleToString(appOSDData.avgWaitForInputBTime_ms,2,1)+L","+
-                      doubleToString(appOSDData.avgDecodingTime_ms,2,1);
+            ret.value=StringHelper::doubleToString(appOSDData.avgParsingTime_ms,2,1)+L","+
+                    StringHelper:: doubleToString(appOSDData.avgWaitForInputBTime_ms,2,1)+L","+
+                    StringHelper::doubleToString(appOSDData.avgDecodingTime_ms,2,1);
             ret.metric=L"ms";
         }
             break;
         case DECODER_LATENCY_SUM:{
             ret.prefix=L"Dec";
             float total=appOSDData.avgParsingTime_ms+appOSDData.avgWaitForInputBTime_ms+appOSDData.avgDecodingTime_ms;
-            ret.value=doubleToString(total,4,2);
+            ret.value=StringHelper::doubleToString(total,4,2);
             ret.metric=L"ms";
         }
             break;
@@ -453,21 +456,21 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case EZWB_UPLINK_RC_RSSI:{
-            ret.value=intToString(wifibroadcastTelemetryData.current_signal_joystick_uplink,5);
+            ret.value=StringHelper::intToString(wifibroadcastTelemetryData.current_signal_joystick_uplink,5);
             ret.metric=L"dBm";
         }
             break;
         case EZWB_UPLINK_RC_BLOCKS:{
-            std::wstring s1 = intToString((int) wifibroadcastTelemetryData.lost_packet_cnt_rc, 6);
-            std::wstring s2 = intToString((int) wifibroadcastTelemetryData.lost_packet_cnt_telemetry_up , 6);
+            std::wstring s1 = StringHelper::intToString((int) wifibroadcastTelemetryData.lost_packet_cnt_rc, 6);
+            std::wstring s2 = StringHelper::intToString((int) wifibroadcastTelemetryData.lost_packet_cnt_telemetry_up , 6);
             ret.value=s1+L"/"+s2;
             ret.metric=L"";
         }
             break;
         case EZWB_STATUS_AIR:{
-            std::wstring s2= intToString(wifibroadcastTelemetryData.cpuload_air, 2);
+            std::wstring s2= StringHelper::intToString(wifibroadcastTelemetryData.cpuload_air, 2);
             std::wstring s3=L"%";
-            std::wstring s4=intToString(wifibroadcastTelemetryData.temp_air,3);
+            std::wstring s4=StringHelper::intToString(wifibroadcastTelemetryData.temp_air,3);
             std::wstring s5=L"°";
             ret.value=s2+s3+L" "+s4+s5;
             ret.prefix=L"CPU";
@@ -475,9 +478,9 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case EZWB_STATUS_GROUND:{
-            std::wstring s2= intToString(wifibroadcastTelemetryData.cpuload_gnd, 2);
+            std::wstring s2= StringHelper::intToString(wifibroadcastTelemetryData.cpuload_gnd, 2);
             std::wstring s3=L"%";
-            std::wstring s4=intToString(wifibroadcastTelemetryData.temp_gnd,3);
+            std::wstring s4=StringHelper::intToString(wifibroadcastTelemetryData.temp_gnd,3);
             std::wstring s5=L"°";
             ret.value=s2+s3+L" "+s4+s5;
             ret.prefix=L"CPU";
@@ -485,8 +488,8 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         }
             break;
         case EZWB_BLOCKS:{
-            std::wstring s1 = intToString((int) wifibroadcastTelemetryData.damaged_block_cnt, 6);
-            std::wstring s2 = intToString((int) wifibroadcastTelemetryData.lost_packet_cnt, 6);
+            std::wstring s1 = StringHelper::intToString((int) wifibroadcastTelemetryData.damaged_block_cnt, 6);
+            std::wstring s2 = StringHelper::intToString((int) wifibroadcastTelemetryData.lost_packet_cnt, 6);
             ret.value=s1+L"/"+s2;
             ret.prefix=L"";
         }
@@ -527,9 +530,9 @@ TelemetryReceiver::getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(int adapter) const {
         LOGD("Adapter error");
     }
     if(adapter<wifibroadcastTelemetryData.wifi_adapter_cnt){
-        const std::wstring s1=intToString((int)wifibroadcastTelemetryData.adapter[adapter].current_signal_dbm,4);
+        const std::wstring s1=StringHelper::intToString((int)wifibroadcastTelemetryData.adapter[adapter].current_signal_dbm,4);
         const std::wstring s2=L"dBm [";
-        const std::wstring s3=intToString((int)wifibroadcastTelemetryData.adapter[adapter].received_packet_cnt,7);
+        const std::wstring s3=StringHelper::intToString((int)wifibroadcastTelemetryData.adapter[adapter].received_packet_cnt,7);
         const std::wstring s4=L"]";
         ret.value=s1+s2+s3+s4;
     }else{
@@ -630,44 +633,44 @@ const std::string TelemetryReceiver::getAllTelemetryValuesAsString() const {
 }
 
 const std::string TelemetryReceiver::getEZWBDataAsString()const{
-    std::ostringstream ostringstream1;
-    ostringstream1 << "damaged_block_cnt:" << wifibroadcastTelemetryData.damaged_block_cnt << "\n";
-    ostringstream1 << "lost_packet_cnt:" << wifibroadcastTelemetryData.lost_packet_cnt << "\n";
-    ostringstream1 << "skipped_packet_cnt:" << wifibroadcastTelemetryData.skipped_packet_cnt << "\n";
-    ostringstream1 << "received_packet_cnt:" << wifibroadcastTelemetryData.received_packet_cnt << "\n";
-    ostringstream1 << "kbitrate:" << wifibroadcastTelemetryData.kbitrate << "\n";
-    ostringstream1 << "kbitrate_measured:" << wifibroadcastTelemetryData.kbitrate_measured << "\n";
-    ostringstream1 << "kbitrate_set:" << wifibroadcastTelemetryData.kbitrate_set << "\n";
-    ostringstream1 << "lost_packet_cnt_telemetry_up:" << wifibroadcastTelemetryData.lost_packet_cnt_telemetry_up << "\n";
-    ostringstream1 << "lost_packet_cnt_telemetry_down:" << wifibroadcastTelemetryData.lost_packet_cnt_telemetry_down<< "\n";
-    ostringstream1 << "lost_packet_cnt_msp_up:" << wifibroadcastTelemetryData.lost_packet_cnt_msp_up << "\n";
-    ostringstream1 << "lost_packet_cnt_msp_down:" << wifibroadcastTelemetryData.lost_packet_cnt_msp_down << "\n";
-    ostringstream1 << "lost_packet_cnt_rc:" << wifibroadcastTelemetryData.lost_packet_cnt_rc << "\n";
-    ostringstream1 << "current_signal_joystick_uplink:" << (int) wifibroadcastTelemetryData.current_signal_joystick_uplink << "\n";
-    ostringstream1 << "current_signal_telemetry_uplink:" << (int) wifibroadcastTelemetryData.current_signal_telemetry_uplink << "\n";
-    ostringstream1 << "joystick_connected:" << (int) wifibroadcastTelemetryData.joystick_connected << "\n";
-    ostringstream1 << "cpuload_gnd:" << (int) wifibroadcastTelemetryData.cpuload_gnd << "\n";
-    ostringstream1 << "temp_gnd:" << (int) wifibroadcastTelemetryData.temp_gnd << "\n";
-    ostringstream1 << "cpuload_air:" << (int) wifibroadcastTelemetryData.cpuload_air << "\n";
-    ostringstream1 << "temp_air:" << (int) wifibroadcastTelemetryData.temp_air << "\n";
-    ostringstream1 << "wifi_adapter_cnt:" << wifibroadcastTelemetryData.wifi_adapter_cnt << "\n";
+    std::stringstream stringstream;
+    stringstream << "damaged_block_cnt:" << wifibroadcastTelemetryData.damaged_block_cnt << "\n";
+    stringstream << "lost_packet_cnt:" << wifibroadcastTelemetryData.lost_packet_cnt << "\n";
+    stringstream << "skipped_packet_cnt:" << wifibroadcastTelemetryData.skipped_packet_cnt << "\n";
+    stringstream << "received_packet_cnt:" << wifibroadcastTelemetryData.received_packet_cnt << "\n";
+    stringstream << "kbitrate:" << wifibroadcastTelemetryData.kbitrate << "\n";
+    stringstream << "kbitrate_measured:" << wifibroadcastTelemetryData.kbitrate_measured << "\n";
+    stringstream << "kbitrate_set:" << wifibroadcastTelemetryData.kbitrate_set << "\n";
+    stringstream << "lost_packet_cnt_telemetry_up:" << wifibroadcastTelemetryData.lost_packet_cnt_telemetry_up << "\n";
+    stringstream << "lost_packet_cnt_telemetry_down:" << wifibroadcastTelemetryData.lost_packet_cnt_telemetry_down<< "\n";
+    stringstream << "lost_packet_cnt_msp_up:" << wifibroadcastTelemetryData.lost_packet_cnt_msp_up << "\n";
+    stringstream << "lost_packet_cnt_msp_down:" << wifibroadcastTelemetryData.lost_packet_cnt_msp_down << "\n";
+    stringstream << "lost_packet_cnt_rc:" << wifibroadcastTelemetryData.lost_packet_cnt_rc << "\n";
+    stringstream << "current_signal_joystick_uplink:" << (int) wifibroadcastTelemetryData.current_signal_joystick_uplink << "\n";
+    stringstream << "current_signal_telemetry_uplink:" << (int) wifibroadcastTelemetryData.current_signal_telemetry_uplink << "\n";
+    stringstream << "joystick_connected:" << (int) wifibroadcastTelemetryData.joystick_connected << "\n";
+    stringstream << "cpuload_gnd:" << (int) wifibroadcastTelemetryData.cpuload_gnd << "\n";
+    stringstream << "temp_gnd:" << (int) wifibroadcastTelemetryData.temp_gnd << "\n";
+    stringstream << "cpuload_air:" << (int) wifibroadcastTelemetryData.cpuload_air << "\n";
+    stringstream << "temp_air:" << (int) wifibroadcastTelemetryData.temp_air << "\n";
+    stringstream << "wifi_adapter_cnt:" << wifibroadcastTelemetryData.wifi_adapter_cnt << "\n";
     for (int i = 0; i < wifibroadcastTelemetryData.wifi_adapter_cnt; i++) {
-        ostringstream1 << "Adapter" << i << " dbm:" << (int) wifibroadcastTelemetryData.adapter[i].current_signal_dbm<<" pkt:"
+        stringstream << "Adapter" << i << " dbm:" << (int) wifibroadcastTelemetryData.adapter[i].current_signal_dbm<<" pkt:"
                        << (int) wifibroadcastTelemetryData.adapter[i].received_packet_cnt << "\n";
     }
-    return ostringstream1.str();
+    return stringstream.str();
 }
 
-float TelemetryReceiver::getHeadingHome_Deg() const {
-    return (float)course_to(uav_td.Latitude_dDeg,uav_td.Longitude_dDeg,originData.Latitude_dDeg,originData.Longitude_dDeg);
+const float TelemetryReceiver::getHeading_Deg() const {
+    return uav_td.Heading_Deg;
 }
 
 const float TelemetryReceiver::getCourseOG_Deg() const {
     return uav_td.CourseOG_Deg;
 }
 
-const float TelemetryReceiver::getHeading_Deg() const {
-    return uav_td.Heading_Deg;
+float TelemetryReceiver::getHeadingHome_Deg() const {
+    return (float)course_to(uav_td.Latitude_dDeg,uav_td.Longitude_dDeg,originData.Latitude_dDeg,originData.Longitude_dDeg);
 }
 
 const std::string TelemetryReceiver::getProtocolAsString() const {

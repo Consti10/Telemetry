@@ -5,8 +5,8 @@
 #include <stdint.h>
 #include "UAVTelemetryData.h"
 
-int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length);
-int ltm_check(UAVTelemetryData *td,OriginData *originData);
+int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length,const bool readAltitudeSigned);
+int ltm_check(UAVTelemetryData *td,OriginData *originData,const bool readAltitudeSigned);
 
 #define LIGHTTELEMETRY_START1 0x24 //$ Header byte 1
 #define LIGHTTELEMETRY_START2 0x54 //T Header byte 2

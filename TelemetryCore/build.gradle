@@ -38,6 +38,5 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$rootProject.appcompatVersion"
     implementation 'androidx.preference:preference:1.0.0'
 
-
     implementation 'com.mapzen.android:prefs-plus:1.0.0'
 }

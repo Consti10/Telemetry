@@ -52,7 +52,7 @@ static enum _serial_state {
 }
         c_state = IDLE;
 
-int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length) {
+int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length,const bool readAltitudeSigned) {
     int i;
 
     for(i=0; i<data_length; ++i) {
@@ -104,7 +104,7 @@ int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,con
             }
             if(LTMreceiverIndex == LTMframelength-4) {   // received checksum byte
                 if(LTMrcvChecksum == 0) {
-                    if(ltm_check(td,originData) == 1)
+                    if(ltm_check(td,originData,readAltitudeSigned) == 1)
                     c_state = IDLE;
                 }
                 else { // wrong checksum, drop packet
@@ -119,14 +119,16 @@ int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,con
 
 // --------------------------------------------------------------------------------------
 // Decoded received commands
-int ltm_check(UAVTelemetryData *td,OriginData *originData) {
+int ltm_check(UAVTelemetryData *td,OriginData *originData,const bool readAltitudeSigned) {
     LTMreadIndex = 0;
 
     if (LTMcmd==LIGHTTELEMETRY_GFRAME)  {
         td->Latitude_dDeg = (ltmread_u32())/10000000.0;
         td->Longitude_dDeg = (ltmread_u32())/10000000.0;
         td->SpeedGround_KPH = (ltmread_u8() * 3.6f); // convert to kmh
-        td->AltitudeGPS_m = (ltmread_u32()/100.0f);
+        td->AltitudeGPS_m = readAltitudeSigned ?
+                 (((signed)ltmread_u32())/100.0f) //needs to be signed with iNAV
+                :((ltmread_u32())/100.0f);
         uint8_t ltm_satsfix = ltmread_u8();
         td->SatsInUse = ((ltm_satsfix >> 2) & 0xFF);
         td->validmsgsrx++;

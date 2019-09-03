@@ -1,3 +1,5 @@
+//Created by SettingsParser on ...
+
 #ifndef CONSTI_10_100_IDT
 #define CONSTI_10_100_IDT
 
@@ -12,6 +14,7 @@ public:
     static constexpr const char* EZWBS_Port="EZWB status port";
     static constexpr const char* T_ORIGIN_POSITION_ANDROID="T_ORIGIN_POSITION_ANDROID";
     static constexpr const char* T_MAVLINK_FLIGHTMODE_QUADCOPTER="T_MAVLINK_FLIGHTMODE_QUADCOPTER";
+    static constexpr const char* T_LTM_FOR_INAV="T_LTM_FOR_INAV";
     static constexpr const char* T_BATT_CELLS_N="T_BATT_CELLS_N";
     static constexpr const char* T_BATT_CELLS_V_WARNING1_ORANGE="T_BATT_CELLS_V_WARNING1_ORANGE";
     static constexpr const char* T_BATT_CELLS_V_WARNING2_RED="T_BATT_CELLS_V_WARNING2_RED";
