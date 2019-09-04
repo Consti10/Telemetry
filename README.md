@@ -11,6 +11,7 @@ Its functions are also exposed to JAVA code using the ndk.
 contains just a MainActivity.java class that allows modification of settings and lists debugging values on TextViews.
 These debugging values also include all received data as prefix - value - metric triples. Note that some prefixes have to be interpreted
 as Icons instead of utf-8 strings, and therefore are not displayed properly in the example.
+
 <img src="https://github.com/Consti10/Telemetry/blob/master/Screenshots/screenshot1.png" alt="Example" width="240">
 
 #### Usage:
