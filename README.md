@@ -12,7 +12,7 @@ contains just a MainActivity.java class that allows modification of settings and
 These debugging values also include all received data as prefix - value - metric triples. Note that some prefixes have to be interpreted
 as Icons instead of utf-8 strings, and therefore are not displayed properly in the example.
 
-<img src="https://github.com/Consti10/Telemetry/blob/master/Screenshots/screenshot1.png" alt="Example" width="240">
+<img src="https://github.com/Consti10/Telemetry/blob/master/screenshots/screenshot1.png" alt="Example" width="240">
 
 #### Usage:
 TelemetryExample depends on TelemetryCore, other projects should only include TelemetryCore not TelemetryExample.
