@@ -38,7 +38,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation('com.google.android.gms:play-services-location:16.0.0')
     implementation "androidx.appcompat:appcompat:$rootProject.appcompatVersion"
-    implementation 'androidx.preference:preference:1.0.0'
+    implementation "androidx.preference:preference:$rootProject.androidxpreferenceVersion"
 
     implementation 'com.mapzen.android:prefs-plus:1.0.0'
 }
