@@ -21,8 +21,8 @@ TelemetryExample depends on TelemetryCore, other projects should only include Te
 **Setup Dependencies**\
 There are 2 ways to use TelemetryCore in your Project \
 **1 Declaring Dependency via Jitpack: [jitpack.io](https://jitpack.io)** \
-:heavy_plus_sign: Easy
-:heavy_minus_sign: cannot browse native libraries
+:heavy_plus_sign: Easy \
+:heavy_minus_sign: cannot browse native libraries \
 Gradle example:
 ```gradle
     allprojects {
@@ -36,7 +36,7 @@ Gradle example:
    }
 ```
 **2 Forking the repo and including sources manually:** \
-:heavy_plus_sign: browse native libraries
+:heavy_plus_sign: browse native libraries \
 :heavy_plus_sign: modify code
 * To your top level settings.gradle file, add
 ```
