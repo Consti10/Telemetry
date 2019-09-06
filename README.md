@@ -6,6 +6,8 @@ It parses telemetry coming from different uav platforms ( MAVLINK,LTM,FRSKY ) in
 for optaining Telemetry values as human-readable strings (e.g. for display on an On-Screen-Display) without being platform-dependent.
 Its functions are also exposed to JAVA code using the ndk. 
 
+[![Release](https://jitpack.io/v/Consti10/Telemetry.svg)]
+(https://jitpack.io/#Consti10/Telemetry)
 
 ### TelemetryExample
 contains just a MainActivity.java class that allows modification of settings and lists debugging values on TextViews.
