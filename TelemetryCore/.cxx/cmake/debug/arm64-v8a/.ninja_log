@@ -1,9 +1,0 @@
-# ninja log v5
-2	4187	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/frsky.c.o	b7706c0ab825bf27
-1990	4525	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/smartport.c.o	df5470c6228f56da
-863	5387	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/mavlink2.c.o	6262f912325190ea
-3062	5519	0	CMakeFiles/ltm_frsky_mavlink_smartport.dir/src/main/cpp/Telemetry/cFiles/ltm.c.o	eb105c546e4e058c
-5519	6727	0	../../../../build/intermediates/cmake/debug/obj/arm64-v8a/libltm_frsky_mavlink_smartport.so	421bfa856f429f1e
-7556	11473	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/UDPReceiver.cpp.o	7188b183cdd9a68e
-6727	14057	0	CMakeFiles/TelemetryReceiver.dir/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o	42473dfb229ec563
-14058	15267	0	../../../../jniLibs/arm64-v8a/libTelemetryReceiver.so	2f183298dc9e8c94
