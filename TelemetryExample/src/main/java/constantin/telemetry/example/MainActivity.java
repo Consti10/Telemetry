@@ -58,13 +58,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume(){
         super.onResume();
-        testReceiverTelemetry.startReceiving();
     }
 
     @Override
     protected void onPause(){
         super.onPause();
-        testReceiverTelemetry.stopReceiving();
     }
 
     private void checkAndRequestPermissions(){
