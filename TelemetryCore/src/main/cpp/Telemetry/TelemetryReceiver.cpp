@@ -38,19 +38,33 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
     return port;
 }
 
-TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR):
-        GROUND_RECORDING_DIRECTORY(DIR),
-        T_Protocol(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1))),T_Port(getTelemetryPort(settingsN,T_Protocol)),
-        EZWBS_Protocol(static_cast<EZWB_STATUS_PROTOCOL>(settingsN.getInt(IDT::EZWBS_Protocol))),EZWBS_Port(settingsN.getInt(IDT::EZWBS_Port)),
-        MAVLINK_FLIGHTMODE_QUADCOPTER(settingsN.getBoolean(IDT::T_MAVLINK_FLIGHTMODE_QUADCOPTER)),
-        BATT_CAPACITY_MAH(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH)),BATT_CELLS_N(settingsN.getInt(IDT::T_BATT_CELLS_N)),
-        BATT_CELLS_V_WARNING1_ORANGE(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING1_ORANGE)),BATT_CELLS_V_WARNING2_RED(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING2_RED)),
-        BATT_CAPACITY_MAH_USED_WARNING(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH_USED_WARNING)),
-        ORIGIN_POSITION_ANDROID(settingsN.getBoolean(IDT::T_ORIGIN_POSITION_ANDROID)),
-        SOURCE_TYPE(static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_SOURCE))),
-        ENABLE_GROUND_RECORDING(settingsN.getBoolean(IDT::T_GROUND_RECORDING)),
-        T_PLAYBACK_FILENAME(settingsN.getString(IDT::T_PLAYBACK_FILENAME)),
-        LTM_FOR_INAV(true){
+TelemetryReceiver::TelemetryReceiver(const char* DIR):
+        GROUND_RECORDING_DIRECTORY(DIR){
+}
+
+void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager* assetManager) {
+    assert(mTelemetryDataReceiver.get()==nullptr);
+    assert(mEZWBDataReceiver.get()== nullptr);
+    assert(mTestFileReader.get()== nullptr);
+    
+    //read all the settings usw begin --------------------------
+    SettingsN settingsN(env,context,"pref_telemetry");
+    T_Protocol=(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1)));
+    T_Port=(getTelemetryPort(settingsN,T_Protocol));
+    EZWBS_Protocol=(static_cast<EZWB_STATUS_PROTOCOL>(settingsN.getInt(IDT::EZWBS_Protocol)));
+    EZWBS_Port=(settingsN.getInt(IDT::EZWBS_Port));
+    MAVLINK_FLIGHTMODE_QUADCOPTER=(settingsN.getBoolean(IDT::T_MAVLINK_FLIGHTMODE_QUADCOPTER));
+    BATT_CAPACITY_MAH=(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH));
+    BATT_CELLS_N=(settingsN.getInt(IDT::T_BATT_CELLS_N));
+    BATT_CELLS_V_WARNING1_ORANGE=(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING1_ORANGE));
+    BATT_CELLS_V_WARNING2_RED=(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING2_RED)),
+            BATT_CAPACITY_MAH_USED_WARNING=(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH_USED_WARNING));
+    ORIGIN_POSITION_ANDROID=(settingsN.getBoolean(IDT::T_ORIGIN_POSITION_ANDROID));
+    SOURCE_TYPE=(static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_SOURCE)));
+    ENABLE_GROUND_RECORDING=(settingsN.getBoolean(IDT::T_GROUND_RECORDING));
+    T_PLAYBACK_FILENAME=(settingsN.getString(IDT::T_PLAYBACK_FILENAME));
+    LTM_FOR_INAV=(true);
+    //
     resetNReceivedTelemetryBytes();
     std::memset (&uav_td, 0, sizeof(uav_td));
     uav_td.Pitch_Deg=10; //else you cannot see the AH 3D Quad,since it is totally flat
@@ -66,16 +80,8 @@ TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR)
     wifibroadcastTelemetryData.current_signal_joystick_uplink=-99;
     wifibroadcastTelemetryData.current_signal_telemetry_uplink=-99;
     wifibroadcastTelemetryData.wifi_adapter_cnt=1;
-}
-
-
-void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
-    assert(mTelemetryDataReceiver.get()==nullptr);
-    assert(mEZWBDataReceiver.get()== nullptr);
-    assert(mTestFileReader.get()== nullptr);
-    //read all the settings usw begin --------------------------
-
     //read all settings end -----------------------------------
+
 
     if(ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS){
         const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
@@ -702,9 +708,8 @@ inline TelemetryReceiver *native(jlong ptr) {
 extern "C" {
 JNI_METHOD(jlong , createInstance)
 (JNIEnv *env,jclass unused,jobject context,jstring groundRecordingDirectory) {
-    SettingsN settingsN(env,context,"pref_telemetry");
     const char *str = env->GetStringUTFChars(groundRecordingDirectory, nullptr);
-    auto* telemetryReceiver = new TelemetryReceiver(settingsN,str);
+    auto* telemetryReceiver = new TelemetryReceiver(str);
     env->ReleaseStringUTFChars(groundRecordingDirectory,str);
     return jptr(telemetryReceiver);
 }
@@ -716,10 +721,10 @@ JNI_METHOD(void, deleteInstance)
 }
 
 JNI_METHOD(void, startReceiving)
-(JNIEnv *env,jclass unused,jlong testReceiverN,jobject assetManager) {
+(JNIEnv *env,jclass unused,jlong testReceiverN,jobject context,jobject assetManager) {
     TelemetryReceiver* p=native(testReceiverN);
     AAssetManager* mgr=AAssetManager_fromJava(env,assetManager);
-    p->startReceiving(mgr);
+    p->startReceiving(env,context,mgr);
 }
 
 JNI_METHOD(void, stopReceiving)

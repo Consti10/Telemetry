@@ -46,34 +46,37 @@ private:
     enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
     enum PROTOCOL_OPTIONS {NONE,XLTM,MAVLINK,XSMARTPORT,FRSKY};
     enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6,OpenHD_1_0_0};
-    const SOURCE_TYPE_OPTIONS SOURCE_TYPE;
-    const PROTOCOL_OPTIONS T_Protocol;
-    const int T_Port;
     static int getTelemetryPort(const SettingsN& settingsN, int T_Protocol);
     const std::string GROUND_RECORDING_DIRECTORY;
+    //
+    SOURCE_TYPE_OPTIONS SOURCE_TYPE;
+    PROTOCOL_OPTIONS T_Protocol;
+    int T_Port;
     //ez-wb status settings
     EZWB_STATUS_PROTOCOL EZWBS_Protocol;
-    const int EZWBS_Port;
-    const std::string T_PLAYBACK_FILENAME;
-    const bool LTM_FOR_INAV;
+    int EZWBS_Port;
+    std::string T_PLAYBACK_FILENAME;
+    bool LTM_FOR_INAV;
 public:
-    const bool MAVLINK_FLIGHTMODE_QUADCOPTER;
-    const bool ORIGIN_POSITION_ANDROID;
-    const bool ENABLE_GROUND_RECORDING;
+    bool MAVLINK_FLIGHTMODE_QUADCOPTER;
+    bool ORIGIN_POSITION_ANDROID;
+    bool ENABLE_GROUND_RECORDING;
     //
-    const int BATT_CAPACITY_MAH;
-    const int BATT_CELLS_N;
-    const float BATT_CELLS_V_WARNING1_ORANGE;
-    const float BATT_CELLS_V_WARNING2_RED;
-    const float BATT_CAPACITY_MAH_USED_WARNING;
+    int BATT_CAPACITY_MAH;
+    int BATT_CELLS_N;
+    float BATT_CELLS_V_WARNING1_ORANGE;
+    float BATT_CELLS_V_WARNING2_RED;
+    float BATT_CAPACITY_MAH_USED_WARNING;
 public:
-    explicit TelemetryReceiver(const SettingsN& settingsN,const char* DIR);
+    explicit TelemetryReceiver(const char* DIR);
     /**
      * Start all telemetry receiver. If they are already receiving, nothing happens.
      * Make sure startReceiving() and stopReceivingAndWait() are not called on different threads
-     * Also make sure to call stopReading() every time startReading() is called
+     * Also make sure to call stopReceiving() every time startReceiving() is called
+     * Change 22.02.2020: Also read all settings from shared preferences (before they were immutable, but this meant you
+     * had to re-create the native TelemetryReceiver() every time shared preferences were changed)
      */
-    void startReceiving(AAssetManager* assetManager);
+    void startReceiving(JNIEnv *env,jobject context,AAssetManager* assetManager);
     /**
      * Stop all telemetry receiver if they are currently running
      * Make sure startReading() and stopReading() are not called on different threads

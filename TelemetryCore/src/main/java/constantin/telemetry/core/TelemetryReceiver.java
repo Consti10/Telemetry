@@ -45,7 +45,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
     }
     private static native long createInstance(Context context,String groundRecordingDirectory);
     private static native void deleteInstance(long instance);
-    private static native void startReceiving(long instance,AssetManager assetManager);
+    private static native void startReceiving(long instance,Context context,AssetManager assetManager);
     private static native void stopReceiving(long instance);
     //set values from java
     private static native void setDecodingInfo(long instance,float currentFPS, float currentKiloBitsPerSecond,float avgParsingTime_ms,
@@ -77,7 +77,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private void startReceiving(){
-        startReceiving(nativeInstance,context.getAssets());
+        startReceiving(nativeInstance,context,context.getAssets());
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
