@@ -2,6 +2,7 @@ package constantin.telemetry.core;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -34,13 +35,11 @@ public class HomeLocation implements LifecycleObserver {
     private final IHomeLocationChanged mIHomeLocationChanged;
     private final int SUFFICIENT_ACCURACY_M=10;
     private final boolean OSD_ORIGIN_POSITION_ANDROID;
-    private boolean paused=false;
 
-    public  <T extends ComponentActivity> HomeLocation(final T t,IHomeLocationChanged homeLocationChanged){
+    public <T extends Activity & LifecycleOwner> HomeLocation(final T t, IHomeLocationChanged homeLocationChanged){
         t.getLifecycle().addObserver(this);
-        final Context context=t.getApplicationContext();
         mIHomeLocationChanged=homeLocationChanged;
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(t);
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -52,10 +51,9 @@ public class HomeLocation implements LifecycleObserver {
                 }
             }
         };
-        final SharedPreferences pref_telemetry = context.getSharedPreferences("pref_telemetry",MODE_PRIVATE);
-        OSD_ORIGIN_POSITION_ANDROID=pref_telemetry.getBoolean(context.getString(R.string.T_ORIGIN_POSITION_ANDROID),false);
+        final SharedPreferences pref_telemetry = t.getSharedPreferences("pref_telemetry",MODE_PRIVATE);
+        OSD_ORIGIN_POSITION_ANDROID=pref_telemetry.getBoolean(t.getString(R.string.T_ORIGIN_POSITION_ANDROID),false);
     }
-
 
 
     @SuppressLint("MissingPermission")

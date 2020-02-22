@@ -24,13 +24,13 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     private TextView receivedTelemetryDataTV=null;
     private TextView ezwbForwardDataTV=null;
     private TextView dataAsStringTV=null;
-    private final Context context;
+    private final Activity activity;
     private final TelemetryReceiver telemetryReceiver;
     private Thread mThread;
 
-    public  <T extends ComponentActivity> TestReceiverTelemetry(final T t){
+    public  <T extends Activity & LifecycleOwner> TestReceiverTelemetry(final T t){
         t.getLifecycle().addObserver(this);
-        this.context=t.getApplicationContext();
+        this.activity=t;
         telemetryReceiver =new TelemetryReceiver(t);
     }
 
@@ -69,7 +69,7 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     private void updateViewIfStringChanged(final TextView tv, final String newContent,final boolean changeColor,@ColorInt final int newColor){
         final String prev=tv.getText().toString();
         if(!prev.contentEquals(newContent)){
-            ((Activity)context).runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     tv.setText(newContent);
@@ -84,10 +84,10 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     }
 
     private void makeToastOnUI(final String s,final int length){
-        ((Activity)context).runOnUiThread(new Runnable() {
+        activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context,s,length).show();
+                Toast.makeText(activity,s,length).show();
             }
         });
     }

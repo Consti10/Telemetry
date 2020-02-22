@@ -2,6 +2,7 @@ package constantin.telemetry.core;
 
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -67,10 +68,10 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
 
     //Only use with AppCombatActivity for lifecycle listener
     //receives data in between onPause()<-->onResume()
-    public <T extends ComponentActivity> TelemetryReceiver(final T parent){
+    public <T extends Activity & LifecycleOwner> TelemetryReceiver(final T parent){
         parent.getLifecycle().addObserver(this);
-        this.context=parent.getApplicationContext();
-        nativeInstance=createInstance(context,getDirectoryToSaveDataTo());
+        context=parent;
+        nativeInstance=createInstance(parent,getDirectoryToSaveDataTo());
         mHomeLocation=new HomeLocation(parent,this);
     }
 
