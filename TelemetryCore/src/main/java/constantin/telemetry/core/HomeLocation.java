@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -34,10 +35,9 @@ public class HomeLocation implements LifecycleObserver {
     private final boolean OSD_ORIGIN_POSITION_ANDROID;
     private boolean paused=false;
 
-    public HomeLocation(final AppCompatActivity activity,IHomeLocationChanged homeLocationChanged){
-        activity.getLifecycle().addObserver(this);
+    public <T extends LifecycleOwner> HomeLocation(final T t,final Context context, IHomeLocationChanged homeLocationChanged){
+        t.getLifecycle().addObserver(this);
         mIHomeLocationChanged=homeLocationChanged;
-        final Context context=activity.getApplicationContext();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         mLocationCallback = new LocationCallback() {
             @Override

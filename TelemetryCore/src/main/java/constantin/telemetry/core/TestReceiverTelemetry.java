@@ -11,6 +11,7 @@ import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
 //creates a new thread that -in between onResume() / onPause()
@@ -23,18 +24,17 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     private final TextView ezwbForwardDataTV;
     private final TextView dataAsStringTV;
     private final Context context;
-    private final AppCompatActivity activity;
     private final TelemetryReceiver telemetryReceiver;
     private Thread mThread;
 
-    public TestReceiverTelemetry(AppCompatActivity activity, TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV, TextView telemetryValuesAsString){
-        this.activity=activity;
-        activity.getLifecycle().addObserver(this);
-        this.context=activity.getApplicationContext();
+    public <T extends LifecycleOwner> TestReceiverTelemetry(final T t,final Context context,
+                                                            TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV, TextView telemetryValuesAsString){
+        t.getLifecycle().addObserver(this);
+        this.context=context;
         this.receivedTelemetryDataTV=receivedTelemetryDataTV;
         this.ezwbForwardDataTV=ezwbForwardDataTV;
         this.dataAsStringTV=telemetryValuesAsString;
-        telemetryReceiver =new TelemetryReceiver(activity);
+        telemetryReceiver =new TelemetryReceiver(t,context);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -66,7 +66,7 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     private void updateViewIfStringChanged(final TextView tv, final String newContent,final boolean changeColor,@ColorInt final int newColor){
         final String prev=tv.getText().toString();
         if(!prev.contentEquals(newContent)){
-            activity.runOnUiThread(new Runnable() {
+            ((Activity)context).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     tv.setText(newContent);

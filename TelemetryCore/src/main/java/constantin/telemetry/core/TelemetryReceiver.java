@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
 import java.io.File;
@@ -65,11 +66,11 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
 
     //Only use with AppCombatActivity for lifecycle listener
     //receives data in between onPause()<-->onResume()
-    public TelemetryReceiver(final AppCompatActivity activity){
-        activity.getLifecycle().addObserver(this);
-        this.context=activity.getApplicationContext();
+    public <T extends LifecycleOwner> TelemetryReceiver(final T lifecycleOwner,final Context context){
+        lifecycleOwner.getLifecycle().addObserver(this);
+        this.context=context;
         nativeInstance=createInstance(context,getDirectoryToSaveDataTo());
-        mHomeLocation=new HomeLocation(activity,this);
+        mHomeLocation=new HomeLocation(lifecycleOwner,context,this);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
