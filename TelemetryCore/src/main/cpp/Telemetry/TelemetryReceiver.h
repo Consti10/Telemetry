@@ -5,9 +5,9 @@
 #ifndef OSDTESTER_TELEMETRYRECEIVER_H
 #define OSDTESTER_TELEMETRYRECEIVER_H
 
-#include "UDPReceiver.h"
+#include "Network/UDPReceiver.h"
 #include "cFiles/UAVTelemetryData.h"
-#include "WFBTelemetryData.h"
+#include "WFBTelemetryData/WFBTelemetryData.h"
 
 #include <atomic>
 #include <fstream>
@@ -39,8 +39,8 @@ public:
     void operator=(const TelemetryReceiver&) = delete;
 private:
     //these are called via lambda by the UDP receiver(s)
-    void onUAVTelemetryDataReceived(uint8_t[],int);
-    void onEZWBStatusDataReceived(uint8_t[], int);
+    void onUAVTelemetryDataReceived(const uint8_t[],size_t);
+    void onEZWBStatusDataReceived(const uint8_t[],size_t);
 private:
     enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
     enum PROTOCOL_OPTIONS {NONE,XLTM,MAVLINK,XSMARTPORT,FRSKY};

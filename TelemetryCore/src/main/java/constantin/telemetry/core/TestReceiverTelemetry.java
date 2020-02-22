@@ -8,36 +8,46 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
-public class TestReceiverTelemetry implements Runnable {
+//creates a new thread that -in between onResume() / onPause()
+//constantly reads from telemetryReceiver and updates the apropiate ui elements
+//
+
+public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
 
     private final TextView receivedTelemetryDataTV;
     private final TextView ezwbForwardDataTV;
     private final TextView dataAsStringTV;
     private final Context context;
-    private TelemetryReceiver telemetryReceiver;
+    private final AppCompatActivity activity;
+    private final TelemetryReceiver telemetryReceiver;
     private Thread mThread;
 
-    public TestReceiverTelemetry(Context c, TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV,TextView telemetryValuesAsString){
-        this.context=c;
+    public TestReceiverTelemetry(AppCompatActivity activity, TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV, TextView telemetryValuesAsString){
+        this.activity=activity;
+        activity.getLifecycle().addObserver(this);
+        this.context=activity.getApplicationContext();
         this.receivedTelemetryDataTV=receivedTelemetryDataTV;
         this.ezwbForwardDataTV=ezwbForwardDataTV;
         this.dataAsStringTV=telemetryValuesAsString;
+        telemetryReceiver =new TelemetryReceiver(activity);
     }
 
-    public void startReceiving(){
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    private void startUiUpdates(){
         mThread=new Thread(this);
         mThread.setName("TestReceiverTelemetry");
-        telemetryReceiver =new TelemetryReceiver(context);
-        telemetryReceiver.startReceiving();
         mThread.start();
     }
 
-    public void stopReceiving(){
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    public void stopUiUpdates(){
         mThread.interrupt();
         try {mThread.join();} catch (InterruptedException e) {e.printStackTrace();}
-        telemetryReceiver.stopReceiving();
-        telemetryReceiver.delete();
     }
 
     @SuppressLint("ApplySharedPref")
@@ -56,7 +66,7 @@ public class TestReceiverTelemetry implements Runnable {
     private void updateViewIfStringChanged(final TextView tv, final String newContent,final boolean changeColor,@ColorInt final int newColor){
         final String prev=tv.getText().toString();
         if(!prev.contentEquals(newContent)){
-            ((Activity)context).runOnUiThread(new Runnable() {
+            activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     tv.setText(newContent);

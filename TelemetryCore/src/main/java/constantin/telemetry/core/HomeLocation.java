@@ -14,6 +14,10 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -22,14 +26,18 @@ import static android.content.Context.MODE_PRIVATE;
  * accuracy of SUFFICIENT_ACCURACY_M is achieved
  */
 
-public class HomeLocation {
+public class HomeLocation implements LifecycleObserver {
     private final FusedLocationProviderClient mFusedLocationClient;
     private final LocationCallback mLocationCallback;
-    private IHomeLocationChanged mIHomeLocationChanged;
+    private final IHomeLocationChanged mIHomeLocationChanged;
     private final int SUFFICIENT_ACCURACY_M=10;
     private final boolean OSD_ORIGIN_POSITION_ANDROID;
+    private boolean paused=false;
 
-    public HomeLocation(final Context context){
+    public HomeLocation(final AppCompatActivity activity,IHomeLocationChanged homeLocationChanged){
+        activity.getLifecycle().addObserver(this);
+        mIHomeLocationChanged=homeLocationChanged;
+        final Context context=activity.getApplicationContext();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         mLocationCallback = new LocationCallback() {
             @Override
@@ -46,10 +54,12 @@ public class HomeLocation {
         OSD_ORIGIN_POSITION_ANDROID=pref_telemetry.getBoolean(context.getString(R.string.T_ORIGIN_POSITION_ANDROID),false);
     }
 
+
+
     @SuppressLint("MissingPermission")
-    public synchronized void resume(IHomeLocationChanged IHomeLocationChanged){
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    private void resume(){
         if(!OSD_ORIGIN_POSITION_ANDROID)return;
-        mIHomeLocationChanged = IHomeLocationChanged;
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(500); // in ms
         mLocationRequest.setFastestInterval(500);
@@ -57,12 +67,13 @@ public class HomeLocation {
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
     }
 
-    public synchronized void pause(){
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    private void pause(){
         mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        mIHomeLocationChanged =null;
+        mFusedLocationClient.flushLocations();
     }
 
-    private synchronized void newLocation(@NonNull final Location location){
+    private void newLocation(@NonNull final Location location){
         printLocation(location);
         if(mIHomeLocationChanged !=null){
             mIHomeLocationChanged.onHomeLocationChanged(location);

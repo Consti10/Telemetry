@@ -9,6 +9,11 @@ import android.location.Location;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+
 import java.io.File;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -25,7 +30,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 @SuppressWarnings("WeakerAccess")
-public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
+public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, LifecycleObserver {
 
     public static final int SOURCE_TYPE_UDP=0;
     public static final int SOURCE_TYPE_FILE=1;
@@ -58,24 +63,28 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged {
 
     //settings are initialized when creating the native instance !
 
-    public TelemetryReceiver(final Context context){
-        this.context=context;
+    //Only use with AppCombatActivity for lifecycle listener
+    //receives data in between onPause()<-->onResume()
+    public TelemetryReceiver(final AppCompatActivity activity){
+        activity.getLifecycle().addObserver(this);
+        this.context=activity.getApplicationContext();
         nativeInstance=createInstance(context,getDirectoryToSaveDataTo());
-        mHomeLocation=new HomeLocation(context);
+        mHomeLocation=new HomeLocation(activity,this);
     }
 
-    public void delete(){
-        deleteInstance(nativeInstance);
-    }
-
-    public void startReceiving(){
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    private void startReceiving(){
         startReceiving(nativeInstance,context.getAssets());
-        mHomeLocation.resume(this);
     }
 
-    public void stopReceiving(){
-        mHomeLocation.pause();
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    private void stopReceiving(){
         stopReceiving(nativeInstance);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+    private void deleteNativeInstance(){
+        deleteInstance(nativeInstance);
     }
 
     public final long getNativeInstance(){

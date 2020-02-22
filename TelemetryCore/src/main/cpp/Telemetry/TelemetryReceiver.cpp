@@ -9,7 +9,7 @@
 #include "Helper/PositionHelper.hpp"
 #include "Helper/StringHelper.hpp"
 #include "Helper/CPUPriorities.hpp"
-#include "WFBBackwardsCompatibility.h"
+#include "WFBTelemetryData/WFBBackwardsCompatibility.h"
 
 #include <locale>
 #include <codecvt>
@@ -81,19 +81,19 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
     }
     if(SOURCE_TYPE==UDP){
         if(T_Protocol!=TelemetryReceiver::NONE ){
-            std::function<void(uint8_t data[],int data_length)> f= [=](uint8_t data[],int data_length) {
+            UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
                 this->onUAVTelemetryDataReceived(data,data_length);
             };
-            mTelemetryDataReceiver=new UDPReceiver(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,1024,f);
+            mTelemetryDataReceiver=new UDPReceiver(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f,1024);
             mTelemetryDataReceiver->startReceiving();
         }
         //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
         //should not add any additional latency
         if(EZWBS_Protocol!=DISABLED){
-            std::function<void(uint8_t data[],int data_length)> f2 = [=](uint8_t data[],int data_length) {
+            UDPReceiver::DATA_CALLBACK f2 = [=](const uint8_t data[],size_t data_length) {
                 this->onEZWBStatusDataReceived(data, data_length);
             };
-            mEZWBDataReceiver=new UDPReceiver(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,1024,f2);
+            mEZWBDataReceiver=new UDPReceiver(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2,1024);
             mEZWBDataReceiver->startReceiving();
         }
     }else if(SOURCE_TYPE==FILE || SOURCE_TYPE==ASSETS){
@@ -140,7 +140,7 @@ void TelemetryReceiver::stopReceiving() {
     }
 }
 
-void TelemetryReceiver::onUAVTelemetryDataReceived(uint8_t data[],int data_length){
+void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t data_length){
     switch (T_Protocol){
         case TelemetryReceiver::XLTM:
             ltm_read(&uav_td,&originData,data,data_length,LTM_FOR_INAV);
@@ -168,7 +168,7 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(uint8_t data[],int data_lengt
     }
 }
 
-void TelemetryReceiver::onEZWBStatusDataReceived(uint8_t *data,const int data_length){
+void TelemetryReceiver::onEZWBStatusDataReceived(const uint8_t *data,const size_t data_length){
     nWIFIBRADCASTBytes+=data_length;
     if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES){
         const auto* struct_pointer= reinterpret_cast<const wifibroadcast_rx_status_forward_t*>(data);
@@ -720,9 +720,9 @@ JNI_METHOD(void, deleteInstance)
 
 JNI_METHOD(void, startReceiving)
 (JNIEnv *env,jclass unused,jlong testReceiverN,jobject assetManager) {
-    TelemetryReceiver* testRecN=native(testReceiverN);
+    TelemetryReceiver* p=native(testReceiverN);
     AAssetManager* mgr=AAssetManager_fromJava(env,assetManager);
-    testRecN->startReceiving(mgr);
+    p->startReceiving(mgr);
 }
 
 JNI_METHOD(void, stopReceiving)
@@ -733,8 +733,8 @@ JNI_METHOD(void, stopReceiving)
 
 JNI_METHOD(jstring , getStatisticsAsString)
 (JNIEnv *env,jclass unused,jlong telemetryReceiverN) {
-    TelemetryReceiver* telRecN=native(telemetryReceiverN);
-    jstring ret = env->NewStringUTF( telRecN->getStatisticsAsString().c_str());
+    TelemetryReceiver* p=native(telemetryReceiverN);
+    jstring ret = env->NewStringUTF(p->getStatisticsAsString().c_str());
     return ret;
 }
 

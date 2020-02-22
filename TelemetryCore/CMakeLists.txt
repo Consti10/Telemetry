@@ -24,7 +24,7 @@ target_link_libraries(ltm_frsky_mavlink_smartport
 #######################################################
 add_library( TelemetryReceiver
         SHARED
-        src/main/cpp/Telemetry/UDPReceiver.cpp
+        src/main/cpp/Telemetry/Network/UDPReceiver.cpp
         src/main/cpp/Telemetry/TelemetryReceiver.cpp
         )
 target_link_libraries(TelemetryReceiver
