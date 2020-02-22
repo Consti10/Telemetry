@@ -39,6 +39,7 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
 }
 
 TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR):
+        GROUND_RECORDING_DIRECTORY(DIR),
         T_Protocol(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1))),T_Port(getTelemetryPort(settingsN,T_Protocol)),
         EZWBS_Protocol(static_cast<EZWB_STATUS_PROTOCOL>(settingsN.getInt(IDT::EZWBS_Protocol))),EZWBS_Port(settingsN.getInt(IDT::EZWBS_Port)),
         MAVLINK_FLIGHTMODE_QUADCOPTER(settingsN.getBoolean(IDT::T_MAVLINK_FLIGHTMODE_QUADCOPTER)),
@@ -48,9 +49,7 @@ TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR)
         ORIGIN_POSITION_ANDROID(settingsN.getBoolean(IDT::T_ORIGIN_POSITION_ANDROID)),
         SOURCE_TYPE(static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_SOURCE))),
         ENABLE_GROUND_RECORDING(settingsN.getBoolean(IDT::T_GROUND_RECORDING)),
-        GROUND_RECORDING_DIRECTORY(DIR),
         T_PLAYBACK_FILENAME(settingsN.getString(IDT::T_PLAYBACK_FILENAME)),
-        //LTM_FOR_INAV(settingsN.getBoolean(IDT::T_LTM_FOR_INAV))
         LTM_FOR_INAV(true){
     resetNReceivedTelemetryBytes();
     std::memset (&uav_td, 0, sizeof(uav_td));
@@ -71,20 +70,24 @@ TelemetryReceiver::TelemetryReceiver(const SettingsN& settingsN,const char* DIR)
 
 
 void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
-    assert(mTelemetryDataReceiver==nullptr);
-    assert(mEZWBDataReceiver== nullptr);
-    assert(mTestFileReader== nullptr);
+    assert(mTelemetryDataReceiver.get()==nullptr);
+    assert(mEZWBDataReceiver.get()== nullptr);
+    assert(mTestFileReader.get()== nullptr);
+    //read all the settings usw begin --------------------------
+
+    //read all settings end -----------------------------------
+
     if(ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS){
-        const auto filename=GroundRecorder::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
+        const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
         //LOGD("%s",filename.c_str());
-        mGroundRecorder=new GroundRecorder(filename);
+        mGroundRecorder=std::make_unique<GroundRecorderRAW>(filename);
     }
     if(SOURCE_TYPE==UDP){
         if(T_Protocol!=TelemetryReceiver::NONE ){
             UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
                 this->onUAVTelemetryDataReceived(data,data_length);
             };
-            mTelemetryDataReceiver=new UDPReceiver(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f,1024);
+            mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f,1024);
             mTelemetryDataReceiver->startReceiving();
         }
         //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
@@ -93,7 +96,7 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
             UDPReceiver::DATA_CALLBACK f2 = [=](const uint8_t data[],size_t data_length) {
                 this->onEZWBStatusDataReceived(data, data_length);
             };
-            mEZWBDataReceiver=new UDPReceiver(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2,1024);
+            mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2,1024);
             mEZWBDataReceiver->startReceiving();
         }
     }else if(SOURCE_TYPE==FILE || SOURCE_TYPE==ASSETS){
@@ -105,10 +108,10 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
             }
             if(SOURCE_TYPE==FILE){
                 //we don't check if we are playing the right file type !
-                mTestFileReader=new FileReader(T_PLAYBACK_FILENAME,
+                mTestFileReader=std::make_unique<FileReader>(T_PLAYBACK_FILENAME,
                                                waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
             }else{
-                mTestFileReader=new FileReader(assetManager,"testlog."+getProtocolAsString(),
+                mTestFileReader=std::make_unique<FileReader>(assetManager,"testlog."+getProtocolAsString(),
                                                waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
             }
             mTestFileReader->startReading();
@@ -117,26 +120,20 @@ void TelemetryReceiver::startReceiving(AAssetManager* assetManager) {
 }
 
 void TelemetryReceiver::stopReceiving() {
-    if(mTelemetryDataReceiver!= nullptr){
+    if(mTelemetryDataReceiver){
         mTelemetryDataReceiver->stopReceiving();
-        delete(mTelemetryDataReceiver);
-        mTelemetryDataReceiver= nullptr;
+        mTelemetryDataReceiver.reset();
     }
-    if(mEZWBDataReceiver!= nullptr){
+    if(mEZWBDataReceiver){
         mEZWBDataReceiver->stopReceiving();
-        delete(mEZWBDataReceiver);
-        mEZWBDataReceiver= nullptr;
+        mEZWBDataReceiver.reset();
     }
-    if(mTestFileReader!= nullptr){
+    if(mTestFileReader){
         mTestFileReader->stopReading();
-        delete(mTestFileReader);
-        mTestFileReader= nullptr;
+        mTestFileReader.reset();
     }
-    if(mGroundRecorder!= nullptr){
-        //LOGD("XX%s",mGroundRecorder->filename.c_str());
-        mGroundRecorder->stop();
-        delete(mGroundRecorder);
-        mGroundRecorder=nullptr;
+    if(mGroundRecorder){
+        mGroundRecorder.reset();
     }
 }
 
@@ -163,7 +160,7 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
     if(T_Protocol==TelemetryReceiver::XLTM){
         uav_td.BatteryPack_P=(int8_t)(uav_td.BatteryPack_mAh/BATT_CAPACITY_MAH*100.0f);
     }
-    if(mGroundRecorder!= nullptr){
+    if(mGroundRecorder){
         mGroundRecorder->writeData(data,data_length);
     }
 }

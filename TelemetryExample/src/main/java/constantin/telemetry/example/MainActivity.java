@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
                 final Intent intent=new Intent();
                 intent.putExtra(ASettingsTelemetry.EXTRA_KEY,true);
                 intent.setClass(getApplicationContext(), ASettingsTelemetry.class);
+                //i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
         });

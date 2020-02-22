@@ -11,18 +11,25 @@
 #include <sstream>
 #include <filesystem>
 
+//Write raw data into the file specified by filename.
+//The file is only created as soon as any data is written, to not pollute
+//the file system with empty files
 
-class GroundRecorder{
+class GroundRecorderRAW{
 private:
     const std::string filename;
 public:
-    GroundRecorder(std::string s):filename(s) {
-        //ofstream.open (filename.c_str());
+    GroundRecorderRAW(std::string s):filename(s) {}
+    ~GroundRecorderRAW(){
+        if(ofstream.is_open()){
+            ofstream.flush();
+            ofstream.close();
+        }
     }
 
 //only as soon as we actually write data the file is created
 //to not pollute the file system with empty files
-    void writeData(const uint8_t *data,const int data_length) {
+    void writeData(const uint8_t *data,const size_t data_length) {
         if(data_length==0){
             return;
         }
@@ -30,11 +37,6 @@ public:
             ofstream.open (filename.c_str());
         }
         ofstream.write((char*)data,data_length);
-    }
-
-    void stop() {
-        ofstream.flush();
-        ofstream.close();
     }
     static std::string findUnusedFilename(std::string directory,std::string filetype) {
         auto t = std::time(nullptr);

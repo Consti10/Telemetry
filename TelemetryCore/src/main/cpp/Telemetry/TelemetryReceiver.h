@@ -12,9 +12,10 @@
 #include <atomic>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include "Helper/SettingsN.hpp"
 #include "Helper/FileReader.hpp"
-#include "Helper/GroundRecorder.hpp"
+#include "Helper/GroundRecorderRAW.hpp"
 
 //#define RECEIVE_FROM_TESTLOG
 
@@ -49,10 +50,10 @@ private:
     const PROTOCOL_OPTIONS T_Protocol;
     const int T_Port;
     static int getTelemetryPort(const SettingsN& settingsN, int T_Protocol);
+    const std::string GROUND_RECORDING_DIRECTORY;
     //ez-wb status settings
     EZWB_STATUS_PROTOCOL EZWBS_Protocol;
     const int EZWBS_Port;
-    const std::string GROUND_RECORDING_DIRECTORY;
     const std::string T_PLAYBACK_FILENAME;
     const bool LTM_FOR_INAV;
 public:
@@ -162,10 +163,10 @@ public:
 
     const std::wstring getMAVLINKFlightMode()const;
 private:
-    UDPReceiver* mTelemetryDataReceiver= nullptr;
-    UDPReceiver* mEZWBDataReceiver= nullptr;
-    FileReader* mTestFileReader= nullptr;
-    GroundRecorder* mGroundRecorder=nullptr;
+    std::unique_ptr<UDPReceiver> mTelemetryDataReceiver;
+    std::unique_ptr<UDPReceiver> mEZWBDataReceiver;
+    std::unique_ptr<FileReader> mTestFileReader;
+    std::unique_ptr<GroundRecorderRAW> mGroundRecorder;
 
     long nTelemetryBytes=0;
     long nWIFIBRADCASTBytes=0;
