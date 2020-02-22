@@ -13,6 +13,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
@@ -35,8 +36,9 @@ public class HomeLocation implements LifecycleObserver {
     private final boolean OSD_ORIGIN_POSITION_ANDROID;
     private boolean paused=false;
 
-    public <T extends LifecycleOwner> HomeLocation(final T t,final Context context, IHomeLocationChanged homeLocationChanged){
+    public  <T extends ComponentActivity> HomeLocation(final T t,IHomeLocationChanged homeLocationChanged){
         t.getLifecycle().addObserver(this);
+        final Context context=t.getApplicationContext();
         mIHomeLocationChanged=homeLocationChanged;
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(context);
         mLocationCallback = new LocationCallback() {

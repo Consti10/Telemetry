@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.ComponentActivity;
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Lifecycle;
@@ -15,26 +16,28 @@ import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.OnLifecycleEvent;
 
 //creates a new thread that -in between onResume() / onPause()
-//constantly reads from telemetryReceiver and updates the apropiate ui elements
-//
+//constantly reads from telemetryReceiver and updates the appropriate ui elements
+//if they are not null
 
 public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
 
-    private final TextView receivedTelemetryDataTV;
-    private final TextView ezwbForwardDataTV;
-    private final TextView dataAsStringTV;
+    private TextView receivedTelemetryDataTV=null;
+    private TextView ezwbForwardDataTV=null;
+    private TextView dataAsStringTV=null;
     private final Context context;
     private final TelemetryReceiver telemetryReceiver;
     private Thread mThread;
 
-    public <T extends LifecycleOwner> TestReceiverTelemetry(final T t,final Context context,
-                                                            TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV, TextView telemetryValuesAsString){
+    public  <T extends ComponentActivity> TestReceiverTelemetry(final T t){
         t.getLifecycle().addObserver(this);
-        this.context=context;
+        this.context=t.getApplicationContext();
+        telemetryReceiver =new TelemetryReceiver(t);
+    }
+
+    public void setViews(TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV, TextView telemetryValuesAsString){
         this.receivedTelemetryDataTV=receivedTelemetryDataTV;
         this.ezwbForwardDataTV=ezwbForwardDataTV;
         this.dataAsStringTV=telemetryValuesAsString;
-        telemetryReceiver =new TelemetryReceiver(t,context);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
@@ -45,7 +48,7 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    public void stopUiUpdates(){
+    private void stopUiUpdates(){
         mThread.interrupt();
         try {mThread.join();} catch (InterruptedException e) {e.printStackTrace();}
     }

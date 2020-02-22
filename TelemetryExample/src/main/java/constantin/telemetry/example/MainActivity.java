@@ -52,7 +52,8 @@ public class MainActivity extends AppCompatActivity {
         TextView tv1 = findViewById(R.id.textView);
         TextView tv2 = findViewById(R.id.textView2);
         TextView tv3 = findViewById(R.id.textView3);
-        testReceiverTelemetry=new TestReceiverTelemetry(this,this, tv1, tv2, tv3);
+        testReceiverTelemetry=new TestReceiverTelemetry(this);
+        testReceiverTelemetry.setViews( tv1, tv2, tv3);
     }
 
     @Override
