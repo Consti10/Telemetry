@@ -29,9 +29,9 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     private Thread mThread;
 
     public  <T extends Activity & LifecycleOwner> TestReceiverTelemetry(final T t){
-        t.getLifecycle().addObserver(this);
         this.activity=t;
         telemetryReceiver =new TelemetryReceiver(t);
+        t.getLifecycle().addObserver(this);
     }
 
     public void setViews(TextView receivedTelemetryDataTV, TextView ezwbForwardDataTV, TextView telemetryValuesAsString){
@@ -51,6 +51,44 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     private void stopUiUpdates(){
         mThread.interrupt();
         try {mThread.join();} catch (InterruptedException e) {e.printStackTrace();}
+    }
+
+    @Override
+    public void run() {
+        long lastCheckMS = System.currentTimeMillis() - 2*1000;
+        while (!Thread.currentThread().isInterrupted()){
+            //if any of the TV are not null, we update its content
+            //with the corresponding string, and optionally change color
+            if(receivedTelemetryDataTV !=null){
+                final String s= telemetryReceiver.getStatisticsAsString();
+                final int newColor=telemetryReceiver.anyTelemetryDataReceived() ? Color.GREEN : Color.RED;
+                updateViewIfStringChanged(receivedTelemetryDataTV,s,true,newColor);
+            }
+            if(ezwbForwardDataTV!=null){
+                final String s= telemetryReceiver.getEZWBDataAsString();
+                updateViewIfStringChanged(ezwbForwardDataTV,s,false,0);
+            }
+            if(dataAsStringTV!=null){
+                final String s = telemetryReceiver.getTelemetryDataAsString();
+                updateViewIfStringChanged(dataAsStringTV,s,false,0);
+            }
+            if(telemetryReceiver.isEZWBIpAvailable()){
+                onEZWBIpDetected(telemetryReceiver.getEZWBIPAdress());
+            }
+            //Every 3.5s we check if we are receiving video data, but cannot parse the data. Probably the user did mix up
+            //ezwb-versions
+            if(System.currentTimeMillis()- lastCheckMS >=3500){
+                final boolean errorEZ_WB= telemetryReceiver.receivingEZWBButCannotParse();
+                lastCheckMS =System.currentTimeMillis();
+                if(errorEZ_WB){
+                    makeToastOnUI("You are receiving ez-wifibroadcast telemetry data, but FPV-VR cannot parse it. Probably you are using" +
+                            " app version 1.5 or higher with ez-wb. 1.6 or lower. Please upgrade to ez-wb 2.0. This also allows you to read all useful" +
+                            " telemetry data from your EZ-WB rx pi on android.",Toast.LENGTH_SHORT);
+                }
+            }
+            //Refresh every 200ms
+            try {Thread.sleep(200);} catch (InterruptedException e) {return;}
+        }
     }
 
     @SuppressLint("ApplySharedPref")
@@ -90,44 +128,6 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
                 Toast.makeText(activity,s,length).show();
             }
         });
-    }
-
-    @Override
-    public void run() {
-        long lastCheckMS = System.currentTimeMillis() - 2*1000;
-        while (!Thread.currentThread().isInterrupted()){
-            //if any of the TV are not null, we update its content
-            //with the corresponding string, and optionally change color
-            if(receivedTelemetryDataTV !=null){
-                final String s= telemetryReceiver.getStatisticsAsString();
-                final int newColor=telemetryReceiver.anyTelemetryDataReceived() ? Color.GREEN : Color.RED;
-                updateViewIfStringChanged(receivedTelemetryDataTV,s,true,newColor);
-            }
-            if(ezwbForwardDataTV!=null){
-                final String s= telemetryReceiver.getEZWBDataAsString();
-                updateViewIfStringChanged(ezwbForwardDataTV,s,false,0);
-            }
-            if(dataAsStringTV!=null){
-                final String s = telemetryReceiver.getTelemetryDataAsString();
-                updateViewIfStringChanged(dataAsStringTV,s,false,0);
-            }
-            if(telemetryReceiver.isEZWBIpAvailable()){
-                onEZWBIpDetected(telemetryReceiver.getEZWBIPAdress());
-            }
-            //Every 3.5s we check if we are receiving video data, but cannot parse the data. Probably the user did mix up
-            //ezwb-versions
-            if(System.currentTimeMillis()- lastCheckMS >=3500){
-                final boolean errorEZ_WB= telemetryReceiver.receivingEZWBButCannotParse();
-                lastCheckMS =System.currentTimeMillis();
-                if(errorEZ_WB){
-                    makeToastOnUI("You are receiving ez-wifibroadcast telemetry data, but FPV-VR cannot parse it. Probably you are using" +
-                            " app version 1.5 or higher with ez-wb. 1.6 or lower. Please upgrade to ez-wb 2.0. This also allows you to read all useful" +
-                            " telemetry data from your EZ-WB rx pi on android.",Toast.LENGTH_SHORT);
-                }
-            }
-            //Refresh every 200ms
-            try {Thread.sleep(200);} catch (InterruptedException e) {return;}
-        }
     }
 
     public interface EZWBIpAddressDetected{

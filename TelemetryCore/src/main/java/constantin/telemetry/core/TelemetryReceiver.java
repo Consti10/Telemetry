@@ -39,7 +39,6 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
     public static final int SOURCE_TYPE_FILE=1;
     public static final int SOURCE_TYPE_ASSETS=2;
 
-
     static {
         System.loadLibrary("TelemetryReceiver");
     }
@@ -64,15 +63,14 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
     private final Context context;
     private final HomeLocation mHomeLocation;
 
-    //settings are initialized when creating the native instance !
 
     //Only use with AppCombatActivity for lifecycle listener
     //receives data in between onPause()<-->onResume()
     public <T extends Activity & LifecycleOwner> TelemetryReceiver(final T parent){
-        parent.getLifecycle().addObserver(this);
         context=parent;
         nativeInstance=createInstance(parent,getDirectoryToSaveDataTo());
         mHomeLocation=new HomeLocation(parent,this);
+        parent.getLifecycle().addObserver(this);
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)

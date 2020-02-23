@@ -46,7 +46,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mTelemetryDataReceiver.get()==nullptr);
     assert(mEZWBDataReceiver.get()== nullptr);
     assert(mTestFileReader.get()== nullptr);
-    
+
     //read all the settings usw begin --------------------------
     SettingsN settingsN(env,context,"pref_telemetry");
     T_Protocol=(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1)));
@@ -565,7 +565,7 @@ const std::string TelemetryReceiver::getStatisticsAsString()const {
     }else{
         ostream<<"Source type==File. ("+getProtocolAsString()+") Select UDP as data source\n";
         ostream<<"nTelemetryBytes"<<nTelemetryBytes<<"\n";
-        ostream<<"nParsedBytes"<<mTestFileReader->getNReceivedbytes()<<"\n";
+        ostream<<"nParsedBytes"<<(mTestFileReader ? mTestFileReader->getNReceivedbytes() : -1)<<"\n";
         ostream<<"Packets:"<<uav_td.validmsgsrx<<"\n";
     }
     return ostream.str();
@@ -682,7 +682,7 @@ const std::string TelemetryReceiver::getProtocolAsString() const {
         case TelemetryReceiver::XLTM:ss<<"ltm";break;
         case TelemetryReceiver::FRSKY:ss<<"frsky";break;
         case TelemetryReceiver::MAVLINK:ss<<"mavlink";break;
-        default:assert(false);break;
+        default:assert(true);break;
     }
     return ss.str();
 }
