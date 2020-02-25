@@ -20,7 +20,6 @@ android {
             abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
@@ -36,7 +35,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation('com.google.android.gms:play-services-location:16.0.0')
+    implementation('com.google.android.gms:play-services-location:17.0.0')
     implementation "androidx.appcompat:appcompat:$rootProject.appcompatVersion"
     implementation "androidx.preference:preference:$rootProject.androidxpreferenceVersion"
 
