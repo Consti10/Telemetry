@@ -20,6 +20,8 @@ public:
     static constexpr const char* T_BATT_CELLS_V_MIN="T_BATT_CELLS_V_MIN";
     static constexpr const char* T_BATT_CAPACITY_MAH="T_BATT_CAPACITY_MAH";
     static constexpr const char* T_BATT_CAPACITY_MAH_USED_WARNING="T_BATT_CAPACITY_MAH_USED_WARNING";
+    static constexpr const char* T_METRIC_SPEED_HORIZONTAL="T_METRIC_SPEED_HORIZONTAL";
+    static constexpr const char* T_METRIC_SPEED_VERTICAL="T_METRIC_SPEED_VERTICAL";
     static constexpr const char* T_GROUND_RECORDING="T_GROUND_RECORDING";
     static constexpr const char* T_SOURCE="T_SOURCE";
     static constexpr const char* T_PLAYBACK_FILENAME="T_PLAYBACK_FILENAME";

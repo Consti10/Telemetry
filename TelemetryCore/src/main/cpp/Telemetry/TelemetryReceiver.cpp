@@ -46,7 +46,6 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mTelemetryDataReceiver.get()==nullptr);
     assert(mEZWBDataReceiver.get()== nullptr);
     assert(mTestFileReader.get()== nullptr);
-
     //read all the settings usw begin --------------------------
     SettingsN settingsN(env,context,"pref_telemetry");
     T_Protocol=(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1)));
@@ -64,6 +63,8 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     ENABLE_GROUND_RECORDING=(settingsN.getBoolean(IDT::T_GROUND_RECORDING));
     T_PLAYBACK_FILENAME=(settingsN.getString(IDT::T_PLAYBACK_FILENAME));
     LTM_FOR_INAV=(true);
+    T_METRIC_SPEED_HORIZONTAL= static_cast<METRIC_SPEED>(settingsN.getInt(IDT::T_METRIC_SPEED_HORIZONTAL));
+    T_METRIC_SPEED_VERTICAL= static_cast<METRIC_SPEED>(settingsN.getInt(IDT::T_METRIC_SPEED_VERTICAL),1);
     //
     resetNReceivedTelemetryBytes();
     std::memset (&uav_td, 0, sizeof(uav_td));
@@ -334,14 +335,24 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             break;
         case HS_GROUND:{
             ret.prefix=L"HS";
-            ret.value= StringHelper::doubleToString(uav_td.SpeedGround_KPH, 5, 2);
-            ret.metric=L"km/h";
+            if(T_METRIC_SPEED_HORIZONTAL==KMH){
+                ret.value= StringHelper::doubleToString(uav_td.SpeedGround_KPH, 5, 2);
+                ret.metric=L"km/h";
+            }else{
+                ret.value= StringHelper::doubleToString(uav_td.SpeedGround_KPH*KMH_TO_MS, 5, 2);
+                ret.metric=L"m/s";
+            }
         }
             break;
         case HS_AIR:{
             ret.prefix=L"HS";
-            ret.value= StringHelper::doubleToString(uav_td.SpeedAir_KPH, 5, 2);
-            ret.metric=L"km/h";
+            if(T_METRIC_SPEED_HORIZONTAL==KMH){
+                ret.value= StringHelper::doubleToString(uav_td.SpeedAir_KPH, 5, 2);
+                ret.metric=L"km/h";
+            }else{
+                ret.value= StringHelper::doubleToString(uav_td.SpeedAir_KPH*KMH_TO_MS, 5, 2);
+                ret.metric=L"m/s";
+            }
         }
             break;
         case FLIGHT_TIME:{
@@ -430,8 +441,13 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             break;
         case VS:{
             ret.prefix=L"VS";
-            ret.value= StringHelper::doubleToString(uav_td.SpeedClimb_KPH, 5, 2);
-            ret.metric=L"km/h";
+            if(T_METRIC_SPEED_VERTICAL==KMH){
+                ret.value= StringHelper::doubleToString(uav_td.SpeedClimb_KPH, 5, 2);
+                ret.metric=L"km/h";
+            }else{
+                ret.value= StringHelper::doubleToString(uav_td.SpeedClimb_KPH*KMH_TO_MS, 5, 2);
+                ret.metric=L"m/s";
+            }
         }
             break;
         case DECODER_LATENCY_DETAILED:{

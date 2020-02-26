@@ -46,6 +46,7 @@ private:
     enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
     enum PROTOCOL_OPTIONS {NONE,XLTM,MAVLINK,XSMARTPORT,FRSKY};
     enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6,OpenHD_1_0_0};
+    enum METRIC_SPEED{KMH,MS};
     static int getTelemetryPort(const SettingsN& settingsN, int T_Protocol);
     const std::string GROUND_RECORDING_DIRECTORY;
     //
@@ -57,6 +58,8 @@ private:
     int EZWBS_Port;
     std::string T_PLAYBACK_FILENAME;
     bool LTM_FOR_INAV;
+    METRIC_SPEED T_METRIC_SPEED_VERTICAL;
+    METRIC_SPEED T_METRIC_SPEED_HORIZONTAL;
 public:
     bool MAVLINK_FLIGHTMODE_QUADCOPTER;
     bool ORIGIN_POSITION_ANDROID;
@@ -163,7 +166,6 @@ public:
     };
     const MTelemetryValue getTelemetryValue(TelemetryValueIndex index)const;
     const MTelemetryValue getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(int adapter)const;
-
     const std::wstring getMAVLINKFlightMode()const;
 private:
     std::unique_ptr<UDPReceiver> mTelemetryDataReceiver;
@@ -179,6 +181,7 @@ private:
     AppOSDData appOSDData;
     UAVTelemetryData uav_td;
     wifibroadcast_rx_status_forward_t2 wifibroadcastTelemetryData;
+    static constexpr const float KMH_TO_MS=1000.0F/(60.0F*60.0F);
 private:
     const std::wstring ICON_BATTERY=std::wstring(1,(wchar_t)192);
     const std::wstring ICON_CHIP=std::wstring(1,(wchar_t)192+1);
