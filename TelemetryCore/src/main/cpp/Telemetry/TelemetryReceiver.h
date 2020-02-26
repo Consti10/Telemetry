@@ -60,6 +60,7 @@ private:
     bool LTM_FOR_INAV;
     METRIC_SPEED T_METRIC_SPEED_VERTICAL;
     METRIC_SPEED T_METRIC_SPEED_HORIZONTAL;
+    void updateSettings(JNIEnv *env,jobject context);
 public:
     bool MAVLINK_FLIGHTMODE_QUADCOPTER;
     bool ORIGIN_POSITION_ANDROID;

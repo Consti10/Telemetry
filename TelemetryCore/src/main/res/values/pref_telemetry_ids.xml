@@ -25,7 +25,7 @@
     //Metrics
     <string name="T_METRIC_SPEED_HORIZONTAL">T_METRIC_SPEED_HORIZONTAL</string>
     <string name="T_METRIC_SPEED_VERTICAL">T_METRIC_SPEED_VERTICAL</string>
-
+    //other
     <string name="T_GROUND_RECORDING">T_GROUND_RECORDING</string>
 
 

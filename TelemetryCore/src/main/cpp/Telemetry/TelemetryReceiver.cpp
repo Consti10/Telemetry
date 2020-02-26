@@ -42,11 +42,7 @@ TelemetryReceiver::TelemetryReceiver(const char* DIR):
         GROUND_RECORDING_DIRECTORY(DIR){
 }
 
-void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager* assetManager) {
-    assert(mTelemetryDataReceiver.get()==nullptr);
-    assert(mEZWBDataReceiver.get()== nullptr);
-    assert(mTestFileReader.get()== nullptr);
-    //read all the settings usw begin --------------------------
+void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
     SettingsN settingsN(env,context,"pref_telemetry");
     T_Protocol=(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1)));
     T_Port=(getTelemetryPort(settingsN,T_Protocol));
@@ -81,9 +77,13 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     wifibroadcastTelemetryData.current_signal_joystick_uplink=-99;
     wifibroadcastTelemetryData.current_signal_telemetry_uplink=-99;
     wifibroadcastTelemetryData.wifi_adapter_cnt=1;
-    //read all settings end -----------------------------------
+}
 
-
+void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager* assetManager) {
+    assert(mTelemetryDataReceiver.get()==nullptr);
+    assert(mEZWBDataReceiver.get()== nullptr);
+    assert(mTestFileReader.get()== nullptr);
+    updateSettings(env,context);
     if(ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS){
         const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
         //LOGD("%s",filename.c_str());
@@ -707,6 +707,7 @@ const std::string TelemetryReceiver::getSystemAsString() const {
     const std::string ret=(EZWBS_Protocol==EZWB_16_rc6) ? "EZ-Wifibroadcast" : "OpenHD";
     return ret;
 }
+
 
 
 //----------------------------------------------------JAVA bindings---------------------------------------------------------------
