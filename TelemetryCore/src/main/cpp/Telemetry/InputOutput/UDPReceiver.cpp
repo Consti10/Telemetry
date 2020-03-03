@@ -1,15 +1,16 @@
 
 #include "UDPReceiver.h"
-#include "../Helper/CPUPriorities.hpp"
+#include "../Helper/CPUPriority.hpp"
 #include <arpa/inet.h>
 #include <vector>
 #include <sstream>
+#include <array>
 
 #define TAG "UDPReceiver"
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
 
-UDPReceiver::UDPReceiver(int port,const std::string& name,int CPUPriority,const DATA_CALLBACK& onDataReceivedCallback,size_t buffsize):
-        mPort(port),mName(name),RECV_BUFF_SIZE(buffsize),mCPUPriority(CPUPriority),onDataReceivedCallback(onDataReceivedCallback){
+UDPReceiver::UDPReceiver(int port,const std::string& name,int CPUPriority,const DATA_CALLBACK& onDataReceivedCallback,size_t WANTED_RCVBUF_SIZE):
+        mPort(port),mName(name),WANTED_RCVBUF_SIZE(WANTED_RCVBUF_SIZE),mCPUPriority(CPUPriority),onDataReceivedCallback(onDataReceivedCallback){
 }
 
 void UDPReceiver::registerOnSourceIPFound(const SOURCE_IP_CALLBACK& onSourceIP) {
@@ -30,11 +31,8 @@ void UDPReceiver::startReceiving() {
 }
 
 void UDPReceiver::stopReceiving() {
-    if(receiving== false){
-        LOGD("UDP Receiver %s already stopped",mName.c_str());
-        return;
-    }
     receiving=false;
+    //this stops the recvfrom even if in blocking mode
     shutdown(mSocket,SHUT_RD);
     if(mUDPReceiverThread->joinable()){
         mUDPReceiverThread->join();
@@ -52,22 +50,20 @@ void UDPReceiver::receiveFromUDPLoop() {
     if (setsockopt(mSocket, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int)) < 0){
         LOGD("Error setting reuse");
     }
+    int recvBufferSize=0;
+    socklen_t len=sizeof(recvBufferSize);
+    getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, &recvBufferSize, &len);
+    LOGD("Default socket recv buffer is %d bytes", recvBufferSize);
+
+    if(WANTED_RCVBUF_SIZE>recvBufferSize){
+        recvBufferSize=WANTED_RCVBUF_SIZE;
+        if(setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, &WANTED_RCVBUF_SIZE,len)) {
+            LOGD("Cannot increase buffer size to %d bytes", WANTED_RCVBUF_SIZE);
+        }
+        getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, &recvBufferSize, &len);
+        LOGD("Wanted %d Set %d", WANTED_RCVBUF_SIZE,recvBufferSize);
+    }
     //
-    //setMaxSocketBuffer();
-    // 30Mbps 50ms buffer
-    int val=1;
-    socklen_t len=sizeof(int);
-    getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, &val,&len);
-    LOGD("Default socket recv buffer is %d bytes", val);
-
-    /*val = 30 * 1000 * 500 / 8;
-    setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &val, sizeof(val));
-    len = sizeof(val);
-    getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &val, &len);
-    LOGD("Current socket recv buffer is %d bytes", val);*/
-
-    //
-
     setCPUPriority(mCPUPriority,mName);
     struct sockaddr_in myaddr;
     memset((uint8_t *) &myaddr, 0, sizeof(myaddr));
@@ -78,25 +74,24 @@ void UDPReceiver::receiveFromUDPLoop() {
         LOGD("Error binding Port; %d", mPort);
         return;
     }
-    std::vector<uint8_t> buff(RECV_BUFF_SIZE);
+    //wrap into unique pointer to avoid running out of stack
+    const auto buff=std::make_unique<std::array<uint8_t,UDP_PACKET_MAX_SIZE>>();
+
     sockaddr_in source;
     socklen_t sourceLen= sizeof(sockaddr_in);
-
     std::vector<uint8_t> sequenceNumbers;
-
 
     while (receiving) {
         //TODO investigate: does a big buffer size create latency with MSG_WAITALL ?
-        //Hypothesis: it should on linux, but does not on android ? what ?
-        const ssize_t message_length = recvfrom(mSocket,buff.data(),RECV_BUFF_SIZE, MSG_WAITALL,(sockaddr*)&source,&sourceLen);
+        const ssize_t message_length = recvfrom(mSocket,buff->data(),UDP_PACKET_MAX_SIZE, MSG_WAITALL,(sockaddr*)&source,&sourceLen);
         //ssize_t message_length = recv(mSocket, buff, (size_t) mBuffsize, MSG_WAITALL);
         if (message_length > 0) { //else -1 was returned;timeout/No data received
             //LOGD("Data size %d",(int)message_length);
 
-            //Custom protocoll where first byte of udp packet is sequence number
+            //Custom protocol where first byte of udp packet is sequence number
             if(false){
                 uint8_t nr;
-                memcpy(&nr,buff.data(),1);
+                memcpy(&nr,buff->data(),1);
                 sequenceNumbers.push_back(nr);
                 if(sequenceNumbers.size()>32){
                     std::stringstream ss;
@@ -116,9 +111,9 @@ void UDPReceiver::receiveFromUDPLoop() {
                     LOGD("Seq numbers. In order %d  In ascending order %d values : %s",(int)allInOrder,(int)allInAscendingOrder,ss.str().c_str());
                     sequenceNumbers.resize(0);
                 }
-                onDataReceivedCallback(&buff.data()[1], (size_t)message_length);
+                onDataReceivedCallback(&buff->data()[1], (size_t)message_length);
             }else{
-                onDataReceivedCallback(buff.data(), (size_t)message_length);
+                onDataReceivedCallback(buff->data(), (size_t)message_length);
             }
 
             nReceivedBytes+=message_length;

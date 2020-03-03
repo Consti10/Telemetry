@@ -94,7 +94,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
             UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
                 this->onUAVTelemetryDataReceived(data,data_length);
             };
-            mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f,1024);
+            mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f);
             mTelemetryDataReceiver->startReceiving();
         }
         //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
@@ -103,7 +103,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
             UDPReceiver::DATA_CALLBACK f2 = [=](const uint8_t data[],size_t data_length) {
                 this->onEZWBStatusDataReceived(data, data_length);
             };
-            mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2,1024);
+            mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2);
             mEZWBDataReceiver->startReceiving();
         }
     }else if(SOURCE_TYPE==FILE || SOURCE_TYPE==ASSETS){
