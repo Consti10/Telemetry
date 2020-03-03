@@ -183,6 +183,7 @@ private:
     UAVTelemetryData uav_td;
     wifibroadcast_rx_status_forward_t2 wifibroadcastTelemetryData;
     static constexpr const float KMH_TO_MS=1000.0F/(60.0F*60.0F);
+    static constexpr const int CPU_PRIORITY_UDPRECEIVER_TELEMETRY=-2;
 private:
     const std::wstring ICON_BATTERY=std::wstring(1,(wchar_t)192);
     const std::wstring ICON_CHIP=std::wstring(1,(wchar_t)192+1);

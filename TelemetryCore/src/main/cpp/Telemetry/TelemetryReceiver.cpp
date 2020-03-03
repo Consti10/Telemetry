@@ -8,7 +8,6 @@
 #include "IDT.hpp"
 #include "Helper/PositionHelper.hpp"
 #include "Helper/StringHelper.hpp"
-#include "Helper/CPUPriorities.hpp"
 #include "WFBTelemetryData/WFBBackwardsCompatibility.h"
 
 #include <locale>
