@@ -11,6 +11,8 @@
 
 #define LOGSH(...) __android_log_print(ANDROID_LOG_DEBUG, "StringHelper", __VA_ARGS__)
 
+//Really messy spaghetti code
+
 class StringHelper{
 private:
     static const int countDigitsFast(long n){

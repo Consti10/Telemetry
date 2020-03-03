@@ -116,10 +116,10 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
             if(SOURCE_TYPE==FILE){
                 //we don't check if we are playing the right file type !
                 mTestFileReader=std::make_unique<FileReader>(T_PLAYBACK_FILENAME,
-                                               waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
+                        [this](const uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
             }else{
                 mTestFileReader=std::make_unique<FileReader>(assetManager,"testlog."+getProtocolAsString(),
-                                               waitTimeMS,[this](uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
+                        [this](const uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
             }
             mTestFileReader->startReading();
         }
@@ -581,7 +581,7 @@ const std::string TelemetryReceiver::getStatisticsAsString()const {
     }else{
         ostream<<"Source type==File. ("+getProtocolAsString()+") Select UDP as data source\n";
         ostream<<"nTelemetryBytes"<<nTelemetryBytes<<"\n";
-        ostream<<"nParsedBytes"<<(mTestFileReader ? mTestFileReader->getNReceivedbytes() : -1)<<"\n";
+        ostream<<"nParsedBytes"<<(mTestFileReader ? mTestFileReader->getNReceivedBytes(): -1)<<"\n";
         ostream<<"Packets:"<<uav_td.validmsgsrx<<"\n";
     }
     return ostream.str();

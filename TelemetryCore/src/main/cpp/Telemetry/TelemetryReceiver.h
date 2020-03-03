@@ -5,7 +5,6 @@
 #ifndef OSDTESTER_TELEMETRYRECEIVER_H
 #define OSDTESTER_TELEMETRYRECEIVER_H
 
-#include "Network/UDPReceiver.h"
 #include "cFiles/UAVTelemetryData.h"
 #include "WFBTelemetryData/WFBTelemetryData.h"
 
@@ -14,8 +13,9 @@
 #include <iostream>
 #include <memory>
 #include "Helper/SettingsN.hpp"
-#include "Helper/FileReader.hpp"
-#include "Helper/GroundRecorderRAW.hpp"
+#include "InputOutput/FileReader.h"
+#include "InputOutput/GroundRecorderRAW.hpp"
+#include "InputOutput/UDPReceiver.h"
 
 //#define RECEIVE_FROM_TESTLOG
 
