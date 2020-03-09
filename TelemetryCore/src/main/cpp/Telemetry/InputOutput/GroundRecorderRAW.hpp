@@ -39,6 +39,18 @@ public:
         }
         ofstream.write((char*)data,data_length);
     }
+    void writePacket(const uint8_t *packet,const size_t packet_length) {
+        if(!ofstream.is_open()){
+            ofstream.open (filename.c_str());
+        }
+        //Packet:
+        //int packet_length;
+        //long timestamp
+        //uint8_t data[packet_length];
+        int len=(int)packet_length;
+        ofstream.write((char*)&len,sizeof(len));
+        ofstream.write((char*)packet,packet_length);
+    }
     static std::string findUnusedFilename(std::string directory,std::string filetype) {
         auto t = std::time(nullptr);
         auto tm = *std::localtime(&t);
