@@ -83,7 +83,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mEZWBDataReceiver.get()== nullptr);
     assert(mTestFileReader.get()== nullptr);
     updateSettings(env,context);
-    if(ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS){
+    if((ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS )){
         const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
         //LOGD("%s",filename.c_str());
         mGroundRecorder=std::make_unique<GroundRecorderRAW>(filename);
@@ -168,6 +168,11 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
     }
     if(mGroundRecorder){
         mGroundRecorder->writeData(data,data_length);
+        //mGroundRecorder->writePacket(data,data_length);
+    }
+    try{
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }catch (...){
     }
 }
 
