@@ -23,15 +23,18 @@ target_link_libraries(ltm_frsky_mavlink_smartport
         android
         log)
 #######################################################
-include_directories(${TELEMETRY_PATH}/InputOutput)
-include_directories(${TELEMETRY_PATH}/Helper)
-#include_directories(../InputOutput)
+#include_directories(${TELEMETRY_PATH}/InputOutput)
+#include_directories(${TELEMETRY_PATH}/Helper)
+set(IO_PATH ../../VideoTelemetryShared/InputOutput)
+set(HELPER_PATH ../../VideoTelemetryShared/Helper)
+include_directories(${HELPER_PATH})
+include_directories(${IO_PATH})
 
 add_library( TelemetryReceiver
         SHARED
         ${TELEMETRY_PATH}/TelemetryReceiver.cpp
-        ${TELEMETRY_PATH}/InputOutput/FileReader.cpp
-        ${TELEMETRY_PATH}/InputOutput/UDPReceiver.cpp
+        ${IO_PATH}/FileReader.cpp
+        ${IO_PATH}/UDPReceiver.cpp
         )
 target_link_libraries(TelemetryReceiver
         ${log-lib}
