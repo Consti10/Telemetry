@@ -25,8 +25,8 @@ target_link_libraries(ltm_frsky_mavlink_smartport
 #######################################################
 #include_directories(${TELEMETRY_PATH}/InputOutput)
 #include_directories(${TELEMETRY_PATH}/Helper)
-set(IO_PATH ../../VideoTelemetryShared/InputOutput)
-set(HELPER_PATH ../../VideoTelemetryShared/Helper)
+set(IO_PATH ../../LiveVideo10ms/VideoTelemetryShared/InputOutput)
+set(HELPER_PATH ../../LiveVideo10ms/VideoTelemetryShared/Helper)
 include_directories(${HELPER_PATH})
 include_directories(${IO_PATH})
 
