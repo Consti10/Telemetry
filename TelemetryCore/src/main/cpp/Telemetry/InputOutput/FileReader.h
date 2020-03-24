@@ -69,19 +69,6 @@ private:
      */
     void passDataInChunks(const uint8_t data[],const size_t size);
     void passDataInChunks(const std::vector<uint8_t>& data);
-    /**
-     * Load the Asset file specified by path into memory and return as one big data buffer
-     * The data is neither parsed nor modified any other way
-     */
-    static std::vector<uint8_t>
-    loadRawAssetFileIntoMemory(AAssetManager *assetManager, const std::string &path);
-
-    /**
-     * convert the asset file specified at path from .mp4 into a raw .h264 bitstream
-     * then return as one big data buffer
-     */
-    static std::vector<uint8_t>
-    loadConvertMP4AssetFileIntoMemory(AAssetManager *assetManager, const std::string &path);
 
     /**
      * Depending on the file type, either parse data or leave it untouched
@@ -97,16 +84,8 @@ private:
      */
     void readFileInChunks();
 
-    // read mp4 file one by one
-    void readMP4FileInChunks();
+    void readFpvFileInChunks();
 
-    // read raw file one by one
-    void readRawFileInChunks();
-
-    /**
-     * Utility for MediaFormat Handling, return buffer as std::vector that owns memory
-     */
-    static std::vector<uint8_t> getBufferFromMediaFormat(const char* name,AMediaFormat* format);
 private:
     const RAW_DATA_CALLBACK onDataReceivedCallback;
     const std::size_t CHUNK_SIZE;
@@ -118,7 +97,6 @@ private:
     std::atomic<bool> receiving;
     int nReceivedB=0;
     void receiveLoop();
-    static constexpr const size_t NALU_BUFF_SIZE=1024*1024;
 };
 
 #endif //FPV_VR_FILERECEIVER_H

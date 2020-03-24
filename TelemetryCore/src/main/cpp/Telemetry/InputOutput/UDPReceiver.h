@@ -39,6 +39,7 @@ public:
      * Stop and join receiver thread, which closes port
      */
     void stopReceiving();
+    //Get function(s) for private member variables
     long getNReceivedBytes()const;
     std::string getSourceIPAddress()const;
     int getPort()const;

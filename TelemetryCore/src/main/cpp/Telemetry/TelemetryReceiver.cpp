@@ -6,8 +6,8 @@
 #include <cstdint>
 #include <jni.h>
 #include "IDT.hpp"
-#include "Helper/PositionHelper.hpp"
-#include "Helper/StringHelper.hpp"
+#include <PositionHelper.hpp>
+#include <StringHelper.hpp>
 #include "WFBTelemetryData/WFBBackwardsCompatibility.h"
 
 #include <locale>
@@ -43,21 +43,21 @@ TelemetryReceiver::TelemetryReceiver(const char* DIR):
 
 void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
     SettingsN settingsN(env,context,"pref_telemetry");
-    T_Protocol=(static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1)));
-    T_Port=(getTelemetryPort(settingsN,T_Protocol));
-    EZWBS_Protocol=(static_cast<EZWB_STATUS_PROTOCOL>(settingsN.getInt(IDT::EZWBS_Protocol)));
-    EZWBS_Port=(settingsN.getInt(IDT::EZWBS_Port));
-    MAVLINK_FLIGHTMODE_QUADCOPTER=(settingsN.getBoolean(IDT::T_MAVLINK_FLIGHTMODE_QUADCOPTER));
-    BATT_CAPACITY_MAH=(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH));
-    BATT_CELLS_N=(settingsN.getInt(IDT::T_BATT_CELLS_N));
-    BATT_CELLS_V_WARNING1_ORANGE=(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING1_ORANGE));
-    BATT_CELLS_V_WARNING2_RED=(settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING2_RED)),
-            BATT_CAPACITY_MAH_USED_WARNING=(settingsN.getInt(IDT::T_BATT_CAPACITY_MAH_USED_WARNING));
-    ORIGIN_POSITION_ANDROID=(settingsN.getBoolean(IDT::T_ORIGIN_POSITION_ANDROID));
-    SOURCE_TYPE=(static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_SOURCE)));
-    ENABLE_GROUND_RECORDING=(settingsN.getBoolean(IDT::T_GROUND_RECORDING));
-    T_PLAYBACK_FILENAME=(settingsN.getString(IDT::T_PLAYBACK_FILENAME));
-    LTM_FOR_INAV=(true);
+    T_Protocol=static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1));
+    T_Port=getTelemetryPort(settingsN,T_Protocol);
+    EZWBS_Protocol=static_cast<EZWB_STATUS_PROTOCOL>(settingsN.getInt(IDT::EZWBS_Protocol));
+    EZWBS_Port=settingsN.getInt(IDT::EZWBS_Port);
+    MAVLINK_FLIGHTMODE_QUADCOPTER=settingsN.getBoolean(IDT::T_MAVLINK_FLIGHTMODE_QUADCOPTER);
+    BATT_CAPACITY_MAH=settingsN.getInt(IDT::T_BATT_CAPACITY_MAH);
+    BATT_CELLS_N=settingsN.getInt(IDT::T_BATT_CELLS_N);
+    BATT_CELLS_V_WARNING1_ORANGE=settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING1_ORANGE);
+    BATT_CELLS_V_WARNING2_RED=settingsN.getFloat(IDT::T_BATT_CELLS_V_WARNING2_RED),
+            BATT_CAPACITY_MAH_USED_WARNING=settingsN.getInt(IDT::T_BATT_CAPACITY_MAH_USED_WARNING);
+    ORIGIN_POSITION_ANDROID=settingsN.getBoolean(IDT::T_ORIGIN_POSITION_ANDROID);
+    SOURCE_TYPE=static_cast<SOURCE_TYPE_OPTIONS >(settingsN.getInt(IDT::T_SOURCE));
+    ENABLE_GROUND_RECORDING=settingsN.getBoolean(IDT::T_GROUND_RECORDING);
+    T_PLAYBACK_FILENAME=settingsN.getString(IDT::T_PLAYBACK_FILENAME);
+    LTM_FOR_INAV=true;
     T_METRIC_SPEED_HORIZONTAL= static_cast<METRIC_SPEED>(settingsN.getInt(IDT::T_METRIC_SPEED_HORIZONTAL));
     T_METRIC_SPEED_VERTICAL= static_cast<METRIC_SPEED>(settingsN.getInt(IDT::T_METRIC_SPEED_VERTICAL),1);
     //
@@ -83,10 +83,15 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mEZWBDataReceiver.get()== nullptr);
     assert(mTestFileReader.get()== nullptr);
     updateSettings(env,context);
-    if((ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS )){
+    //if((ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS )){
+    if(true){
         const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
         //LOGD("%s",filename.c_str());
-        mGroundRecorder=std::make_unique<GroundRecorderRAW>(filename);
+        //mGroundRecorder=std::make_unique<GroundRecorderRAW>(filename);
+    }
+    if(true){
+        const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,"fpv");
+        mGroundRecorder2=std::make_unique<GroundRecorderFPV>(filename);
     }
     if(SOURCE_TYPE==UDP){
         if(T_Protocol!=TelemetryReceiver::NONE ){
@@ -141,6 +146,9 @@ void TelemetryReceiver::stopReceiving() {
     if(mGroundRecorder){
         mGroundRecorder.reset();
     }
+    if(mGroundRecorder2){
+        mGroundRecorder2.reset();
+    }
 }
 
 void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t data_length){
@@ -170,6 +178,9 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
         mGroundRecorder->writeData(data,data_length);
         //mGroundRecorder->writePacket(data,data_length);
     }
+    if(mGroundRecorder2){
+        mGroundRecorder2->writePacket(data,data_length, static_cast<uint8_t >(T_Protocol));
+    }
     try{
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }catch (...){
@@ -187,6 +198,9 @@ void TelemetryReceiver::onEZWBStatusDataReceived(const uint8_t *data,const size_
         nWIFIBROADCASTParsedPackets++;
     }else{
         nWIFIBRADCASTFailedPackets++;
+    }
+    if(mGroundRecorder2){
+        mGroundRecorder2->writePacket(data,data_length,GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB);
     }
 }
 

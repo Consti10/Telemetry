@@ -24,6 +24,9 @@ target_link_libraries(ltm_frsky_mavlink_smartport
         log)
 #######################################################
 include_directories(${TELEMETRY_PATH}/InputOutput)
+include_directories(${TELEMETRY_PATH}/Helper)
+#include_directories(../InputOutput)
+
 add_library( TelemetryReceiver
         SHARED
         ${TELEMETRY_PATH}/TelemetryReceiver.cpp

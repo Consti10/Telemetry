@@ -12,10 +12,11 @@
 #include <fstream>
 #include <iostream>
 #include <memory>
-#include "Helper/SettingsN.hpp"
-#include "InputOutput/FileReader.h"
-#include "InputOutput/GroundRecorderRAW.hpp"
-#include "InputOutput/UDPReceiver.h"
+#include <GroundRecorderFPV.hpp>
+#include <SettingsN.hpp>
+#include <FileReader.h>
+#include <GroundRecorderRAW.hpp>
+#include <UDPReceiver.h>
 
 //#define RECEIVE_FROM_TESTLOG
 
@@ -173,6 +174,7 @@ private:
     std::unique_ptr<UDPReceiver> mEZWBDataReceiver;
     std::unique_ptr<FileReader> mTestFileReader;
     std::unique_ptr<GroundRecorderRAW> mGroundRecorder;
+    std::unique_ptr<GroundRecorderFPV> mGroundRecorder2;
 
     long nTelemetryBytes=0;
     long nWIFIBRADCASTBytes=0;
