@@ -122,22 +122,25 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                 case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
                 case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_LTM:
                     T_Protocol=LTM;
+                    this->onUAVTelemetryDataReceived(d,len);
                     break;
                 case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_MAVLINK:
                     T_Protocol=MAVLINK;
+                    this->onUAVTelemetryDataReceived(d,len);
                     break;
                 case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_FRSKY:
                     T_Protocol=FRSKY;
+                    this->onUAVTelemetryDataReceived(d,len);
                     break;
                 case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_SMARTPORT:
                     T_Protocol=SMARTPORT;
+                    this->onUAVTelemetryDataReceived(d,len);
                     break;
                 case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB:
                     this->onEZWBStatusDataReceived(d,len);
                     break;
                 default:break;
             }
-            this->onUAVTelemetryDataReceived(d,len);
         };
         if(SOURCE_TYPE==FILE){
             mTestFileReader=std::make_unique<FileReader>(T_PLAYBACK_FILENAME,callback,64);
