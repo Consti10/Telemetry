@@ -50,10 +50,10 @@ typedef struct {
 } frsky_state_t;
 
 int frsky_interpret_packet(frsky_state_t *state, UAVTelemetryData *td);
-int frsky_parse_buffer(frsky_state_t *state, UAVTelemetryData *td,const uint8_t *data,const int data_length);
+int frsky_parse_buffer(frsky_state_t *state, UAVTelemetryData *td,const uint8_t *data,const size_t data_length);
 
 frsky_state_t state;
-int frsky_read( UAVTelemetryData *td,const uint8_t *data,const int data_length){
+int frsky_read( UAVTelemetryData *td,const uint8_t *data,const size_t data_length){
 	return frsky_parse_buffer(&state,td,data,data_length);
 }
 

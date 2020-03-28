@@ -52,7 +52,7 @@ static enum _serial_state {
 }
         c_state = IDLE;
 
-int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const int data_length,const bool readAltitudeSigned) {
+int ltm_read(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const size_t data_length,const bool readAltitudeSigned) {
     int i;
 
     for(i=0; i<data_length; ++i) {

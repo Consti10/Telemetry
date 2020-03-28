@@ -45,7 +45,7 @@ private:
     void onEZWBStatusDataReceived(const uint8_t[],size_t);
 private:
     enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
-    enum PROTOCOL_OPTIONS {NONE,XLTM,MAVLINK,XSMARTPORT,FRSKY};
+    enum PROTOCOL_OPTIONS {NONE,LTM,MAVLINK,SMARTPORT,FRSKY};
     enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6,OpenHD_1_0_0};
     enum METRIC_SPEED{KMH,MS};
     static int getTelemetryPort(const SettingsN& settingsN, int T_Protocol);
@@ -173,9 +173,7 @@ private:
     std::unique_ptr<UDPReceiver> mTelemetryDataReceiver;
     std::unique_ptr<UDPReceiver> mEZWBDataReceiver;
     std::unique_ptr<FileReader> mTestFileReader;
-    std::unique_ptr<GroundRecorderRAW> mGroundRecorder;
-    std::unique_ptr<GroundRecorderFPV> mGroundRecorder2;
-
+    GroundRecorderFPV mGroundRecorder;
     long nTelemetryBytes=0;
     long nWIFIBRADCASTBytes=0;
     long nWIFIBROADCASTParsedPackets=0;

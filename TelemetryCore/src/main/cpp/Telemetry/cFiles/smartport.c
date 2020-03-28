@@ -2,7 +2,7 @@
 #include "UAVTelemetryData.h"
 
 
-void smartport_read(UAVTelemetryData *td,const uint8_t *data,const int data_length) {
+void smartport_read(UAVTelemetryData *td,const uint8_t *data,const size_t data_length) {
     static uint8_t s = 0;
     static uint8_t e = 0;
     static uint8_t tBuffer[7];

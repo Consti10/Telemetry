@@ -2,7 +2,7 @@
 #include "frsky.h"
 #include "UAVTelemetryData.h"
 
-int frsky_parse_buffer(frsky_state_t *state, UAVTelemetryData *td,const uint8_t *data,const int data_length) {
+int frsky_parse_buffer(frsky_state_t *state, UAVTelemetryData *td,const uint8_t *data,const size_t data_length) {
 	int i;
 	for(i=0; i<data_length; ++i) {
 		uint8_t ch = data[i];

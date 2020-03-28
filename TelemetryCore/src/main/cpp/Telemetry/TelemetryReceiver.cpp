@@ -28,9 +28,9 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
     int port=5700;
     switch (T_Protocol){
         case TelemetryReceiver::NONE:break;
-        case TelemetryReceiver::XLTM :port=settingsN.getInt(IDT::T_LTMPort);break;
+        case TelemetryReceiver::LTM :port=settingsN.getInt(IDT::T_LTMPort);break;
         case TelemetryReceiver::MAVLINK:port=settingsN.getInt(IDT::T_MAVLINKPort);break;
-        case TelemetryReceiver::XSMARTPORT:port=settingsN.getInt(IDT::T_SMARTPORTPort);break;
+        case TelemetryReceiver::SMARTPORT:port=settingsN.getInt(IDT::T_SMARTPORTPort);break;
         case TelemetryReceiver::FRSKY:port=settingsN.getInt(IDT::T_FRSKYPort);break;
         default:break;
     }
@@ -38,7 +38,8 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
 }
 
 TelemetryReceiver::TelemetryReceiver(const char* DIR):
-        GROUND_RECORDING_DIRECTORY(DIR){
+        GROUND_RECORDING_DIRECTORY(DIR),
+        mGroundRecorder(DIR){
 }
 
 void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
@@ -85,13 +86,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     updateSettings(env,context);
     //if((ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS )){
     if(true){
-        const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,getProtocolAsString());
-        //LOGD("%s",filename.c_str());
-        //mGroundRecorder=std::make_unique<GroundRecorderRAW>(filename);
-    }
-    if(true){
-        const auto filename=GroundRecorderRAW::findUnusedFilename(GROUND_RECORDING_DIRECTORY,"fpv");
-        mGroundRecorder2=std::make_unique<GroundRecorderFPV>(filename);
+        mGroundRecorder.start();
     }
     if(SOURCE_TYPE==UDP){
         if(T_Protocol!=TelemetryReceiver::NONE ){
@@ -111,22 +106,47 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
             mEZWBDataReceiver->startReceiving();
         }
     }else if(SOURCE_TYPE==FILE || SOURCE_TYPE==ASSETS){
-        if(T_Protocol!=TelemetryReceiver::NONE){
-            std::string protocol;
-            int waitTimeMS=5;
-            if(T_Protocol==TelemetryReceiver::MAVLINK){
-                waitTimeMS=1;
-            }
-            if(SOURCE_TYPE==FILE){
-                //we don't check if we are playing the right file type !
-                mTestFileReader=std::make_unique<FileReader>(T_PLAYBACK_FILENAME,
-                        [this](const uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
-            }else{
-                mTestFileReader=std::make_unique<FileReader>(assetManager,"testlog."+getProtocolAsString(),
-                        [this](const uint8_t* d,int len) { this->onUAVTelemetryDataReceived(d,len); },64);
-            }
-            mTestFileReader->startReading();
+        if(FileHelper::endsWith(T_PLAYBACK_FILENAME,".ltm")){
+            T_Protocol=LTM;
+        }else if(FileHelper::endsWith(T_PLAYBACK_FILENAME,"mavlink")){
+            T_Protocol=MAVLINK;
+        }else if(FileHelper::endsWith(T_PLAYBACK_FILENAME,".frsky")){
+            T_Protocol=FRSKY;
+        }else if(FileHelper::endsWith(T_PLAYBACK_FILENAME,".smartport")){
+            T_Protocol=SMARTPORT;
+        }else{
+            //Ground recording file ends with .fpv, which merges video and telemetry data
         }
+        FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
+            switch(packetType){
+                case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
+                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_LTM:
+                    T_Protocol=LTM;
+                    break;
+                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_MAVLINK:
+                    T_Protocol=MAVLINK;
+                    break;
+                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_FRSKY:
+                    T_Protocol=FRSKY;
+                    break;
+                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_SMARTPORT:
+                    T_Protocol=SMARTPORT;
+                    break;
+                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB:
+                    this->onEZWBStatusDataReceived(d,len);
+                    break;
+                default:break;
+            }
+            this->onUAVTelemetryDataReceived(d,len);
+        };
+        if(SOURCE_TYPE==FILE){
+            mTestFileReader=std::make_unique<FileReader>(T_PLAYBACK_FILENAME,callback,64);
+        }else{
+            mTestFileReader=std::make_unique<FileReader>(assetManager,"testlog."+getProtocolAsString(),[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
+                this->onUAVTelemetryDataReceived(d,len);
+                },64);
+        }
+        mTestFileReader->startReading();
     }
 }
 
@@ -143,23 +163,18 @@ void TelemetryReceiver::stopReceiving() {
         mTestFileReader->stopReading();
         mTestFileReader.reset();
     }
-    if(mGroundRecorder){
-        mGroundRecorder.reset();
-    }
-    if(mGroundRecorder2){
-        mGroundRecorder2.reset();
-    }
+   mGroundRecorder.stop();
 }
 
 void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t data_length){
     switch (T_Protocol){
-        case TelemetryReceiver::XLTM:
+        case TelemetryReceiver::LTM:
             ltm_read(&uav_td,&originData,data,data_length,LTM_FOR_INAV);
             break;
         case TelemetryReceiver::MAVLINK:
             mavlink_read_v2(&uav_td,&originData,data,data_length);
             break;
-        case TelemetryReceiver::XSMARTPORT:
+        case TelemetryReceiver::SMARTPORT:
             smartport_read(&uav_td,data,data_length);
             break;
         case TelemetryReceiver::FRSKY:
@@ -171,16 +186,10 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
             break;
     }
     nTelemetryBytes+=data_length;
-    if(T_Protocol==TelemetryReceiver::XLTM){
+    if(T_Protocol==TelemetryReceiver::LTM){
         uav_td.BatteryPack_P=(int8_t)(uav_td.BatteryPack_mAh/BATT_CAPACITY_MAH*100.0f);
     }
-    if(mGroundRecorder){
-        mGroundRecorder->writeData(data,data_length);
-        //mGroundRecorder->writePacket(data,data_length);
-    }
-    if(mGroundRecorder2){
-        mGroundRecorder2->writePacket(data,data_length, static_cast<uint8_t >(T_Protocol));
-    }
+    mGroundRecorder.writePacketIfStarted(data,data_length,static_cast<uint8_t >(T_Protocol));
     try{
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }catch (...){
@@ -199,9 +208,7 @@ void TelemetryReceiver::onEZWBStatusDataReceived(const uint8_t *data,const size_
     }else{
         nWIFIBRADCASTFailedPackets++;
     }
-    if(mGroundRecorder2){
-        mGroundRecorder2->writePacket(data,data_length,GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB);
-    }
+    mGroundRecorder.writePacketIfStarted(data,data_length,GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB);
 }
 
 const int TelemetryReceiver::getNReceivedTelemetryBytes()const {
@@ -713,7 +720,7 @@ float TelemetryReceiver::getHeadingHome_Deg() const {
 const std::string TelemetryReceiver::getProtocolAsString() const {
     std::stringstream ss;
     switch (T_Protocol){
-        case TelemetryReceiver::XLTM:ss<<"ltm";break;
+        case TelemetryReceiver::LTM:ss<<"ltm";break;
         case TelemetryReceiver::FRSKY:ss<<"frsky";break;
         case TelemetryReceiver::MAVLINK:ss<<"mavlink";break;
         default:assert(true);break;

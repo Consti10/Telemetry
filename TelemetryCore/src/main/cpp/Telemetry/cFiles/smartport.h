@@ -1,6 +1,6 @@
 
-#ifndef SMARTPORT
-#define SMARTPORT
+#ifndef FPV_VR_SMARTPORT
+#define FPV_VR_SMARTPORT
 
 #include <stdint.h>
 #include "UAVTelemetryData.h"
@@ -53,7 +53,7 @@ typedef struct {
 	uint8_t crc;
 	} tSPortData;
 
-void smartport_read(UAVTelemetryData *td,const uint8_t *data,const int data_length);
+void smartport_read(UAVTelemetryData *td,const uint8_t *data,const size_t data_length);
 uint8_t u8CheckCrcSPORT( uint8_t *t );
 void smartport_check(UAVTelemetryData *td, uint8_t *t);
 
