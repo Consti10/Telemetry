@@ -734,7 +734,6 @@ const std::string TelemetryReceiver::getSystemAsString() const {
 }
 
 
-
 //----------------------------------------------------JAVA bindings---------------------------------------------------------------
 #define JNI_METHOD(return_type, method_name) \
   JNIEXPORT return_type JNICALL              \
