@@ -88,68 +88,57 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     if(true){
         mGroundRecorder.start();
     }
-    if(SOURCE_TYPE==UDP){
-        if(T_Protocol!=TelemetryReceiver::NONE ){
-            UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
-                this->onUAVTelemetryDataReceived(data,data_length);
-            };
-            mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f);
-            mTelemetryDataReceiver->startReceiving();
-        }
-        //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
-        //should not add any additional latency
-        if(EZWBS_Protocol!=DISABLED){
-            UDPReceiver::DATA_CALLBACK f2 = [=](const uint8_t data[],size_t data_length) {
-                this->onEZWBStatusDataReceived(data, data_length);
-            };
-            mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2);
-            mEZWBDataReceiver->startReceiving();
-        }
-    }else if(SOURCE_TYPE==FILE || SOURCE_TYPE==ASSETS){
-        if(FileHelper::endsWith(T_PLAYBACK_FILENAME,".ltm")){
-            T_Protocol=LTM;
-        }else if(FileHelper::endsWith(T_PLAYBACK_FILENAME,"mavlink")){
-            T_Protocol=MAVLINK;
-        }else if(FileHelper::endsWith(T_PLAYBACK_FILENAME,".frsky")){
-            T_Protocol=FRSKY;
-        }else if(FileHelper::endsWith(T_PLAYBACK_FILENAME,".smartport")){
-            T_Protocol=SMARTPORT;
-        }else{
-            //Ground recording file ends with .fpv, which merges video and telemetry data
-        }
-        FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
-            switch(packetType){
-                case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
-                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_LTM:
-                    T_Protocol=LTM;
-                    this->onUAVTelemetryDataReceived(d,len);
-                    break;
-                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_MAVLINK:
-                    T_Protocol=MAVLINK;
-                    this->onUAVTelemetryDataReceived(d,len);
-                    break;
-                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_FRSKY:
-                    T_Protocol=FRSKY;
-                    this->onUAVTelemetryDataReceived(d,len);
-                    break;
-                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_SMARTPORT:
-                    T_Protocol=SMARTPORT;
-                    this->onUAVTelemetryDataReceived(d,len);
-                    break;
-                case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB:
-                    this->onEZWBStatusDataReceived(d,len);
-                    break;
-                default:break;
+    switch(SOURCE_TYPE){
+        case UDP:{
+            if(T_Protocol!=TelemetryReceiver::NONE ){
+                UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
+                    this->onUAVTelemetryDataReceived(data,data_length);
+                };
+                mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f);
+                mTelemetryDataReceiver->startReceiving();
             }
-        };
-        if(SOURCE_TYPE==FILE){
-            mTestFileReader=std::make_unique<FileReader>(T_PLAYBACK_FILENAME,callback,64);
-        }else{
-            mTestFileReader=std::make_unique<FileReader>(assetManager,"testlog."+getProtocolAsString(),[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
-                this->onUAVTelemetryDataReceived(d,len);
-                },64);
-        }
-        mTestFileReader->startReading();
+            //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
+            //should not add any additional latency
+            if(EZWBS_Protocol!=DISABLED){
+                UDPReceiver::DATA_CALLBACK f2 = [=](const uint8_t data[],size_t data_length) {
+                    this->onEZWBStatusDataReceived(data, data_length);
+                };
+                mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2);
+                mEZWBDataReceiver->startReceiving();
+            }
+        }break;
+        case FILE:
+        case ASSETS:{
+            const bool useAsset=SOURCE_TYPE==ASSETS;
+            const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
+            FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
+                switch(packetType){
+                    case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
+                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_LTM:
+                        T_Protocol=LTM;
+                        this->onUAVTelemetryDataReceived(d,len);
+                        break;
+                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_MAVLINK:
+                        T_Protocol=MAVLINK;
+                        this->onUAVTelemetryDataReceived(d,len);
+                        break;
+                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_FRSKY:
+                        T_Protocol=FRSKY;
+                        this->onUAVTelemetryDataReceived(d,len);
+                        break;
+                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_SMARTPORT:
+                        T_Protocol=SMARTPORT;
+                        this->onUAVTelemetryDataReceived(d,len);
+                        break;
+                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB:
+                        this->onEZWBStatusDataReceived(d,len);
+                        break;
+                    default:break;
+                }
+            };
+            mTestFileReader=std::make_unique<FileReader>(useAsset ? assetManager : nullptr,filename,callback,64);
+            mTestFileReader->startReading();
+        }break;
     }
 }
 
