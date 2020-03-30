@@ -73,7 +73,7 @@ public:
     float BATT_CELLS_V_WARNING2_RED;
     float BATT_CAPACITY_MAH_USED_WARNING;
 public:
-    explicit TelemetryReceiver(const char* DIR);
+    explicit TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder);
     /**
      * Start all telemetry receiver. If they are already receiving, nothing happens.
      * Make sure startReceiving() and stopReceivingAndWait() are not called on different threads
@@ -173,7 +173,7 @@ private:
     std::unique_ptr<UDPReceiver> mTelemetryDataReceiver;
     std::unique_ptr<UDPReceiver> mEZWBDataReceiver;
     std::unique_ptr<FileReader> mTestFileReader;
-    GroundRecorderFPV mGroundRecorder;
+    GroundRecorderFPV& mGroundRecorder;
     long nTelemetryBytes=0;
     long nWIFIBRADCASTBytes=0;
     long nWIFIBROADCASTParsedPackets=0;

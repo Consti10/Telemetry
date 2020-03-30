@@ -23,10 +23,9 @@ target_link_libraries(ltm_frsky_mavlink_smartport
         android
         log)
 #######################################################
-#include_directories(${TELEMETRY_PATH}/InputOutput)
-#include_directories(${TELEMETRY_PATH}/Helper)
-set(IO_PATH ../../LiveVideo10ms/VideoTelemetryShared/InputOutput)
-set(HELPER_PATH ../../LiveVideo10ms/VideoTelemetryShared/Helper)
+set(V_CORE_DIR ../../LiveVideo10ms/VideoCore)
+set(IO_PATH ${V_CORE_DIR}/../VideoTelemetryShared/InputOutput)
+set(HELPER_PATH ${V_CORE_DIR}/../VideoTelemetryShared/Helper)
 include_directories(${HELPER_PATH})
 include_directories(${IO_PATH})
 

@@ -37,9 +37,9 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
     return port;
 }
 
-TelemetryReceiver::TelemetryReceiver(const char* DIR):
+TelemetryReceiver::TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder):
         GROUND_RECORDING_DIRECTORY(DIR),
-        mGroundRecorder(DIR){
+        mGroundRecorder((externalGroundRecorder== nullptr) ?( * new GroundRecorderFPV(DIR)) : *externalGroundRecorder){
 }
 
 void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
@@ -110,7 +110,8 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
         case FILE:
         case ASSETS:{
             const bool useAsset=SOURCE_TYPE==ASSETS;
-            const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
+            //const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
+            const std::string filename = useAsset ? "ltm.fpv" :T_PLAYBACK_FILENAME;
             FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
                 switch(packetType){
                     case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
@@ -740,9 +741,9 @@ inline TelemetryReceiver *native(jlong ptr) {
 
 extern "C" {
 JNI_METHOD(jlong , createInstance)
-(JNIEnv *env,jclass unused,jobject context,jstring groundRecordingDirectory) {
+(JNIEnv *env,jclass unused,jobject context,jstring groundRecordingDirectory,jlong externalGroundRecorder) {
     const char *str = env->GetStringUTFChars(groundRecordingDirectory, nullptr);
-    auto* telemetryReceiver = new TelemetryReceiver(str);
+    auto* telemetryReceiver = new TelemetryReceiver(str,reinterpret_cast<GroundRecorderFPV*>(externalGroundRecorder));
     env->ReleaseStringUTFChars(groundRecordingDirectory,str);
     return jptr(telemetryReceiver);
 }

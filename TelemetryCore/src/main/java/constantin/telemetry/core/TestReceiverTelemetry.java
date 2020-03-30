@@ -30,7 +30,7 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
 
     public  <T extends Activity & LifecycleOwner> TestReceiverTelemetry(final T t){
         this.activity=t;
-        telemetryReceiver =new TelemetryReceiver(t);
+        telemetryReceiver =new TelemetryReceiver(t,0);
         t.getLifecycle().addObserver(this);
     }
 
