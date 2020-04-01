@@ -73,6 +73,8 @@ public:
     float BATT_CELLS_V_WARNING2_RED;
     float BATT_CAPACITY_MAH_USED_WARNING;
 public:
+    //External ground recorder means we use the ground recorder of the video lib for a merged
+    //Video an telemetry ground recording file
     explicit TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder);
     /**
      * Start all telemetry receiver. If they are already receiving, nothing happens.

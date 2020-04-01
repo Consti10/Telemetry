@@ -84,8 +84,8 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mEZWBDataReceiver.get()== nullptr);
     assert(mTestFileReader.get()== nullptr);
     updateSettings(env,context);
-    //if((ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS )){
-    if(true){
+    if((ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS )){
+    //if(true){
         mGroundRecorder.start();
     }
     switch(SOURCE_TYPE){
@@ -182,11 +182,11 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
     if(T_Protocol==TelemetryReceiver::LTM){
         uav_td.BatteryPack_P=(int8_t)(uav_td.BatteryPack_mAh/BATT_CAPACITY_MAH*100.0f);
     }
-    mGroundRecorder.writePacketIfStarted(data,data_length,static_cast<uint8_t >(T_Protocol));
-    try{
+    mGroundRecorder.writePacketIfStarted(data,data_length,static_cast<uint8_t>(T_Protocol));
+    /*try{
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }catch (...){
-    }
+    }*/
 }
 
 void TelemetryReceiver::onEZWBStatusDataReceived(const uint8_t *data,const size_t data_length){
