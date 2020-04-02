@@ -110,8 +110,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
         case FILE:
         case ASSETS:{
             const bool useAsset=SOURCE_TYPE==ASSETS;
-            //const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
-            const std::string filename = useAsset ? "ltm.fpv" :T_PLAYBACK_FILENAME;
+            const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
             FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
                 switch(packetType){
                     case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
@@ -137,7 +136,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                     default:break;
                 }
             };
-            mTestFileReader=std::make_unique<FileReader>(useAsset ? assetManager : nullptr,filename,callback,64);
+            mTestFileReader=std::make_unique<FileReader>(useAsset ? assetManager : nullptr,filename,callback,true,64);
             mTestFileReader->startReading();
         }break;
     }
@@ -714,8 +713,9 @@ const std::string TelemetryReceiver::getProtocolAsString() const {
     std::stringstream ss;
     switch (T_Protocol){
         case TelemetryReceiver::LTM:ss<<"ltm";break;
-        case TelemetryReceiver::FRSKY:ss<<"frsky";break;
         case TelemetryReceiver::MAVLINK:ss<<"mavlink";break;
+        case TelemetryReceiver::SMARTPORT:ss<<"smartport";break;
+        case TelemetryReceiver::FRSKY:ss<<"frsky";break;
         default:assert(true);break;
     }
     return ss.str();
