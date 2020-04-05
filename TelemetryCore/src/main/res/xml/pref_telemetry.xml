@@ -122,17 +122,6 @@
     </PreferenceCategory>
 
 
-    <PreferenceCategory
-        android:title="Ground recording">
-
-        <SwitchPreference
-            android:key="@string/T_GROUND_RECORDING"
-            android:title="@string/T_GROUND_RECORDING"
-            android:summary="Record telemetry data into a file for playback"
-            android:defaultValue="false" />
-
-    </PreferenceCategory>
-
 
     <PreferenceCategory
         android:title="Advanced">
@@ -148,6 +137,12 @@
             android:title="@string/T_PLAYBACK_FILENAME"
             android:summary="Entered filename will be played if Source=File. Enter full path !"
             android:defaultValue="@string/T_PLAYBACK_FILENAME_DEFAULT_VALUE"
+            android:enabled="false"/>
+        <SwitchPreference
+            android:key="@string/T_GROUND_RECORDING"
+            android:title="@string/T_GROUND_RECORDING"
+            android:summary="Record telemetry data into a file for playback"
+            android:defaultValue="false"
             android:enabled="false"/>
     </PreferenceCategory>
 

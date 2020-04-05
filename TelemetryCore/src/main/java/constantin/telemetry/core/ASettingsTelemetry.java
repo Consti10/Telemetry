@@ -42,8 +42,10 @@ public class ASettingsTelemetry extends AppCompatActivity {
             if(showAdvanced){
                 Preference p1=findPreference(getString(R.string.T_PLAYBACK_FILENAME));
                 Preference p2=findPreference(getString(R.string.T_SOURCE));
+                Preference p3=findPreference(getString(R.string.T_GROUND_RECORDING));
                 p1.setEnabled(true);
                 p2.setEnabled(true);
+                p3.setEnabled(true);
             }
         }
 
