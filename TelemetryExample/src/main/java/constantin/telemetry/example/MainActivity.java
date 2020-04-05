@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import constantin.telemetry.core.ASettingsTelemetry;
 import constantin.telemetry.core.TelemetryReceiver;
+import constantin.telemetry.core.TelemetrySettings;
 import constantin.telemetry.core.TestReceiverTelemetry;
 
 import android.Manifest;
@@ -38,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         checkAndRequestPermissions();
-        TelemetryReceiver.initializePreferences(this,false);
+        TelemetrySettings.initializePreferences(this,false);
         Button button=findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
