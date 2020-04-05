@@ -1,0 +1,8 @@
+Executable : C:\Users\geier\AppData\Local\Android\Sdk\cmake\3.10.2.4988404\bin\ninja.exe
+arguments : 
+-C
+C:\Users\geier\Desktop\FPV_VR\Telemetry\TelemetryExample\.cxx\cmake\debug\x86
+TelemetryReceiver
+ltm_frsky_mavlink_smartport
+jvmArgs : 
+

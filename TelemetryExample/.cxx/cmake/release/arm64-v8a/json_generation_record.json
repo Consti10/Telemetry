@@ -1,0 +1,428 @@
+[
+  {
+    "level": "INFO",
+    "message": "Start JSON generation. Platform version: 21 min SDK version: arm64-v8a",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "No CMake version was specified in build.gradle. Using default version 3.10.2.",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Trying to locate CMake in local SDK repository.",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "- CMake found in SDK at \u0027C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\u0027 had version \u00273.10.2\u0027",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "rebuilding JSON C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\release\\arm64-v8a\\android_gradle_build.json due to:",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "- expected json C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\release\\arm64-v8a\\android_gradle_build.json file is not present, will remove stale json folder",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "- missing previous command file C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\release\\arm64-v8a\\build_command.txt, will remove stale json folder",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "- command changed from previous, will remove stale json folder",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "created folder \u0027C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\release\\arm64-v8a\u0027",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "executing cmake Executable : C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\cmake.exe\narguments : \n-HC:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\n-DCMAKE_CXX_FLAGS\u003d-std\u003dc++17\n-DCMAKE_BUILD_TYPE\u003dRelease\n-DCMAKE_TOOLCHAIN_FILE\u003dC:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\ndk\\20.0.5594570\\build\\cmake\\android.toolchain.cmake\n-DANDROID_ABI\u003darm64-v8a\n-DANDROID_NDK\u003dC:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\ndk\\20.0.5594570\n-DANDROID_PLATFORM\u003dandroid-21\n-DCMAKE_ANDROID_ARCH_ABI\u003darm64-v8a\n-DCMAKE_ANDROID_NDK\u003dC:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\ndk\\20.0.5594570\n-DCMAKE_EXPORT_COMPILE_COMMANDS\u003dON\n-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\u003dC:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\build\\intermediates\\cmake\\release\\obj\\arm64-v8a\n-DCMAKE_MAKE_PROGRAM\u003dC:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe\n-DCMAKE_SYSTEM_NAME\u003dAndroid\n-DCMAKE_SYSTEM_VERSION\u003d21\n-DANDROID_STL\u003dc++_static\n-BC:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\release\\arm64-v8a\n-GNinja\njvmArgs : \n\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "[\u003d\u003d \"CMake Server\" \u003d\u003d[\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"supportedProtocolVersions\":[{\"isExperimental\":true,\"major\":1,\"minor\":1}],\"type\":\"hello\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "]\u003d\u003d \"CMake Server\" \u003d\u003d]\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\n  \"type\": \"handshake\",\n  \"cookie\": \"gradle-cmake-cookie\",\n  \"protocolVersion\": {\n    \"isExperimental\": true,\n    \"major\": 1,\n    \"minor\": 1\n  },\n  \"sourceDirectory\": \"C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample\",\n  \"buildDirectory\": \"C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample/.cxx/cmake/release/arm64-v8a\",\n  \"generator\": \"Ninja\"\n}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"gradle-cmake-cookie\",\"inReplyTo\":\"handshake\",\"type\":\"reply\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\n  \"type\": \"configure\",\n  \"cacheArguments\": [\n    \"\",\n    \"-DCMAKE_CXX_FLAGS\\u003d-std\\u003dc++17\",\n    \"-DCMAKE_BUILD_TYPE\\u003dRelease\",\n    \"-DCMAKE_TOOLCHAIN_FILE\\u003dC:\\\\Users\\\\geier\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\ndk\\\\20.0.5594570\\\\build\\\\cmake\\\\android.toolchain.cmake\",\n    \"-DANDROID_ABI\\u003darm64-v8a\",\n    \"-DANDROID_NDK\\u003dC:\\\\Users\\\\geier\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\ndk\\\\20.0.5594570\",\n    \"-DANDROID_PLATFORM\\u003dandroid-21\",\n    \"-DCMAKE_ANDROID_ARCH_ABI\\u003darm64-v8a\",\n    \"-DCMAKE_ANDROID_NDK\\u003dC:\\\\Users\\\\geier\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\ndk\\\\20.0.5594570\",\n    \"-DCMAKE_EXPORT_COMPILE_COMMANDS\\u003dON\",\n    \"-DCMAKE_LIBRARY_OUTPUT_DIRECTORY\\u003dC:\\\\Users\\\\geier\\\\Desktop\\\\FPV_VR\\\\Telemetry\\\\TelemetryExample\\\\build\\\\intermediates\\\\cmake\\\\release\\\\obj\\\\arm64-v8a\",\n    \"-DCMAKE_MAKE_PROGRAM\\u003dC:\\\\Users\\\\geier\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\cmake\\\\3.10.2.4988404\\\\bin\\\\ninja.exe\",\n    \"-DCMAKE_SYSTEM_NAME\\u003dAndroid\",\n    \"-DCMAKE_SYSTEM_VERSION\\u003d21\",\n    \"-DANDROID_STL\\u003dc++_static\"\n  ]\n}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working C compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working C compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":33,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working C compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe -- works\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working C compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe -- works",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compiler ABI info\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compiler ABI info",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":65,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compiler ABI info - done\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compiler ABI info - done",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compile features\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compile features",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":96,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":126,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":155,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting C compile features - done\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting C compile features - done",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working CXX compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working CXX compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":184,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Check for working CXX compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe -- works\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Check for working CXX compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe -- works",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compiler ABI info\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compiler ABI info",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":211,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compiler ABI info - done\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compiler ABI info - done",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compile features\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compile features",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":237,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":262,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":287,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":311,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Detecting CXX compile features - done\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Detecting CXX compile features - done",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"progressCurrent\":1000,\"progressMaximum\":1000,\"progressMessage\":\"Configuring\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"message\":\"Configuring done\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Configuring done",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"configure\",\"type\":\"reply\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"type\":\"compute\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"message\":\"CMake Error at C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/TelemetryCore.cmake:14 (add_library):\\n  Cannot find source file:\\n\\n    src/main/cpp/Telemetry/cFiles/ltm.c\\n\\n  Tried extensions .c .C .c++ .cc .cpp .cxx .m .M .mm .h .hh .h++ .hm .hpp\\n  .hxx .in .txx\\nCall Stack (most recent call first):\\n  CMakeLists.txt:12 (include)\\n\\n\",\"title\":\"Error\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "ERROR",
+    "message": "CMake Error at C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/TelemetryCore.cmake:14 (add_library):\r\n  Cannot find source file:\r\n\r\n    src/main/cpp/Telemetry/cFiles/ltm.c\r\n\r\n  Tried extensions .c .C .c++ .cc .cpp .cxx .m .M .mm .h .hh .h++ .hm .hpp\r\n  .hxx .in .txx\r\nCall Stack (most recent call first):\r\n  CMakeLists.txt:12 (include)\r\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"message\":\"CMake Error at C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/TelemetryCore.cmake:31 (add_library):\\n  Cannot find source file:\\n\\n    src/main/cpp/Telemetry/TelemetryReceiver.cpp\\n\\n  Tried extensions .c .C .c++ .cc .cpp .cxx .m .M .mm .h .hh .h++ .hm .hpp\\n  .hxx .in .txx\\nCall Stack (most recent call first):\\n  CMakeLists.txt:12 (include)\\n\\n\",\"title\":\"Error\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "ERROR",
+    "message": "CMake Error at C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/TelemetryCore.cmake:31 (add_library):\r\n  Cannot find source file:\r\n\r\n    src/main/cpp/Telemetry/TelemetryReceiver.cpp\r\n\r\n  Tried extensions .c .C .c++ .cc .cpp .cxx .m .M .mm .h .hh .h++ .hm .hpp\r\n  .hxx .in .txx\r\nCall Stack (most recent call first):\r\n  CMakeLists.txt:12 (include)\r\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"message\":\"CMake Error: CMake can not determine linker language for target: ltm_frsky_mavlink_smartport\",\"title\":\"Error\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "ERROR",
+    "message": "CMake Error: CMake can not determine linker language for target: ltm_frsky_mavlink_smartport",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"message\":\"CMake Error: CMake can not determine linker language for target: TelemetryReceiver\",\"title\":\"Error\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "ERROR",
+    "message": "CMake Error: CMake can not determine linker language for target: TelemetryReceiver",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"progressCurrent\":1000,\"progressMaximum\":1000,\"progressMessage\":\"Generating\",\"progressMinimum\":0,\"type\":\"progress\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"inReplyTo\":\"compute\",\"message\":\"Generating done\",\"type\":\"message\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "Generating done",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "{\"cookie\":\"\",\"errorMessage\":\"Failed to compute build system.\",\"inReplyTo\":\"compute\",\"type\":\"error\"}\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "ERROR",
+    "message": "Failed to compute build system.",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  },
+  {
+    "level": "INFO",
+    "message": "JSON generation completed with problem. Exception: com.android.ide.common.process.ProcessException: Error computing CMake server result.\r\nCheck for working C compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe\nCheck for working C compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang.exe -- works\nDetecting C compiler ABI info\nDetecting C compiler ABI info - done\nDetecting C compile features\nDetecting C compile features - done\nCheck for working CXX compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe\nCheck for working CXX compiler: C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/bin/clang++.exe -- works\nDetecting CXX compiler ABI info\nDetecting CXX compiler ABI info - done\nDetecting CXX compile features\nDetecting CXX compile features - done\nConfiguring done\n",
+    "file": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "tag": "release|arm64-v8a"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "buildFiles": [
+    "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\TelemetryCore.cmake",
+    "C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\ndk\\20.0.5594570\\build\\cmake\\android.toolchain.cmake",
+    "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\CMakeLists.txt",
+    "C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\ndk\\20.0.5594570\\build\\cmake\\platforms.cmake"
+  ],
+  "cleanCommands": [
+    "C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\debug\\armeabi-v7a\" clean"
+  ],
+  "buildTargetsCommand": "C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe  -C \"C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\debug\\armeabi-v7a\" {LIST_OF_TARGETS_TO_BUILD}",
+  "libraries": {
+    "TelemetryReceiver-Debug-armeabi-v7a": {
+      "artifactName": "TelemetryReceiver",
+      "buildCommand": "C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\debug\\armeabi-v7a\" TelemetryReceiver",
+      "abi": "armeabi-v7a",
+      "output": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\build\\intermediates\\cmake\\debug\\obj\\armeabi-v7a\\libTelemetryReceiver.so"
+    },
+    "ltm_frsky_mavlink_smartport-Debug-armeabi-v7a": {
+      "artifactName": "ltm_frsky_mavlink_smartport",
+      "buildCommand": "C:\\Users\\geier\\AppData\\Local\\Android\\Sdk\\cmake\\3.10.2.4988404\\bin\\ninja.exe -C \"C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\.cxx\\cmake\\debug\\armeabi-v7a\" ltm_frsky_mavlink_smartport",
+      "abi": "armeabi-v7a",
+      "output": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\build\\intermediates\\cmake\\debug\\obj\\armeabi-v7a\\libltm_frsky_mavlink_smartport.so"
+    }
+  }
+}
