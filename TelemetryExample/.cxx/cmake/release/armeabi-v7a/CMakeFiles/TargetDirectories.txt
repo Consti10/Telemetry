@@ -1,4 +1,0 @@
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample/.cxx/cmake/release/armeabi-v7a/CMakeFiles/ltm_frsky_mavlink_smartport.dir
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample/.cxx/cmake/release/armeabi-v7a/CMakeFiles/rebuild_cache.dir
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample/.cxx/cmake/release/armeabi-v7a/CMakeFiles/TelemetryReceiver.dir
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample/.cxx/cmake/release/armeabi-v7a/CMakeFiles/edit_cache.dir

@@ -1,2 +1,0 @@
-ninja: Entering directory `C:\Users\geier\Desktop\FPV_VR\Telemetry\TelemetryExample\.cxx\cmake\debug\armeabi-v7a'
-ninja: no work to do.
