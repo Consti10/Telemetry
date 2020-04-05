@@ -10,3 +10,14 @@
 12	1345	607805023	CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/LiveVideo10ms/VideoTelemetryShared/InputOutput/FileReader.cpp.o	d04b65220ef9e5a5
 15	1761	607805024	CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o	800372306234d89
 1761	1899	607805024	../../../../build/intermediates/cmake/debug/obj/x86_64/libTelemetryReceiver.so	12a3531d013661bd
+1	149	607805637	build.ninja	2c28452fe9a17ddb
+0	8	0	clean	2c48a91dc7dc096a
+3	97	607805647	CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/ltm.c.o	d70dc8d58ab4dc3
+7	98	607805647	CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/smartport.c.o	a607f568cb502b6c
+5	102	607805647	CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/frsky.c.o	36d704a875e53de
+9	345	607805647	CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink2.c.o	de303a863f3925a8
+347	417	607805647	../../../../build/intermediates/cmake/debug/obj/x86_64/libltm_frsky_mavlink_smartport.so	d81895eaac5a0423
+15	774	607805647	CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/LiveVideo10ms/VideoTelemetryShared/InputOutput/UDPReceiver.cpp.o	2bfb62b4b8507fd4
+11	1350	607805648	CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/LiveVideo10ms/VideoTelemetryShared/InputOutput/FileReader.cpp.o	e0b8a001262e559
+13	1744	607805648	CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/TelemetryReceiver.cpp.o	49c56ec12edf91e5
+1744	1899	607805648	../../../../build/intermediates/cmake/debug/obj/x86_64/libTelemetryReceiver.so	5016528098d85bde

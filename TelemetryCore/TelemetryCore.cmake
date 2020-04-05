@@ -5,7 +5,7 @@
 find_library( log-lib
               log )
 
-set(TELEMETRY_PATH ${CMAKE_CURRENT_LIST_DIR}/src/main/cpp/Telemetry)
+set(TELEMETRY_PATH ${CMAKE_CURRENT_LIST_DIR}/src/main/cpp/)
 
 set(IO_PATH ${V_CORE_DIR}/../VideoTelemetryShared/InputOutput)
 set(HELPER_PATH ${V_CORE_DIR}/../VideoTelemetryShared/Helper)
@@ -27,9 +27,11 @@ target_link_libraries(ltm_frsky_mavlink_smartport
         android
         log)
 #######################################################
+include_directories( ${TELEMETRY_PATH}/TelemetryReceiver)
+include_directories( ${TELEMETRY_PATH}/WFBTelemetryData)
 add_library( TelemetryReceiver
         SHARED
-        ${TELEMETRY_PATH}/TelemetryReceiver.cpp
+        ${TELEMETRY_PATH}/TelemetryReceiver/TelemetryReceiver.cpp
         ${IO_PATH}/FileReader.cpp
         ${IO_PATH}/UDPReceiver.cpp
         )
@@ -40,5 +42,4 @@ target_link_libraries(TelemetryReceiver
         mediandk
         ltm_frsky_mavlink_smartport)
 
-include_directories( ${TELEMETRY_PATH})
 

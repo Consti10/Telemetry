@@ -175,7 +175,6 @@
       "project": {
         "compilerSettingsCacheFolder": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\.cxx",
         "cxxFolder": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\.cxx",
-        "ideBuildTargetAbi": "x86",
         "isBuildOnlyTargetAbiEnabled": true,
         "isCmakeBuildCohabitationEnabled": false,
         "isNativeCompilerSettingsCacheEnabled": false,
@@ -198,7 +197,10 @@
     "objFolder": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryExample\\build\\intermediates\\cmake\\debug\\obj",
     "variantName": "debug",
     "validAbiList": [
-      "X86"
+      "ARMEABI_V7A",
+      "ARM64_V8A",
+      "X86",
+      "X86_64"
     ]
   }
 }

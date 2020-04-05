@@ -1,23 +1,23 @@
 ninja: Entering directory `C:\Users\geier\Desktop\FPV_VR\Telemetry\TelemetryExample\.cxx\cmake\debug\x86_64'
-[1/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/smartport.c.o
-[2/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/frsky.c.o
-[3/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/ltm.c.o
-[4/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink2.c.o
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink2.c:1:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink2.h:5:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/mavlink.h:32:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/common.h:30:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../protocol.h:75:
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:248:25: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+[1/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/ltm.c.o
+[2/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/smartport.c.o
+[3/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/frsky.c.o
+[4/9] Building C object CMakeFiles/ltm_frsky_mavlink_smartport.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink2.c.o
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink2.c:1:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink2.h:5:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink_v2/common/mavlink.h:32:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink_v2/common/common.h:30:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink_v2/common/../protocol.h:75:
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink_v2/common/../mavlink_helpers.h:248:25: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_accumulate_buffer(&msg->checksum, _MAV_PAYLOAD(msg), msg->len);
                                ^~~~~~~~~~~~~
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:249:29: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink_v2/common/../mavlink_helpers.h:249:29: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_accumulate(crc_extra, &msg->checksum);
                                    ^~~~~~~~~~~~~
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:472:12: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink_v2/common/../mavlink_helpers.h:472:12: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_init(&msg->checksum);
                   ^~~~~~~~~~~~~
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:477:21: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/cFiles/mavlink_v2/common/../mavlink_helpers.h:477:21: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_accumulate(c, &msg->checksum);
                            ^~~~~~~~~~~~~
 4 warnings generated.
@@ -39,22 +39,22 @@ C:/Users/geier/Desktop/FPV_VR/LiveVideo10ms/VideoTelemetryShared/InputOutput/UDP
                                                               ^~~~~~~~~~~
 2 warnings generated.
 [7/9] Building CXX object CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/LiveVideo10ms/VideoTelemetryShared/InputOutput/FileReader.cpp.o
-[8/9] Building CXX object CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/TelemetryReceiver.cpp.o
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/TelemetryReceiver.cpp:20:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink2.h:5:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/mavlink.h:32:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/common.h:30:
-In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../protocol.h:75:
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:248:25: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+[8/9] Building CXX object CMakeFiles/TelemetryReceiver.dir/C_/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/TelemetryReceiver.cpp.o
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/TelemetryReceiver.cpp:20:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink2.h:5:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink_v2/common/mavlink.h:32:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink_v2/common/common.h:30:
+In file included from C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink_v2/common/../protocol.h:75:
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink_v2/common/../mavlink_helpers.h:248:25: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_accumulate_buffer(&msg->checksum, _MAV_PAYLOAD(msg), msg->len);
                                ^~~~~~~~~~~~~
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:249:29: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink_v2/common/../mavlink_helpers.h:249:29: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_accumulate(crc_extra, &msg->checksum);
                                    ^~~~~~~~~~~~~
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:472:12: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink_v2/common/../mavlink_helpers.h:472:12: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_init(&msg->checksum);
                   ^~~~~~~~~~~~~
-C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/Telemetry/cFiles/mavlink_v2/common/../mavlink_helpers.h:477:21: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
+C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver/../cFiles/mavlink_v2/common/../mavlink_helpers.h:477:21: warning: taking address of packed member 'checksum' of class or structure '__mavlink_message' may result in an unaligned pointer value [-Waddress-of-packed-member]
         crc_accumulate(c, &msg->checksum);
                            ^~~~~~~~~~~~~
 4 warnings generated.

@@ -1,8 +1,8 @@
 {
   "stringTable": {
     "0": "C:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample/.cxx/cmake/debug/armeabi-v7a",
-    "1": "--target=armv7-none-linux-androideabi21 --gcc-toolchain=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dltm_frsky_mavlink_smartport_EXPORTS -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/Helper -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/InputOutput -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -O0 -fno-limit-debug-info -fPIC",
-    "2": "--target=armv7-none-linux-androideabi21 --gcc-toolchain=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/sysroot -DTelemetryReceiver_EXPORTS -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/Helper -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/InputOutput -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -std=c++17 -O0 -fno-limit-debug-info -fPIC"
+    "1": "--target=armv7-none-linux-androideabi21 --gcc-toolchain=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/sysroot -Dltm_frsky_mavlink_smartport_EXPORTS -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/Helper -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/InputOutput -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/WFBTelemetryData -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -O0 -fno-limit-debug-info -fPIC",
+    "2": "--target=armv7-none-linux-androideabi21 --gcc-toolchain=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64 --sysroot=C:/Users/geier/AppData/Local/Android/Sdk/ndk/20.0.5594570/toolchains/llvm/prebuilt/windows-x86_64/sysroot -DTelemetryReceiver_EXPORTS -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/Helper -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryExample../../../LiveVideo10ms/VideoCore/../VideoTelemetryShared/InputOutput -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/TelemetryReceiver -IC:/Users/geier/Desktop/FPV_VR/Telemetry/TelemetryCore/src/main/cpp/WFBTelemetryData -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -fno-addrsig -march=armv7-a -mthumb -Wa,--noexecstack -Wformat -Werror=format-security -std=c++17 -O0 -fno-limit-debug-info -fPIC"
   },
   "buildFiles": [
     "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\TelemetryCore.cmake",
@@ -23,7 +23,7 @@
       "artifactName": "TelemetryReceiver",
       "files": [
         {
-          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\Telemetry\\TelemetryReceiver.cpp",
+          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\TelemetryReceiver\\TelemetryReceiver.cpp",
           "flagsOrdinal": 2,
           "workingDirectoryOrdinal": 0
         },
@@ -49,22 +49,22 @@
       "artifactName": "ltm_frsky_mavlink_smartport",
       "files": [
         {
-          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\Telemetry\\cFiles\\ltm.c",
+          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\cFiles\\ltm.c",
           "flagsOrdinal": 1,
           "workingDirectoryOrdinal": 0
         },
         {
-          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\Telemetry\\cFiles\\frsky.c",
+          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\cFiles\\frsky.c",
           "flagsOrdinal": 1,
           "workingDirectoryOrdinal": 0
         },
         {
-          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\Telemetry\\cFiles\\mavlink2.c",
+          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\cFiles\\mavlink2.c",
           "flagsOrdinal": 1,
           "workingDirectoryOrdinal": 0
         },
         {
-          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\Telemetry\\cFiles\\smartport.c",
+          "src": "C:\\Users\\geier\\Desktop\\FPV_VR\\Telemetry\\TelemetryCore\\src\\main\\cpp\\cFiles\\smartport.c",
           "flagsOrdinal": 1,
           "workingDirectoryOrdinal": 0
         }
