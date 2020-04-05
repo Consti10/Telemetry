@@ -4,7 +4,6 @@ android {
     compileSdkVersion rootProject.compileSdkVersion
 
 
-
     defaultConfig {
         applicationId "constantin.telemetry.example"
         minSdkVersion rootProject.minSdkVersion
