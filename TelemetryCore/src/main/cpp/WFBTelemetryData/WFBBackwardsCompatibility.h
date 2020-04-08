@@ -9,30 +9,30 @@
 
 //the newer struct has more values then the old one
 //but is mostly backwards compatible
-void writeDataBackwardsCompatible(wifibroadcast_rx_status_forward_t2 *n,
-                                  const wifibroadcast_rx_status_forward_t *o){
-    n->damaged_block_cnt=o->damaged_block_cnt;
-    n->lost_packet_cnt=o->lost_packet_cnt;
-    n->skipped_packet_cnt=o->skipped_packet_cnt;
-    n->received_packet_cnt=o->received_packet_cnt;
-    n->kbitrate=o->kbitrate;
-    n->kbitrate_measured=o->kbitrate_measured;
-    n->kbitrate_set=o->kbitrate_set;
-    n->lost_packet_cnt_telemetry_up=o->lost_packet_cnt_telemetry_up;
-    n->lost_packet_cnt_telemetry_down=o->lost_packet_cnt_telemetry_down;
-    n->lost_packet_cnt_msp_up=o->lost_packet_cnt_msp_up;
-    n->lost_packet_cnt_msp_down=o->lost_packet_cnt_msp_down;
-    n->lost_packet_cnt_rc=o->lost_packet_cnt_rc;
+void writeDataBackwardsCompatible(wifibroadcast_rx_status_forward_t2 *dst,
+                                  const wifibroadcast_rx_status_forward_t *source){
+    dst->damaged_block_cnt=source->damaged_block_cnt;
+    dst->lost_packet_cnt=source->lost_packet_cnt;
+    dst->skipped_packet_cnt=source->skipped_packet_cnt;
+    dst->received_packet_cnt=source->received_packet_cnt;
+    dst->kbitrate=source->kbitrate;
+    dst->kbitrate_measured=source->kbitrate_measured;
+    dst->kbitrate_set=source->kbitrate_set;
+    dst->lost_packet_cnt_telemetry_up=source->lost_packet_cnt_telemetry_up;
+    dst->lost_packet_cnt_telemetry_down=source->lost_packet_cnt_telemetry_down;
+    dst->lost_packet_cnt_msp_up=source->lost_packet_cnt_msp_up;
+    dst->lost_packet_cnt_msp_down=source->lost_packet_cnt_msp_down;
+    dst->lost_packet_cnt_rc=source->lost_packet_cnt_rc;
 
-    n->joystick_connected=o->joystick_connected;
-    n->cpuload_gnd=o->cpuload_gnd;
-    n->temp_gnd=o->temp_gnd;
-    n->cpuload_air=o->cpuload_air;
-    n->temp_air=o->temp_air;
-    n->wifi_adapter_cnt=o->wifi_adapter_cnt;
+    dst->joystick_connected=source->joystick_connected;
+    dst->cpuload_gnd=source->cpuload_gnd;
+    dst->temp_gnd=source->temp_gnd;
+    dst->cpuload_air=source->cpuload_air;
+    dst->temp_air=source->temp_air;
+    dst->wifi_adapter_cnt=source->wifi_adapter_cnt;
     for(int i=0;i<6;i++){
-        const wifi_adapter_rx_status_forward_t* o1=&o->adapter[i];
-        wifi_adapter_rx_status_forward_t2* n1=&n->adapter[i];
+        const wifi_adapter_rx_status_forward_t* o1=&source->adapter[i];
+        wifi_adapter_rx_status_forward_t2* n1=&dst->adapter[i];
         n1->received_packet_cnt=o1->received_packet_cnt;
         n1->current_signal_dbm=o1->current_signal_dbm;
         n1->type=o1->type;

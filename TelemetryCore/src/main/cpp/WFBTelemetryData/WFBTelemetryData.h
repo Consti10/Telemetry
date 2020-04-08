@@ -9,10 +9,6 @@
 #include "stdbool.h"
 
 
-#define WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES 94
-#define WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES 113
-
-
 typedef struct {
     uint32_t received_packet_cnt;
     int8_t current_signal_dbm;
@@ -78,6 +74,7 @@ typedef struct {
     wifi_adapter_rx_status_forward_t2 adapter[6]; // same struct as in wifibroadcast lib.h
 } __attribute__((packed)) wifibroadcast_rx_status_forward_t2;
 
-
+static constexpr const auto WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES=sizeof(wifibroadcast_rx_status_forward_t);
+static constexpr const auto WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES=sizeof(wifibroadcast_rx_status_forward_t2);
 
 #endif //FPV_VR_PRIVATE_WFB_TELEMETRY_DATA_H

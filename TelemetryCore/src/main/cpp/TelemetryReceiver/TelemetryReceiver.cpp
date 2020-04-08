@@ -136,7 +136,8 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                     default:break;
                 }
             };
-            mTestFileReader=std::make_unique<FileReader>(useAsset ? assetManager : nullptr,filename,callback,true,64);
+            //Do not use chunks smaller than the size of telemetry data chunks
+            mTestFileReader=std::make_unique<FileReader>(useAsset ? assetManager : nullptr,filename,callback,true,1024);
             mTestFileReader->startReading();
         }break;
     }
@@ -182,23 +183,24 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
         uav_td.BatteryPack_P=(int8_t)(uav_td.BatteryPack_mAh/BATT_CAPACITY_MAH*100.0f);
     }
     mGroundRecorder.writePacketIfStarted(data,data_length,static_cast<uint8_t>(T_Protocol));
-    /*try{
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }catch (...){
-    }*/
 }
 
 void TelemetryReceiver::onEZWBStatusDataReceived(const uint8_t *data,const size_t data_length){
     nWIFIBRADCASTBytes+=data_length;
-    if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES){
-        const auto* struct_pointer= reinterpret_cast<const wifibroadcast_rx_status_forward_t*>(data);
-        writeDataBackwardsCompatible(&wifibroadcastTelemetryData,struct_pointer);
-        nWIFIBROADCASTParsedPackets++;
-    }else if(data_length==WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES){
-        memcpy(&wifibroadcastTelemetryData,data,WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES);
-        nWIFIBROADCASTParsedPackets++;
-    }else{
-        nWIFIBRADCASTFailedPackets++;
+    switch(data_length){
+        case WIFIBROADCAST_RX_STATUS_FORWARD_SIZE_BYTES:{
+            const auto* struct_pointer= reinterpret_cast<const wifibroadcast_rx_status_forward_t*>(data);
+            writeDataBackwardsCompatible(&wifibroadcastTelemetryData,struct_pointer);
+            nWIFIBROADCASTParsedPackets++;
+        };break;
+        case WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES:{
+            memcpy(&wifibroadcastTelemetryData,data,WIFIBROADCAST_RX_STATUS_FORWARD_2_SIZE_BYTES);
+            nWIFIBROADCASTParsedPackets++;
+        };break;
+        default:
+            LOGD("EZWB status data unknown length %d",(int)data_length);
+            nWIFIBRADCASTFailedPackets++;
+            break;
     }
     mGroundRecorder.writePacketIfStarted(data,data_length,GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB);
 }
