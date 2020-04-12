@@ -21,12 +21,14 @@ import androidx.lifecycle.OnLifecycleEvent;
 import java.io.File;
 
 import dji.common.battery.BatteryState;
+import dji.common.error.DJIError;
 import dji.common.flightcontroller.CompassState;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.gimbal.GimbalMode;
 import dji.common.model.LocationCoordinate2D;
 import dji.common.product.Model;
+import dji.common.util.CommonCallbacks;
 import dji.flysafe.LocationCoordinate;
 import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.VideoFeeder;
@@ -73,7 +75,8 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
     private static native String getEZWBIPAdress(long testRecN);
     private static native boolean receivingEZWBButCannotParse(long testRecN);
     //new
-    private static native void setDJIValues(long instance,double Latitude_dDeg,double Longitude_dDeg,float AltitudeX_m,float Roll_Deg,float Pitch_Deg);
+    private static native void setDJIValues(long instance,double Latitude_dDeg,double Longitude_dDeg,float AltitudeX_m,float Roll_Deg,float Pitch_Deg,
+                                            float SpeedClimb_KPH,float SpeedGround_KPH,int SatsInUse);
     private static native void setDJIBatteryValues(long instance,float BatteryPack_P);
 
     private final long nativeInstance;
@@ -96,7 +99,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
             Toast.makeText(context,"Cannot start dji telemetry",Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context,"starting dji telemetry",Toast.LENGTH_LONG).show();
-            product.getGimbal().setMode(GimbalMode.FPV,null);
+            product.getGimbal().setMode(GimbalMode.FPV, null);
             product.getBattery().setStateCallback(new BatteryState.Callback() {
                 @Override
                 public void onUpdate(BatteryState state) {
@@ -109,7 +112,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
                     final LocationCoordinate2D home=state.getHomeLocation();
                     final LocationCoordinate3D aircraftLocation=state.getAircraftLocation();
                     setDJIValues(nativeInstance,aircraftLocation.getLatitude(),aircraftLocation.getLongitude(),aircraftLocation.getAltitude(),
-                            (float)state.getAttitude().roll,(float)state.getAttitude().pitch);
+                            (float)state.getAttitude().roll,(float)state.getAttitude().pitch,state.getVelocityX(),state.getVelocityZ(),state.getSatelliteCount());
                     setHomeLocation(nativeInstance,home.getLatitude(),home.getLongitude(),0);
                 }
             });

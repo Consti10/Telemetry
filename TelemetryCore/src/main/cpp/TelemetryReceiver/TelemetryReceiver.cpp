@@ -834,13 +834,17 @@ JNI_METHOD(void, setHomeLocation)
 
 JNI_METHOD(void, setDJIValues)
 (JNIEnv *env,jclass unused,jlong nativeInstance,
- jdouble Latitude_dDeg,jdouble Longitude_dDeg,jfloat AltitudeX_m,jfloat Roll_Deg,jfloat Pitch_Deg) {
+ jdouble Latitude_dDeg,jdouble Longitude_dDeg,jfloat AltitudeX_m,jfloat Roll_Deg,jfloat Pitch_Deg,jfloat SpeedClimb_KPH,jfloat SpeedGround_KPH,jint SatsInUse) {
     TelemetryReceiver* instance=native(nativeInstance);
     instance->uav_td.Latitude_dDeg=Latitude_dDeg;
     instance->uav_td.Longitude_dDeg=Longitude_dDeg;
     instance->uav_td.AltitudeGPS_m=AltitudeX_m;
+    instance->uav_td.AltitudeBaro_m=AltitudeX_m;
     instance->uav_td.Roll_Deg=Roll_Deg;
     instance->uav_td.Pitch_Deg=Pitch_Deg;
+    instance->uav_td.SpeedClimb_KPH=SpeedClimb_KPH;
+    instance->uav_td.SpeedGround_KPH=SpeedGround_KPH;
+    instance->uav_td.SatsInUse=SatsInUse;
 }
 
 JNI_METHOD(void, setDJIBatteryValues)

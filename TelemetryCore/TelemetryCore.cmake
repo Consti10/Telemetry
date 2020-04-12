@@ -13,7 +13,7 @@ include_directories(${HELPER_PATH})
 include_directories(${IO_PATH})
 
 set(T_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/src/main/cpp/)
-
+include_directories( ${T_SOURCE_DIR}/SharedCppC)
 ####################
 #C-Files
 ####################
