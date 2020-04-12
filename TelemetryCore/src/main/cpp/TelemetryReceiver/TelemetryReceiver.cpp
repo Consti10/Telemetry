@@ -13,12 +13,13 @@
 #include <locale>
 #include <codecvt>
 #include <android/asset_manager_jni.h>
+#include <array>
 
 extern "C"{
-#include "../cFiles/ltm.h"
-#include "../cFiles/frsky.h"
-#include "../cFiles/mavlink2.h"
-#include "../cFiles/smartport.h"
+#include "../parser_c/ltm.h"
+#include "../parser_c/frsky.h"
+#include "../parser_c/mavlink2.h"
+#include "../parser_c/smartport.h"
 }
 
 #define TAG "TelemetryReceiver"
@@ -133,6 +134,11 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                     case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB:
                         this->onEZWBStatusDataReceived(d,len);
                         break;
+                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_ANDROD_GPS:{
+                        RawOriginData::Packet packet=RawOriginData::fromRawData(d,len);
+                        this->setHome(packet[0],packet[1],packet[2]);
+                        originData.hasBeenSet=true;
+                    }break;
                     default:break;
                 }
             };
@@ -179,7 +185,7 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
             break;
     }
     nTelemetryBytes+=data_length;
-    if(T_Protocol==TelemetryReceiver::LTM){
+    if(T_Protocol!=TelemetryReceiver::MAVLINK){
         uav_td.BatteryPack_P=(int8_t)(uav_td.BatteryPack_mAh/BATT_CAPACITY_MAH*100.0f);
     }
     mGroundRecorder.writePacketIfStarted(data,data_length,static_cast<uint8_t>(T_Protocol));
@@ -219,6 +225,8 @@ void TelemetryReceiver::setHome(double latitude, double longitude,double attitud
     originData.Longitude_dDeg=longitude;
     //originData.Altitude_m=(float)attitude;
     originData.hasBeenSet=true;
+    const auto data=RawOriginData::toRawData({latitude,longitude,attitude});
+    mGroundRecorder.writePacketIfStarted(data.data(),data.size(),GroundRecorderFPV::PACKET_TYPE_TELEMETRY_ANDROD_GPS);
 }
 
 const UAVTelemetryData& TelemetryReceiver::getUAVTelemetryData()const{
@@ -309,14 +317,7 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
             ret.prefix=L"Batt";
             ret.prefixIcon=ICON_BATTERY;
             ret.prefixScale=1.2f;
-            float perc;
-            float capacity=BATT_CAPACITY_MAH;
-            if(T_Protocol==TelemetryReceiver::MAVLINK){
-                perc=uav_td.BatteryPack_P;
-            }else{
-                perc=(capacity-uav_td.BatteryPack_mAh)/capacity*100.0f;
-            }
-            //LOGV3("%d",uav_td.BatteryPack_mAh);
+            float perc=uav_td.BatteryPack_P;
             ret.value=StringHelper::intToString((int)std::round(perc),3);
             ret.metric=L"%";
             if(perc<20.0f){
@@ -829,10 +830,25 @@ JNI_METHOD(void, setHomeLocation)
  jdouble latitude, jdouble longitude, jdouble attitude) {
     TelemetryReceiver* instance=native(nativeInstance);
     instance->setHome((double)latitude,(double)longitude,(double)attitude);
-
-
 }
 
+JNI_METHOD(void, setDJIValues)
+(JNIEnv *env,jclass unused,jlong nativeInstance,
+ jdouble Latitude_dDeg,jdouble Longitude_dDeg,jfloat AltitudeX_m,jfloat Roll_Deg,jfloat Pitch_Deg) {
+    TelemetryReceiver* instance=native(nativeInstance);
+    instance->uav_td.Latitude_dDeg=Latitude_dDeg;
+    instance->uav_td.Longitude_dDeg=Longitude_dDeg;
+    instance->uav_td.AltitudeGPS_m=AltitudeX_m;
+    instance->uav_td.Roll_Deg=Roll_Deg;
+    instance->uav_td.Pitch_Deg=Pitch_Deg;
+}
+
+JNI_METHOD(void, setDJIBatteryValues)
+(JNIEnv *env,jclass unused,jlong nativeInstance,
+ jfloat BatteryPack_P) {
+    TelemetryReceiver* instance=native(nativeInstance);
+    instance->uav_td.BatteryPack_P=BatteryPack_P;
+}
 
 }
 

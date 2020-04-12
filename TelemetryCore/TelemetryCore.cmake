@@ -17,14 +17,14 @@ set(T_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/src/main/cpp/)
 ####################
 #C-Files
 ####################
-add_library( ltm_frsky_mavlink_smartport
+add_library( parser
         SHARED
-        ${T_SOURCE_DIR}/cFiles/ltm.c
-        ${T_SOURCE_DIR}/cFiles/frsky.c
-        ${T_SOURCE_DIR}/cFiles/mavlink2.c
-        ${T_SOURCE_DIR}/cFiles/smartport.c
+        ${T_SOURCE_DIR}/parser_c/ltm.c
+        ${T_SOURCE_DIR}/parser_c/frsky.c
+        ${T_SOURCE_DIR}/parser_c/mavlink2.c
+        ${T_SOURCE_DIR}/parser_c/smartport.c
         )
-target_link_libraries(ltm_frsky_mavlink_smartport
+target_link_libraries(parser
         ${log-lib}
         android
         log)
@@ -43,6 +43,6 @@ target_link_libraries(TelemetryReceiver
         android
         log
         mediandk
-        ltm_frsky_mavlink_smartport)
+        parser)
 
 

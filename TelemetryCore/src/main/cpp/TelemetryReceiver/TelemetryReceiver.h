@@ -5,7 +5,8 @@
 #ifndef OSDTESTER_TELEMETRYRECEIVER_H
 #define OSDTESTER_TELEMETRYRECEIVER_H
 
-#include "../cFiles/UAVTelemetryData.h"
+#include "../SharedCppC/UAVTelemetryData.h"
+#include "../SharedCppC/OriginData.h"
 #include <WFBTelemetryData.h>
 
 #include <atomic>
@@ -182,6 +183,7 @@ private:
     long nWIFIBRADCASTFailedPackets=0;
     OriginData originData;
     AppOSDData appOSDData;
+public:
     UAVTelemetryData uav_td;
     wifibroadcast_rx_status_forward_t2 wifibroadcastTelemetryData;
     static constexpr const float KMH_TO_MS=1000.0F/(60.0F*60.0F);
