@@ -1,14 +1,5 @@
 package constantin.telemetry.example;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import constantin.telemetry.core.ASettingsTelemetry;
-import constantin.telemetry.core.TelemetryReceiver;
-import constantin.telemetry.core.TelemetrySettings;
-import constantin.telemetry.core.TestReceiverTelemetry;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -19,9 +10,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import constantin.telemetry.core.ASettingsTelemetry;
+import constantin.telemetry.core.TelemetrySettings;
+import constantin.telemetry.core.TestReceiverTelemetry;
 
 public class MainActivity extends AppCompatActivity {
 

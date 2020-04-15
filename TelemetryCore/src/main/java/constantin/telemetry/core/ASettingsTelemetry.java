@@ -1,17 +1,17 @@
 package constantin.telemetry.core;
 
-import androidx.appcompat.app.AppCompatActivity;
-/*import androidx.preference.Preference;
-import androidx.preference.PreferenceFragment;
-import androidx.preference.PreferenceFragmentCompat;
-import androidx.preference.PreferenceManager;*/
-
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+/*import androidx.preference.Preference;
+import androidx.preference.PreferenceFragment;
+import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.PreferenceManager;*/
 
 
 public class ASettingsTelemetry extends AppCompatActivity {

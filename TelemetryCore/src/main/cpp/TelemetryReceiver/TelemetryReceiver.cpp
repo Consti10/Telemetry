@@ -22,7 +22,7 @@ extern "C"{
 #include "../parser_c/smartport.h"
 }
 
-#define TAG "TelemetryReceiver"
+constexpr const auto TAG="TelemetryReceiver";
 #define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
 
 int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protocol) {
@@ -721,7 +721,7 @@ const std::string TelemetryReceiver::getProtocolAsString() const {
         case TelemetryReceiver::MAVLINK:ss<<"mavlink";break;
         case TelemetryReceiver::SMARTPORT:ss<<"smartport";break;
         case TelemetryReceiver::FRSKY:ss<<"frsky";break;
-        default:assert(true);break;
+        default:ss<<"unknown";break;
     }
     return ss.str();
 }

@@ -5,8 +5,8 @@
 #ifndef OSDTESTER_TELEMETRYRECEIVER_H
 #define OSDTESTER_TELEMETRYRECEIVER_H
 
-#include "../SharedCppC/UAVTelemetryData.h"
-#include "../SharedCppC/OriginData.h"
+#include <UAVTelemetryData.h>
+#include <OriginData.h>
 #include <WFBTelemetryData.h>
 
 #include <atomic>
@@ -19,7 +19,6 @@
 #include <GroundRecorderRAW.hpp>
 #include <UDPReceiver.h>
 
-//#define RECEIVE_FROM_TESTLOG
 
 /*
  * This data is only generated on the android side and does not depend

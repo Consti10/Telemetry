@@ -39,6 +39,10 @@ public class TelemetrySettings {
                 putInt(context.getString(R.string.T_SOURCE),type).commit();
     }
 
+    public static int getT_SOURCE(final Context context){
+        return context.getSharedPreferences("pref_telemetry",Context.MODE_PRIVATE).
+                getInt(context.getString(R.string.T_SOURCE),SOURCE_TYPE_UDP);
+    }
 
     //
     //also create directory if not already existing
