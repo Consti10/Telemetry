@@ -834,7 +834,7 @@ JNI_METHOD(void, setHomeLocation)
 
 JNI_METHOD(void, setDJIValues)
 (JNIEnv *env,jclass unused,jlong nativeInstance,
- jdouble Latitude_dDeg,jdouble Longitude_dDeg,jfloat AltitudeX_m,jfloat Roll_Deg,jfloat Pitch_Deg,jfloat SpeedClimb_KPH,jfloat SpeedGround_KPH,jint SatsInUse) {
+ jdouble Latitude_dDeg,jdouble Longitude_dDeg,jfloat AltitudeX_m,jfloat Roll_Deg,jfloat Pitch_Deg,jfloat SpeedClimb_KPH,jfloat SpeedGround_KPH,jint SatsInUse,jfloat Heading_Deg) {
     TelemetryReceiver* instance=native(nativeInstance);
     instance->uav_td.Latitude_dDeg=Latitude_dDeg;
     instance->uav_td.Longitude_dDeg=Longitude_dDeg;
@@ -845,13 +845,21 @@ JNI_METHOD(void, setDJIValues)
     instance->uav_td.SpeedClimb_KPH=SpeedClimb_KPH;
     instance->uav_td.SpeedGround_KPH=SpeedGround_KPH;
     instance->uav_td.SatsInUse=SatsInUse;
+    instance->uav_td.Heading_Deg=Heading_Deg;
 }
 
 JNI_METHOD(void, setDJIBatteryValues)
 (JNIEnv *env,jclass unused,jlong nativeInstance,
- jfloat BatteryPack_P) {
+ jfloat BatteryPack_P,jfloat BatteryPack_A) {
     TelemetryReceiver* instance=native(nativeInstance);
     instance->uav_td.BatteryPack_P=BatteryPack_P;
+    instance->uav_td.BatteryPack_A=BatteryPack_A;
+}
+
+JNI_METHOD(void, setDJIDownlinkSignalQuality)
+(JNIEnv *env,jclass unused,jlong nativeInstance,jint value) {
+    TelemetryReceiver* instance=native(nativeInstance);
+    instance->uav_td.RSSI1_Percentage_dBm=value;
 }
 
 }
