@@ -45,7 +45,7 @@ private:
     void onUAVTelemetryDataReceived(const uint8_t[],size_t);
     void onEZWBStatusDataReceived(const uint8_t[],size_t);
 private:
-    enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS };
+    enum SOURCE_TYPE_OPTIONS { UDP,FILE,ASSETS,EXTERNAL_DJI };
     enum PROTOCOL_OPTIONS {NONE,LTM,MAVLINK,SMARTPORT,FRSKY};
     enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6,OpenHD_1_0_0};
     enum METRIC_SPEED{KMH,MS};

@@ -85,12 +85,11 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mEZWBDataReceiver.get()== nullptr);
     assert(mTestFileReader.get()== nullptr);
     updateSettings(env,context);
-    if((ENABLE_GROUND_RECORDING && SOURCE_TYPE!=FILE && SOURCE_TYPE!=ASSETS )){
-    //if(true){
-        mGroundRecorder.start();
-    }
     switch(SOURCE_TYPE){
         case UDP:{
+            if(ENABLE_GROUND_RECORDING){
+                mGroundRecorder.start();
+            }
             if(T_Protocol!=TelemetryReceiver::NONE ){
                 UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
                     this->onUAVTelemetryDataReceived(data,data_length);
@@ -145,6 +144,9 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
             //Do not use chunks smaller than the size of telemetry data chunks
             mTestFileReader=std::make_unique<FileReader>(useAsset ? assetManager : nullptr,filename,callback,true,1024);
             mTestFileReader->startReading();
+        }break;
+        case EXTERNAL_DJI:{
+            // values are set via the setXXX callbacks
         }break;
     }
 }

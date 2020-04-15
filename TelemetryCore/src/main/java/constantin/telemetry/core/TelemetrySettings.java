@@ -11,6 +11,10 @@ import java.io.File;
 import static android.content.Context.MODE_PRIVATE;
 
 public class TelemetrySettings {
+    public static final int SOURCE_TYPE_UDP=0;
+    public static final int SOURCE_TYPE_FILE=1;
+    public static final int SOURCE_TYPE_ASSETS=2;
+    public static final int SOURCE_TYPE_EXTERNAL_DJI=3;
 
     public static String getT_PLAYBACK_FILENAME(final Context context){
         return context.getSharedPreferences("pref_telemetry",Context.MODE_PRIVATE).
@@ -28,6 +32,13 @@ public class TelemetrySettings {
         context.getSharedPreferences("pref_telemetry",Context.MODE_PRIVATE).edit().
                 putBoolean(context.getString(R.string.T_GROUND_RECORDING),enable).commit();
     }
+
+    @SuppressLint("ApplySharedPref")
+    public static void setT_SOURCE(final Context context,final int type){
+        context.getSharedPreferences("pref_telemetry",Context.MODE_PRIVATE).edit().
+                putInt(context.getString(R.string.T_SOURCE),type).commit();
+    }
+
 
     //
     //also create directory if not already existing

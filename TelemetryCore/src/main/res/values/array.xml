@@ -5,11 +5,13 @@
         <item>UDP</item>
         <item>FILE</item>
         <item>ASSETS</item>
+        <item>EXTERNAL_DJI</item>
     </string-array>
     <string-array name="valuesTelemetrySource" >
         <item>0</item>
         <item>1</item>
         <item>2</item>
+        <item>3</item>
     </string-array>
 
     <string-array name="entriesTelemetryProtocol" >

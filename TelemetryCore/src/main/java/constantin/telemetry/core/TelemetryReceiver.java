@@ -23,11 +23,6 @@ import androidx.lifecycle.OnLifecycleEvent;
 
 @SuppressWarnings("WeakerAccess")
 public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, LifecycleObserver {
-
-    public static final int SOURCE_TYPE_UDP=0;
-    public static final int SOURCE_TYPE_FILE=1;
-    public static final int SOURCE_TYPE_ASSETS=2;
-
     static {
         System.loadLibrary("TelemetryReceiver");
     }
