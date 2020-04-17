@@ -75,7 +75,7 @@ public:
 public:
     //External ground recorder means we use the ground recorder of the video lib for a merged
     //Video an telemetry ground recording file
-    explicit TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder);
+    explicit TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder,FileReader* externalFileReader);
     /**
      * Start all telemetry receiver. If they are already receiving, nothing happens.
      * Make sure startReceiving() and stopReceivingAndWait() are not called on different threads
@@ -174,8 +174,10 @@ public:
 private:
     std::unique_ptr<UDPReceiver> mTelemetryDataReceiver;
     std::unique_ptr<UDPReceiver> mEZWBDataReceiver;
-    std::unique_ptr<FileReader> mTestFileReader;
+    // Optionally the ground recorder / file receiver are shared with VideoCore
     GroundRecorderFPV& mGroundRecorder;
+    const bool isExternalFileReceiver;
+    FileReader& mFileReceiver;
     long nTelemetryBytes=0;
     long nWIFIBRADCASTBytes=0;
     long nWIFIBROADCASTParsedPackets=0;

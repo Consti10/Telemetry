@@ -38,9 +38,11 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
     return port;
 }
 
-TelemetryReceiver::TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder):
+TelemetryReceiver::TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder,FileReader* externalFileReader):
         GROUND_RECORDING_DIRECTORY(DIR),
-        mGroundRecorder((externalGroundRecorder== nullptr) ?( * new GroundRecorderFPV(DIR)) : *externalGroundRecorder){
+        mGroundRecorder((externalGroundRecorder== nullptr) ?( * new GroundRecorderFPV(DIR)) : *externalGroundRecorder),
+        mFileReceiver((externalFileReader== nullptr) ?( * new FileReader(1024)) : *externalFileReader),
+        isExternalFileReceiver(externalFileReader!= nullptr){
 }
 
 void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
@@ -83,7 +85,6 @@ void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
 void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager* assetManager) {
     assert(mTelemetryDataReceiver.get()==nullptr);
     assert(mEZWBDataReceiver.get()== nullptr);
-    assert(mTestFileReader.get()== nullptr);
     updateSettings(env,context);
     switch(SOURCE_TYPE){
         case UDP:{
@@ -109,8 +110,6 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
         }break;
         case FILE:
         case ASSETS:{
-            const bool useAsset=SOURCE_TYPE==ASSETS;
-            const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
             FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
                 switch(packetType){
                     case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
@@ -141,9 +140,12 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                     default:break;
                 }
             };
-            //Do not use chunks smaller than the size of telemetry data chunks
-            mTestFileReader=std::make_unique<FileReader>(useAsset ? assetManager : nullptr,filename,callback,true,1024);
-            mTestFileReader->startReading();
+            mFileReceiver.setCallBack(1,callback);
+            if(!isExternalFileReceiver){
+                const bool useAsset=SOURCE_TYPE==ASSETS;
+                const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
+                mFileReceiver.startReading(useAsset ? assetManager : nullptr,filename);
+            }
         }break;
         case EXTERNAL_DJI:{
             // values are set via the setXXX callbacks
@@ -160,11 +162,8 @@ void TelemetryReceiver::stopReceiving() {
         mEZWBDataReceiver->stopReceiving();
         mEZWBDataReceiver.reset();
     }
-    if(mTestFileReader){
-        mTestFileReader->stopReading();
-        mTestFileReader.reset();
-    }
-   mGroundRecorder.stop();
+    mFileReceiver.stopReadingIfStarted();
+    mGroundRecorder.stop();
 }
 
 void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t data_length){
@@ -603,7 +602,7 @@ const std::string TelemetryReceiver::getStatisticsAsString()const {
     }else{
         ostream<<"Source type==File. ("+getProtocolAsString()+") Select UDP as data source\n";
         ostream<<"nTelemetryBytes"<<nTelemetryBytes<<"\n";
-        ostream<<"nParsedBytes"<<(mTestFileReader ? mTestFileReader->getNReceivedBytes(): -1)<<"\n";
+        ostream<<"nParsedBytes"<<mFileReceiver.getNReceivedBytes()<<"\n";
         ostream<<"Packets:"<<uav_td.validmsgsrx<<"\n";
     }
     return ostream.str();
@@ -746,9 +745,9 @@ inline TelemetryReceiver *native(jlong ptr) {
 
 extern "C" {
 JNI_METHOD(jlong , createInstance)
-(JNIEnv *env,jclass unused,jobject context,jstring groundRecordingDirectory,jlong externalGroundRecorder) {
+(JNIEnv *env,jclass unused,jobject context,jstring groundRecordingDirectory,jlong externalGroundRecorder,jlong externalFileReader) {
     const char *str = env->GetStringUTFChars(groundRecordingDirectory, nullptr);
-    auto* telemetryReceiver = new TelemetryReceiver(str,reinterpret_cast<GroundRecorderFPV*>(externalGroundRecorder));
+    auto* telemetryReceiver = new TelemetryReceiver(str,reinterpret_cast<GroundRecorderFPV*>(externalGroundRecorder),reinterpret_cast<FileReader*>(externalFileReader));
     env->ReleaseStringUTFChars(groundRecordingDirectory,str);
     return jptr(telemetryReceiver);
 }
