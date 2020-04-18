@@ -7,6 +7,7 @@ mavlink_status_t status;
 mavlink_message_t msg;
 
 void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *data,const size_t data_length) {
+    //__android_log_print(ANDROID_LOG_DEBUG,"T","MAV:");
     for(int i=0; i<data_length; i++) {
         uint8_t c = data[i];
         if (mavlink_parse_char(MAVLINK_COMM_0, c, &msg, &status)) {
@@ -66,6 +67,7 @@ void mavlink_read_v2(UAVTelemetryData *td,OriginData *originData,const uint8_t *
                     break;
                 }
                 case MAVLINK_MSG_ID_GPS_GLOBAL_ORIGIN:{
+                    //__android_log_print(ANDROID_LOG_DEBUG,"T","ORIGIN X:");
                     if(originData->writeByTelemetryProtocol){
                         originData->Latitude_dDeg=mavlink_msg_gps_global_origin_get_latitude(&msg)/10000000.0;
                         originData->Longitude_dDeg=mavlink_msg_gps_global_origin_get_longitude(&msg)/10000000.0;

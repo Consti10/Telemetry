@@ -67,7 +67,7 @@ TelemetryReceiver::TelemetryReceiver(const char* DIR,GroundRecorderFPV* external
                 break;
             case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_ANDROD_GPS:{
                 RawOriginData::Packet packet=RawOriginData::fromRawData(d,len);
-                this->setHome(packet[0],packet[1],packet[2]);
+                this->setHomeAndroid(packet[0], packet[1], packet[2]);
                 originData.hasBeenSet=true;
             }break;
             default:break;
@@ -221,7 +221,7 @@ void TelemetryReceiver::resetNReceivedTelemetryBytes() {
     nTelemetryBytes=0;
 }
 
-void TelemetryReceiver::setHome(double latitude, double longitude,double attitude) {
+void TelemetryReceiver::setHomeAndroid(double latitude, double longitude, double attitude) {
     //When using LTM we also get the home data by the protocol
     originData.Latitude_dDeg=latitude;
     originData.Longitude_dDeg=longitude;
@@ -831,7 +831,7 @@ JNI_METHOD(void, setHomeLocation)
 (JNIEnv *env,jclass unused,jlong nativeInstance,
  jdouble latitude, jdouble longitude, jdouble attitude) {
     TelemetryReceiver* instance=native(nativeInstance);
-    instance->setHome((double)latitude,(double)longitude,(double)attitude);
+    instance->setHomeAndroid((double) latitude, (double) longitude, (double) attitude);
 }
 
 JNI_METHOD(void, setDJIValues)

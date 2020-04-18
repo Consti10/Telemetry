@@ -93,7 +93,7 @@ public:
     void setDecodingInfo(float currentFPS, float currentKiloBitsPerSecond,float avgParsingTime_ms,float avgWaitForInputBTime_ms,float avgDecodingTime_ms);
     void setOpenGLFPS(float fps);
     void setFlightTime(float timeSeconds);
-    void setHome(double latitude,double longitude,double attitude);
+    void setHomeAndroid(double latitude, double longitude, double attitude);
     void resetNReceivedTelemetryBytes();
     //
     const std::string getStatisticsAsString()const;
