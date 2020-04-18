@@ -43,6 +43,37 @@ TelemetryReceiver::TelemetryReceiver(const char* DIR,GroundRecorderFPV* external
         mGroundRecorder((externalGroundRecorder== nullptr) ?( * new GroundRecorderFPV(DIR)) : *externalGroundRecorder),
         mFileReceiver((externalFileReader== nullptr) ?( * new FileReader(1024)) : *externalFileReader),
         isExternalFileReceiver(externalFileReader!= nullptr){
+    FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
+        switch(packetType){
+            case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
+            case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_LTM:
+                T_Protocol=LTM;
+                this->onUAVTelemetryDataReceived(d,len);
+                break;
+            case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_MAVLINK:
+                T_Protocol=MAVLINK;
+                this->onUAVTelemetryDataReceived(d,len);
+                break;
+            case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_FRSKY:
+                T_Protocol=FRSKY;
+                this->onUAVTelemetryDataReceived(d,len);
+                break;
+            case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_SMARTPORT:
+                T_Protocol=SMARTPORT;
+                this->onUAVTelemetryDataReceived(d,len);
+                break;
+            case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB:
+                this->onEZWBStatusDataReceived(d,len);
+                break;
+            case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_ANDROD_GPS:{
+                RawOriginData::Packet packet=RawOriginData::fromRawData(d,len);
+                this->setHome(packet[0],packet[1],packet[2]);
+                originData.hasBeenSet=true;
+            }break;
+            default:break;
+        }
+    };
+    mFileReceiver.setCallBack(1,callback);
 }
 
 void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
@@ -110,37 +141,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
         }break;
         case FILE:
         case ASSETS:{
-            FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
-                switch(packetType){
-                    case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
-                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_LTM:
-                        T_Protocol=LTM;
-                        this->onUAVTelemetryDataReceived(d,len);
-                        break;
-                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_MAVLINK:
-                        T_Protocol=MAVLINK;
-                        this->onUAVTelemetryDataReceived(d,len);
-                        break;
-                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_FRSKY:
-                        T_Protocol=FRSKY;
-                        this->onUAVTelemetryDataReceived(d,len);
-                        break;
-                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_SMARTPORT:
-                        T_Protocol=SMARTPORT;
-                        this->onUAVTelemetryDataReceived(d,len);
-                        break;
-                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_EZWB:
-                        this->onEZWBStatusDataReceived(d,len);
-                        break;
-                    case GroundRecorderFPV::PACKET_TYPE_TELEMETRY_ANDROD_GPS:{
-                        RawOriginData::Packet packet=RawOriginData::fromRawData(d,len);
-                        this->setHome(packet[0],packet[1],packet[2]);
-                        originData.hasBeenSet=true;
-                    }break;
-                    default:break;
-                }
-            };
-            mFileReceiver.setCallBack(1,callback);
+            // If using external file receiver, start / stop is handled by the video player
             if(!isExternalFileReceiver){
                 const bool useAsset=SOURCE_TYPE==ASSETS;
                 const std::string filename = useAsset ? "testlog."+getProtocolAsString() :T_PLAYBACK_FILENAME;
