@@ -23,7 +23,7 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
     private TextView dataAsStringTV=null;
     private final Activity activity;
     private final TelemetryReceiver telemetryReceiver;
-    private Thread mThread;
+    private Thread mUpateThread;
 
     public  <T extends Activity & LifecycleOwner> TestReceiverTelemetry(final T t){
         this.activity=t;
@@ -39,15 +39,17 @@ public class TestReceiverTelemetry implements Runnable, LifecycleObserver {
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     private void startUiUpdates(){
-        mThread=new Thread(this);
-        mThread.setName("TestReceiverTelemetry");
-        mThread.start();
+        mUpateThread =new Thread(this);
+        mUpateThread.setName("TestReceiverTelemetry");
+        mUpateThread.start();
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     private void stopUiUpdates(){
-        mThread.interrupt();
-        try {mThread.join();} catch (InterruptedException e) {e.printStackTrace();}
+        mUpateThread.interrupt();
+        try {
+            mUpateThread.join();}
+        catch (InterruptedException e) {e.printStackTrace();}
     }
 
     @Override
