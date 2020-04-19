@@ -3,12 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="constantin.telemetry.example">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- DANGEROUS (needs runtime request) -->
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- DANGEROUS (needs runtime request) -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> <!-- DANGEROUS (needs runtime request) -->
-    <!-- open UDP ports -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Info about networks (EZ-WB connect via WIFI) -->
-
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -24,7 +18,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="constantin.telemetry.core.ASettingsTelemetry"/>
     </application>
 
 </manifest>

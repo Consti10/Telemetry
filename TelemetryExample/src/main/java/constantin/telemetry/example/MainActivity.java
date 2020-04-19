@@ -20,25 +20,23 @@ import java.util.Arrays;
 import java.util.List;
 
 import constantin.telemetry.core.ASettingsTelemetry;
+import constantin.telemetry.core.RequestPermissionHelper;
 import constantin.telemetry.core.TelemetrySettings;
 import constantin.telemetry.core.TestReceiverTelemetry;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TestReceiverTelemetry testReceiverTelemetry;
-    private static final String[] REQUIRED_PERMISSION_LIST = new String[]{
+    private final RequestPermissionHelper requestPermissionHelper=new RequestPermissionHelper(new String[]{
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
             Manifest.permission.READ_EXTERNAL_STORAGE,
             Manifest.permission.ACCESS_FINE_LOCATION
-    };
-    private final List<String> missingPermission = new ArrayList<>();
-    private static final int REQUEST_PERMISSION_CODE = 12345;
+    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        checkAndRequestPermissions();
+        requestPermissionHelper.checkAndRequestPermissions(this);
         TelemetrySettings.initializePreferences(this,false);
         Button button=findViewById(R.id.button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv1 = findViewById(R.id.textView);
         TextView tv2 = findViewById(R.id.textView2);
         TextView tv3 = findViewById(R.id.textView3);
-        testReceiverTelemetry=new TestReceiverTelemetry(this);
+        TestReceiverTelemetry testReceiverTelemetry = new TestReceiverTelemetry(this);
         testReceiverTelemetry.setViews( tv1, tv2, tv3);
     }
 
@@ -68,38 +66,12 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
     }
 
-    private void checkAndRequestPermissions(){
-        missingPermission.clear();
-        for (String eachPermission : REQUIRED_PERMISSION_LIST) {
-            if (ContextCompat.checkSelfPermission(this, eachPermission) != PackageManager.PERMISSION_GRANTED) {
-                missingPermission.add(eachPermission);
-            }
-        }
-        if (!missingPermission.isEmpty()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                final String[] asArray=missingPermission.toArray(new String[0]);
-                Log.d("PermissionManager","Request: "+ Arrays.toString(asArray));
-                ActivityCompat.requestPermissions(this, asArray, REQUEST_PERMISSION_CODE);
-            }
-        }
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+                                           @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        // Check for granted permission and remove from missing list
-        if (requestCode == REQUEST_PERMISSION_CODE) {
-            for (int i = grantResults.length - 1; i >= 0; i--) {
-                if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
-                    missingPermission.remove(permissions[i]);
-                }
-            }
-        }
-        if (!missingPermission.isEmpty()) {
-            checkAndRequestPermissions();
-        }
+        requestPermissionHelper.onRequestPermissionsResult(requestCode,permissions,grantResults);
 
     }
 }

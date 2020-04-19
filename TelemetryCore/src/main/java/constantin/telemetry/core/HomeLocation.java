@@ -3,6 +3,7 @@ package constantin.telemetry.core;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.os.Looper;
@@ -33,7 +34,7 @@ public class HomeLocation implements LifecycleObserver {
     private final int SUFFICIENT_ACCURACY_M=10;
     private final boolean OSD_ORIGIN_POSITION_ANDROID;
 
-    public <T extends Activity & LifecycleOwner> HomeLocation(final T t, IHomeLocationChanged homeLocationChanged){
+    public <T extends Context & LifecycleOwner> HomeLocation(final T t, IHomeLocationChanged homeLocationChanged){
         t.getLifecycle().addObserver(this);
         mIHomeLocationChanged=homeLocationChanged;
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(t);
