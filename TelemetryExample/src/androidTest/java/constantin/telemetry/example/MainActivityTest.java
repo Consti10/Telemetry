@@ -28,7 +28,6 @@ public class MainActivityTest {
     public GrantPermissionRule mGrantPermissionRule =
             GrantPermissionRule.grant(
                     "android.permission.ACCESS_FINE_LOCATION",
-                    "android.permission.READ_EXTERNAL_STORAGE",
                     "android.permission.WRITE_EXTERNAL_STORAGE");
 
     @Test

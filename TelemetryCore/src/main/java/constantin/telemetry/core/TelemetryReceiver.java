@@ -47,7 +47,7 @@ public class TelemetryReceiver implements HomeLocation.IHomeLocationChanged, Lif
     protected static native void setDJIValues(long instance,double Latitude_dDeg,double Longitude_dDeg,float AltitudeX_m,float Roll_Deg,float Pitch_Deg,
                                             float SpeedClimb_KPH,float SpeedGround_KPH,int SatsInUse,float Heading_Deg);
     protected static native void setDJIBatteryValues(long instance,float BatteryPack_P,float BatteryPack_A);
-    protected static native void setDJIDownlinkSignalQuality(long instance,int value);
+    protected static native void setDJISignalQuality(long instance,int qualityUpPercentage,int qualityDownPercentage);
 
     protected final long nativeInstance;
     protected final Context context;
