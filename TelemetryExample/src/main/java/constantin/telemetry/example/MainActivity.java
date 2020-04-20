@@ -3,6 +3,7 @@ package constantin.telemetry.example;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.opengl.EGL14;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         TextView tv3 = findViewById(R.id.textView3);
         TestReceiverTelemetry testReceiverTelemetry = new TestReceiverTelemetry(this);
         testReceiverTelemetry.setViews( tv1, tv2, tv3);
+
     }
 
     @Override
@@ -72,6 +74,5 @@ public class MainActivity extends AppCompatActivity {
                                            @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         requestPermissionHelper.onRequestPermissionsResult(requestCode,permissions,grantResults);
-
     }
 }

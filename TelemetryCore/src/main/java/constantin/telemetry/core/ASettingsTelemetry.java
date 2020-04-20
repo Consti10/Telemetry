@@ -79,7 +79,6 @@ public class ASettingsTelemetry extends AppCompatActivity {
             }
         }
 
-
         private void enableOrDisablePreferences_TelemetryProtocol(SharedPreferences sharedPreferences){
             final int val= sharedPreferences.getInt(getActivity().getString(R.string.T_PROTOCOL),0);
             Preference LTMPort=findPreference(getActivity().getString(R.string.T_LTMPort));
