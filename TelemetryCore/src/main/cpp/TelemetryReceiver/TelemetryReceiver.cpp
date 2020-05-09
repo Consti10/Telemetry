@@ -358,9 +358,11 @@ const TelemetryReceiver::MTelemetryValue TelemetryReceiver::getTelemetryValue(Te
         case HS_GROUND:{
             ret.prefix=L"HS";
             if(T_METRIC_SPEED_HORIZONTAL==KMH){
+                ret.valueNotAsString=uav_td.SpeedGround_KPH;
                 ret.value= StringHelper::doubleToString(uav_td.SpeedGround_KPH, 5, 2);
                 ret.metric=L"km/h";
             }else{
+                ret.valueNotAsString=uav_td.SpeedGround_KPH*KMH_TO_MS;
                 ret.value= StringHelper::doubleToString(uav_td.SpeedGround_KPH*KMH_TO_MS, 5, 2);
                 ret.metric=L"m/s";
             }

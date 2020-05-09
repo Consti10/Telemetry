@@ -117,6 +117,7 @@ public:
         std::wstring prefixIcon=std::wstring();
         float prefixScale=0.83f;
         std::wstring value=L"";
+        double valueNotAsString;
         std::wstring metric=L"";
         int warning=0; //0==okay 1==orange 2==red and -1==green
         unsigned long getLength()const{
