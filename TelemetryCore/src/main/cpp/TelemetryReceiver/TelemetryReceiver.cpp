@@ -117,6 +117,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mTelemetryDataReceiver.get()==nullptr);
     assert(mEZWBDataReceiver.get()== nullptr);
     updateSettings(env,context);
+    //LOGD("Start receiving %d",SOURCE_TYPE);
     switch(SOURCE_TYPE){
         case UDP:{
             if(ENABLE_GROUND_RECORDING){
