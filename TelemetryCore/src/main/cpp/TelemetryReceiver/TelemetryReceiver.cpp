@@ -14,6 +14,7 @@
 #include <codecvt>
 #include <android/asset_manager_jni.h>
 #include <array>
+#include <CPUPriority.hpp>
 
 extern "C"{
 #include "../parser_c/ltm.h"
@@ -127,7 +128,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                 UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
                     this->onUAVTelemetryDataReceived(data,data_length);
                 };
-                mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f);
+                mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",FPV_VR_PRIORITY::CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f);
                 mTelemetryDataReceiver->startReceiving();
             }
             //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
@@ -136,7 +137,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                 UDPReceiver::DATA_CALLBACK f2 = [=](const uint8_t data[],size_t data_length) {
                     this->onEZWBStatusDataReceived(data, data_length);
                 };
-                mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2);
+                mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",FPV_VR_PRIORITY::CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2);
                 mEZWBDataReceiver->startReceiving();
             }
         }break;
