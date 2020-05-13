@@ -39,11 +39,12 @@ int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protoc
     return port;
 }
 
-TelemetryReceiver::TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder,FileReader* externalFileReader):
+TelemetryReceiver::TelemetryReceiver(JNIEnv* env,const char* DIR,GroundRecorderFPV* externalGroundRecorder,FileReader* externalFileReader):
         GROUND_RECORDING_DIRECTORY(DIR),
         mGroundRecorder((externalGroundRecorder== nullptr) ?( * new GroundRecorderFPV(DIR)) : *externalGroundRecorder),
         mFileReceiver((externalFileReader== nullptr) ?( * new FileReader(1024)) : *externalFileReader),
         isExternalFileReceiver(externalFileReader!= nullptr){
+    env->GetJavaVM(&javaVm);
     FileReader::RAW_DATA_CALLBACK callback=[this](const uint8_t* d,std::size_t len,GroundRecorderFPV::PACKET_TYPE packetType) {
         switch(packetType){
             case GroundRecorderFPV::PACKET_TYPE_VIDEO_H264:break;
@@ -128,7 +129,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                 UDPReceiver::DATA_CALLBACK f= [=](const uint8_t data[],size_t data_length) {
                     this->onUAVTelemetryDataReceived(data,data_length);
                 };
-                mTelemetryDataReceiver=std::make_unique<UDPReceiver>(T_Port,"TelemetryReceiver receiver",FPV_VR_PRIORITY::CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f);
+                mTelemetryDataReceiver=std::make_unique<UDPReceiver>(javaVm,T_Port,"TelemetryReceiver receiver",FPV_VR_PRIORITY::CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f);
                 mTelemetryDataReceiver->startReceiving();
             }
             //ezWB is sending telemetry packets 128 bytes big. To speed up performance, i have a buffer  of 1024 bytes on the receiving end, though. This
@@ -137,7 +138,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
                 UDPReceiver::DATA_CALLBACK f2 = [=](const uint8_t data[],size_t data_length) {
                     this->onEZWBStatusDataReceived(data, data_length);
                 };
-                mEZWBDataReceiver=std::make_unique<UDPReceiver>(EZWBS_Port,"EZ-WB Status receiver",FPV_VR_PRIORITY::CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2);
+                mEZWBDataReceiver=std::make_unique<UDPReceiver>(javaVm,EZWBS_Port,"EZ-WB Status receiver",FPV_VR_PRIORITY::CPU_PRIORITY_UDPRECEIVER_TELEMETRY,f2);
                 mEZWBDataReceiver->startReceiving();
             }
         }break;
@@ -752,7 +753,7 @@ extern "C" {
 JNI_METHOD(jlong , createInstance)
 (JNIEnv *env,jclass unused,jobject context,jstring groundRecordingDirectory,jlong externalGroundRecorder,jlong externalFileReader) {
     const char *str = env->GetStringUTFChars(groundRecordingDirectory, nullptr);
-    auto* telemetryReceiver = new TelemetryReceiver(str,reinterpret_cast<GroundRecorderFPV*>(externalGroundRecorder),reinterpret_cast<FileReader*>(externalFileReader));
+    auto* telemetryReceiver = new TelemetryReceiver(env,str,reinterpret_cast<GroundRecorderFPV*>(externalGroundRecorder),reinterpret_cast<FileReader*>(externalFileReader));
     env->ReleaseStringUTFChars(groundRecordingDirectory,str);
     return jptr(telemetryReceiver);
 }

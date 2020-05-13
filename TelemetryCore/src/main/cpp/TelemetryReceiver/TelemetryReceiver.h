@@ -75,7 +75,7 @@ public:
 public:
     //External ground recorder means we use the ground recorder of the video lib for a merged
     //Video an telemetry ground recording file
-    explicit TelemetryReceiver(const char* DIR,GroundRecorderFPV* externalGroundRecorder,FileReader* externalFileReader);
+    explicit TelemetryReceiver(JNIEnv* env,const char* DIR,GroundRecorderFPV* externalGroundRecorder,FileReader* externalFileReader);
     /**
      * Start all telemetry receiver. If they are already receiving, nothing happens.
      * Make sure startReceiving() and stopReceivingAndWait() are not called on different threads
@@ -185,6 +185,7 @@ private:
     long nWIFIBRADCASTFailedPackets=0;
     OriginData originData;
     AppOSDData appOSDData;
+    JavaVM* javaVm;
 public:
     UAVTelemetryData uav_td;
     wifibroadcast_rx_status_forward_t2 wifibroadcastTelemetryData;
