@@ -15,6 +15,7 @@
 #include <android/asset_manager_jni.h>
 #include <array>
 #include <CPUPriority.hpp>
+#include <MDebug.hpp>
 
 extern "C"{
 #include "../parser_c/ltm.h"
@@ -24,7 +25,8 @@ extern "C"{
 }
 
 constexpr const auto TAG="TelemetryReceiver";
-#define LOGD(...) __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
+#define MLOGD LOG2(TAG)
+#define MLOGE LOGE(TAG)
 
 int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protocol) {
     int port=5700;
@@ -119,7 +121,7 @@ void TelemetryReceiver::startReceiving(JNIEnv *env,jobject context,AAssetManager
     assert(mTelemetryDataReceiver.get()==nullptr);
     assert(mEZWBDataReceiver.get()== nullptr);
     updateSettings(env,context);
-    //LOGD("Start receiving %d",SOURCE_TYPE);
+    MLOGD<<"Start receiving "<<SOURCE_TYPE;
     switch(SOURCE_TYPE){
         case UDP:{
             if(ENABLE_GROUND_RECORDING){
@@ -185,7 +187,7 @@ void TelemetryReceiver::onUAVTelemetryDataReceived(const uint8_t data[],size_t d
             frsky_read(&uav_td,data,data_length);
             break;
         default:
-            LOGD("TelR ERROR %d",T_Protocol);
+            MLOGE<<"TelR "<<T_Protocol;
             assert(false);
             break;
     }
@@ -209,7 +211,7 @@ void TelemetryReceiver::onEZWBStatusDataReceived(const uint8_t *data,const size_
             nWIFIBROADCASTParsedPackets++;
         };break;
         default:
-            LOGD("EZWB status data unknown length %d",(int)data_length);
+            MLOGE<<"EZWB status data unknown length "<<data_length;
             nWIFIBRADCASTFailedPackets++;
             break;
     }
@@ -573,7 +575,7 @@ TelemetryReceiver::getTelemetryValueEZWB_RSSI_ADAPTERS_0to5(int adapter) const {
     ret.warning=0;
     if(adapter>6 || adapter<0){
         adapter=0;
-        LOGD("Adapter error");
+        MLOGD<<"Adapter error";
     }
     if(adapter<wifibroadcastTelemetryData.wifi_adapter_cnt){
         const std::wstring s1=StringHelper::intToString((int)wifibroadcastTelemetryData.adapter[adapter].current_signal_dbm,4);
