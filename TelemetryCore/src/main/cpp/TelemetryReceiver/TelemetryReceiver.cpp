@@ -15,7 +15,7 @@
 #include <android/asset_manager_jni.h>
 #include <array>
 #include <CPUPriority.hpp>
-#include <MDebug.hpp>
+#include <AndroidLogger.hpp>
 
 extern "C"{
 #include "../parser_c/ltm.h"
@@ -25,7 +25,7 @@ extern "C"{
 }
 
 constexpr const auto TAG="TelemetryReceiver";
-#define MLOGD LOG2(TAG)
+#define MLOGD LOGD(TAG)
 #define MLOGE LOGE(TAG)
 
 int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protocol) {
