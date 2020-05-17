@@ -14,7 +14,8 @@
 #include <codecvt>
 #include <android/asset_manager_jni.h>
 #include <array>
-#include <CPUPriority.hpp>
+#include <AndroidThreadPrioValues.hpp>
+#include <NDKThreadHelper.hpp>
 #include <AndroidLogger.hpp>
 
 extern "C"{
