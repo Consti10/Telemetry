@@ -25,11 +25,7 @@ extern "C"{
 #include "../parser_c/smartport.h"
 }
 
-constexpr const auto TAG="TelemetryReceiver";
-#define MLOGD LOGD(TAG)
-#define MLOGE LOGE(TAG)
-
-int TelemetryReceiver::getTelemetryPort(const SettingsN &settingsN, int T_Protocol) {
+int TelemetryReceiver::getTelemetryPort(const SharedPreferences &settingsN, int T_Protocol) {
     int port=5700;
     switch (T_Protocol){
         case TelemetryReceiver::NONE:break;
@@ -82,7 +78,7 @@ TelemetryReceiver::TelemetryReceiver(JNIEnv* env,const char* DIR,GroundRecorderF
 }
 
 void TelemetryReceiver::updateSettings(JNIEnv *env,jobject context) {
-    SettingsN settingsN(env,context,"pref_telemetry");
+    SharedPreferences settingsN(env,context,"pref_telemetry");
     T_Protocol=static_cast<PROTOCOL_OPTIONS >(settingsN.getInt(IDT::T_PROTOCOL,1));
     T_Port=getTelemetryPort(settingsN,T_Protocol);
     EZWBS_Protocol=static_cast<EZWB_STATUS_PROTOCOL>(settingsN.getInt(IDT::EZWBS_Protocol));

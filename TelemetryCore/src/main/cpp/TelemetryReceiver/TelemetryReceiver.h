@@ -14,7 +14,7 @@
 #include <iostream>
 #include <memory>
 #include <GroundRecorderFPV.hpp>
-#include <SettingsN.hpp>
+#include <SharedPreferences.hpp>
 #include <FileReader.h>
 #include <GroundRecorderRAW.hpp>
 #include <UDPReceiver.h>
@@ -48,7 +48,7 @@ private:
     enum PROTOCOL_OPTIONS {NONE,LTM,MAVLINK,SMARTPORT,FRSKY};
     enum EZWB_STATUS_PROTOCOL{DISABLED,EZWB_16_rc6,OpenHD_1_0_0};
     enum METRIC_SPEED{KMH,MS};
-    static int getTelemetryPort(const SettingsN& settingsN, int T_Protocol);
+    static int getTelemetryPort(const SharedPreferences& settingsN, int T_Protocol);
     const std::string GROUND_RECORDING_DIRECTORY;
     //
     SOURCE_TYPE_OPTIONS SOURCE_TYPE;
