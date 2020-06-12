@@ -33,7 +33,7 @@ public class HomeLocation implements LifecycleObserver {
     private final IHomeLocationChanged mIHomeLocationChanged;
     private final int SUFFICIENT_ACCURACY_M=10;
     private final boolean OSD_ORIGIN_POSITION_ANDROID;
-
+ 
     public <T extends Context & LifecycleOwner> HomeLocation(final T t, IHomeLocationChanged homeLocationChanged){
         t.getLifecycle().addObserver(this);
         mIHomeLocationChanged=homeLocationChanged;
